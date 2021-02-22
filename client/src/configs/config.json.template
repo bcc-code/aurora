@@ -1,0 +1,26 @@
+{
+  "auth0": {
+    "clientId": "1J2g4gsQX11e5WD7kgjlbeQj0qx14kfz",
+    "domain": "login.bcc.no",
+    "apiAudience": "https://widgets.brunstad.org"
+  },
+  "api": {
+    "baseUrl": "http://localhost:5001/brunstadtv-online-dev/europe-west1/"
+  },
+  "app": {
+    "baseUrl": "http://localhost:8080",
+    "name": "BCC Online | LOCAL",
+    "id": "bcc-online"
+  },
+  "firebase": {
+    "apiKey": "**secret**",
+    "authDomain": "brunstadtv-online-dev.firebaseapp.com",
+    "databaseURL": "https://brunstadtv-online-dev.firebaseio.com",
+    "projectId": "brunstadtv-online-dev",
+    "storageBucket": "brunstadtv-online-dev.appspot.com",
+    "messagingSenderId": "**secret**",
+    "appId": "**secret**",
+    "measurementId": "**secret**",
+    "storageBaseUrl": "https://firebasestorage.googleapis.com/v0/b/brunstadtv-online.appspot.com/o/"
+  }
+}

@@ -1,0 +1,11 @@
+.vscode/
+.cache/
+.firebase/
+node_modules/
+firebase/public
+dist/
+
+config.json
+
+*.log
+

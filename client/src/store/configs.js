@@ -1,0 +1,24 @@
+import { firestoreAction  } from 'vuexfire'
+import { db } from '@/data/db.js'
+import keys from '@/utils/keys'
+
+export default {
+    namespaced: true,
+    state: {
+        config: {}
+    },
+    actions: {
+        bindConfigRef: firestoreAction(context => {
+            return context.bindFirestoreRef('config', context.getters.configRef)
+        }),
+    },
+    getters: {
+        configRef: () => {
+            return db.collection('configs').doc(keys.APP.ID)
+        },
+        btvConfigRef: () => {
+            return db.collection('configs').doc('brunstadtv-app')
+        }
+        
+    }
+}

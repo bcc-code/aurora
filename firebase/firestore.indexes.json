@@ -1,0 +1,30 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "hasMembership",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "personId",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "counterShards",
+      "fieldPath": "count",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "poll-stats",
+      "fieldPath": "total",
+      "indexes": []
+    }
+  ]
+}

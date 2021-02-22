@@ -1,0 +1,84 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isServiceAccount() {
+      return request.auth.token.email == "screens@bcc.online";
+    }
+
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/user-groups/bcc/permissions/$(request.auth.token.personId));
+    }
+
+    function isPerson(personId) {
+      return request.auth.token.personId == personId;
+    }
+
+    function isLoggedIn() {
+      return request.auth != null;
+    }
+
+    match /user-groups/bcc {
+      allow read: if true;
+      allow write: if false;
+        
+      match /users/{userId} {
+      	allow read: if isServiceAccount();
+        allow read, update: if isAdmin() || isPerson(userId);
+        allow write: if false;
+      }
+    }    
+
+    match /{documentId=**} {
+      allow read, write: if isAdmin();
+    }
+
+    match /churches/{churchId} {
+      allow read: if isLoggedIn();
+    }
+
+    match /competitions/{competitionId=**} {
+      allow read: if isLoggedIn();
+    }
+
+    match /buk-games/{bukGameId=**} {
+      allow read: if isLoggedIn();
+    }
+
+    match /configs/{configId=**} {
+      allow read: if isLoggedIn();
+    }
+
+    match /events/{eventId} {
+      match /checkins/{checkinId} {
+        allow create: if isLoggedIn();
+        allow get, update: if isPerson(checkinId);
+        allow list: if isServiceAccount();
+        allow list, delete: if isAdmin();
+      }
+      match /gameboard/{gameboardId=**} {
+        allow read: if isLoggedIn();
+      }
+      match /program/{programId=**} {
+        allow read: if isLoggedIn();
+      }
+      match /questions/{questionId=**} {
+        allow read: if isLoggedIn();
+      }
+      match /inquiries-queue/{feedItemId=**} {
+        allow read: if isServiceAccount();
+      }
+      match /feed-approved/{feedItemId=**} {
+        allow read: if isServiceAccount();
+      }
+      match /feed-outgoing/{feedItemId=**} {
+        allow read: if isServiceAccount();
+      }
+      match /responses/{responseId=**} {
+        allow read: if isServiceAccount();
+      }
+      match /screens/{screenId=**} {
+        allow read, write: if isServiceAccount();
+      }
+    }
+  }
+}

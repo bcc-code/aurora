@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap');
+
+.handle {
+  z-index: 100
+}
+
+.gradient-primary {
+  background: linear-gradient(180deg, #E63C62 0%, #9B75A9 33.32%, #7A8DC8 58.94%, #57A7E9 100%);
+}
+
+.gradient-active {
+  background: linear-gradient(135deg, #6EB0E6 0%, #E63C62 100%)
+}
+
+.border-light {
+  border: 1px solid rgba(204, 221, 255, 0.0980392)
+}
+
+.btn {
+  @apply transition duration-200 text-white font-bold py-2 px-4 rounded;
+}
+
+.btn-red {
+  @apply bg-red-500;
+}
+.btn-red:hover {
+  @apply bg-red-600;
+}
+.btn-green {
+  @apply bg-green-500;
+}
+.btn-green:hover {
+  @apply bg-green-600;
+}
+.btn-blue {
+  @apply bg-blue-500;
+}
+.btn-blue:hover {
+  @apply bg-blue-600;
+}
+.btn-delete {
+  @apply cursor-pointer text-red-500;
+}
+.btn-delete:hover {
+  @apply text-red-600;
+}
+.btn-add {
+  @apply cursor-pointer text-green-500;
+}
+.btn-add:hover {
+  @apply text-green-600;
+}
+
+.disabled{
+  @apply opacity-50 cursor-default;
+}
+
+.form-input {
+  @apply appearance-none;
+  @apply block;
+  @apply w-full;
+  @apply bg-background-2;
+  @apply text-white;
+  @apply border;
+  @apply border-gray-700;
+  @apply rounded;
+  @apply py-3;
+  @apply px-4;
+  @apply leading-tight;
+}
+
+.form-input:focus {
+  @apply outline-none;
+  @apply bg-background-2-light;
+  @apply border-gray-600;
+}
+
+.form-label {
+  @apply block;
+  @apply uppercase;
+  @apply tracking-wide;
+  @apply text-white;
+  @apply text-sm;
+}
+
+.list-item {
+  @apply select-none;
+  @apply rounded-md;
+  @apply flex;
+  @apply flex-1;
+  @apply items-center;
+  @apply p-4;
+  @apply transition;
+  @apply duration-500;
+  @apply ease-in-out;
+  @apply transform;
+  @apply relative;
+}
+
+.list-item:hover {
+  @apply -translate-y-1;
+}
+
+.list-item-order {
+  @apply w-8;
+  @apply h-8;
+  @apply bg-blue-800;
+  @apply p-1;
+  @apply text-center;
+  @apply rounded-md;
+  @apply mr-4;
+}
+
+.overlay {
+  @apply absolute;
+  @apply opacity-0;
+  @apply transition;
+  @apply duration-500;
+  @apply flex;
+  @apply justify-end;
+  @apply w-full;
+  @apply pr-8;
+  @apply z-10;
+}
+
+.overlay:hover, .overlay:focus {
+  @apply opacity-100;
+}
+
+/* Screen A and F */
+.faded-bg {
+  background: rgba(32, 48, 66, 0.3);
+}
+
+.shadow-text {
+  text-shadow: 0 .1em .1em rgba(0, 0, 0, 0.5);
+}
+
+.shadow-top {
+  box-shadow: inset 0px 30px 30px -30px rgb(0 0 0 / 50%);
+}
+
+.shadow-over {
+  position: relative;
+}
+.shadow-over:after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.2) 2%, rgba(0, 0, 0, 0) 102%);
+}
+
+.shadow-over-bottom {
+  position: relative;
+}
+.shadow-over-bottom:after {
+  content: '';
+  position: absolute;
+  z-index: 5;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 15%;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 18.67%, rgba(0, 0, 0, 0.6) 100%);
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  width: 0 !important;
+  height: 0 !important;
+}
+.no-scrolbar {
+  overflow: -moz-scrollbars-none;
+  -ms-overflow-style: none;
+}

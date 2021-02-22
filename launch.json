@@ -1,0 +1,7 @@
+{
+    "type": "node",
+    "request": "attach",
+    "name": "Debug Firebase Function Emulator",
+    "port": 5000,
+    "protocol": "legacy" //As we're using node 6, this seems essential
+}

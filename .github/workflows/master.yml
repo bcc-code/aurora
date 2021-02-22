@@ -1,0 +1,79 @@
+name: BCC Online
+
+on:
+  push:
+    branches: [ develop, staging, master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ENV: DEV
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Set ENV to DEV
+      if: endsWith(github.ref, '/develop')
+      run: |
+        echo "ENVIRONMENT=DEV" >> $GITHUB_ENV
+    - name: Set ENV to STAGE
+      if: endsWith(github.ref, '/staging')
+      run: |
+        echo "ENVIRONMENT=STAGE" >> $GITHUB_ENV
+    - name: Set ENV to PROD
+      if: endsWith(github.ref, '/master')
+      run: |
+        echo "ENVIRONMENT=PROD" >> $GITHUB_ENV
+    - name: Replace config tokens
+      uses: microsoft/variable-substitution@v1 
+      with:
+        files: "**/config.json"
+      env:
+        api.baseUrl: ${{ secrets[format('{0}_API_BASE_URL', env.ENVIRONMENT)] }}
+        app.baseUrl: ${{ secrets[format('{0}_APP_BASE_URL', env.ENVIRONMENT)] }}
+        firebase.apiKey: ${{ secrets[format('{0}_FIREBASE_API_KEY', env.ENVIRONMENT)] }}
+        firebase.authDomain: ${{ secrets[format('{0}_FIREBASE_AUTH_DOMAIN', env.ENVIRONMENT)] }}
+        firebase.databaseURL: ${{ secrets[format('{0}_FIREBASE_DATABASE_URL', env.ENVIRONMENT)] }}
+        firebase.projectId: ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
+        firebase.storageBucket: ${{ secrets[format('{0}_FIREBASE_STORAGE_BUCKET', env.ENVIRONMENT)] }}
+        firebase.messagingSenderId: ${{ secrets[format('{0}_FIREBASE_MESSAGING_SENDER_ID', env.ENVIRONMENT)] }}
+        firebase.appId: ${{ secrets[format('{0}_FIREBASE_APP_ID', env.ENVIRONMENT)] }}
+        firebase.measurementId: ${{ secrets[format('{0}_FIREBASE_MEASUREMENT_ID', env.ENVIRONMENT)] }}
+        firebase.storageBaseUrl: ${{ secrets[format('{0}_FIREBASE_STORAGE_BASE_URL', env.ENVIRONMENT)] }}
+    - name: Replace firebase key
+      uses: microsoft/variable-substitution@v1 
+      with:
+        files: "**/firebase-key.json"
+      env:
+        project_id: ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
+        private_key_id: ${{ secrets[format('{0}_FIREBASE_PRIVATE_KEY_ID', env.ENVIRONMENT)] }}
+        private_key: ${{ secrets[format('{0}_FIREBASE_PRIVATE_KEY', env.ENVIRONMENT)] }}
+        client_email: ${{ secrets[format('{0}_FIREBASE_CLIENT_EMAIL', env.ENVIRONMENT)] }}
+        client_id: ${{ secrets[format('{0}_FIREBASE_CLIENT_ID', env.ENVIRONMENT)] }}
+        client_x509_cert_url: ${{ secrets[format('{0}_FIREBASE_CLIENT_CERT_URL', env.ENVIRONMENT)] }}
+    - name: Replace firebase.json tokens
+      uses: microsoft/variable-substitution@v1 
+      with:
+        files: "**/firebase.json"
+      env:
+        hosting.site: ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
+    - name: npm install and build (client)
+      working-directory: ./client
+      run: | 
+        npm ci
+        npm run build
+    - name: npm install and build (functions)
+      working-directory: ./firebase/functions
+      run: |
+        npm ci
+        npm run build
+    - name: deploy to firebase
+      uses: w9jds/firebase-action@master
+      with:
+        args: deploy --project ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        PROJECT_PATH: ./firebase
