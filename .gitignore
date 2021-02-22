@@ -9,4 +9,4 @@ config.json
 firebase-key.json
 
 *.log
-
+firestore-coverage.html
