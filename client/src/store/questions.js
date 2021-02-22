@@ -91,12 +91,12 @@ export default {
             return state.questions.find(question => question.id == state.selectedQuestionId)
         },
         answersByQuestionId: (_s, _g, _r, rootGetters) => (questionId) => {
-            return rootGetters['events/currentEventRef'].collection('questions').doc(questionId).collection('answers').orderBy('order').get().then(snapshot => {
+            return rootGetters['events/eventRef'].collection('questions').doc(questionId).collection('answers').orderBy('order').get().then(snapshot => {
                 return snapshot.docs.map(doc => doc.data())
             });
         },
         responsesByQuestionId: (_s, _g, _r, rootGetters) => (questionId, limit) => {
-            var query = rootGetters['events/currentEventRef'].collection('responses')
+            var query = rootGetters['events/eventRef'].collection('responses')
                 .where("question", "==", questionId);
             if (limit != null) {
                 query = query.limit(limit);
@@ -106,7 +106,7 @@ export default {
             });
         },
         responsesByQuestionIdAndAnswerIds: (_s, _g, _r, rootGetters) => (questionId, answerIds, limit) => {
-            var query = rootGetters['events/currentEventRef'].collection('responses')
+            var query = rootGetters['events/eventRef'].collection('responses')
                 .where("question", "==", questionId)
                 .where("selected", "array-contains-any", answerIds);
             if (limit != null) {
@@ -117,7 +117,7 @@ export default {
             });
         },
         statsRef: (_s, _g, _r, rootGetters) => {
-            return rootGetters['events/currentEventRef'].collection('gameboard').doc('pollSummary')
+            return rootGetters['events/eventRef'].collection('gameboard').doc('pollSummary')
         },
     }
 }

@@ -5,23 +5,46 @@ export const NewEvent = (name, order) => {
         name: name,
         order: order, 
         details: "",
-        syncRate: 120,
+        archived: false,
+        /* USED BY BTV APP */
+        testimonyMaxDurationSeconds: 60,
         currentProgramElement: null,
         isActive: false,
         checkedInUsers: 0,
-        extraCheckins: 0,
-        feedApproval: true,
-        automaticFeed: false,
-        automaticFeedFrequency: 5,
-        testimonyMaxDurationSeconds: 60,
+        
+        /* ONLY USED IN BCC ONLINE */
+        syncRate: 120,
         canSendInquiries: false,
-        components: {
-            program: true,
-            feed: true
+        feed: {
+            autoPush: false,
+            frequency: 5
+        },
+        logo: {
+            useTemplate: true,
+            value: null,
+            computedValue: null
+        },
+        background: {
+            useTemplate: true,
+            value: null,
+            computedValue: null
         },
         style: {
-            primaryColor: null,
-            primaryColorDark: null
+            logo: {
+                useTemplate: true,
+                value: null,
+                computedValue: null
+            },
+            primaryColor: {
+                useTemplate: true,
+                value: null,
+                computedValue: null
+            },
+            primaryColorDark: {
+                useTemplate: true,
+                value: null,
+                computedValue: null
+            }
         }
     }
 }

@@ -1,9 +1,9 @@
 <template>
     <section class="w-full grid grid-cols-4 gap-4">
-        <div class="col-span-full bg-background-2 my-3">
+        <div class="col-span-full my-3">
             <nav class="flex flex-col sm:flex-row">
-                <button v-for="screen in screens" :key="screen.id" class="w-1/2 py-4 px-6 block hover:text-tint-1 focus:outline-none"
-                    :class="selectedScreenId == screen.id ? 'text-tint-1 border-b-2 font-medium border-tint-1' : 'text-white'"
+                <button v-for="screen in screens" :key="screen.id" class="w-1/2 py-2 block"
+                    :class="selectedScreenId == screen.id ? 'bg-seagull rounded-full font-medium' : 'text-white'"
                     @click="selectedScreenId = screen.id">
                     {{$t('menu.screen')}} {{screen.id}}
                 </button>
@@ -12,9 +12,10 @@
         <section class="col-span-full lg:col-span-1">
             <ScreenManager :screen="selectedScreen" />
         </section>
-        <section class="col-span-full lg:col-span-3 relative" v-if="previewScreen != null" ref="preview">
+        <section class="col-span-full lg:col-span-3 relative" v-if="previewScreen != null" ref="preview" :style="{ paddingTop: paddingTop }">
             <PreviewScreen :screen="previewScreen"
-                :customStyle="selectedEvent.style"
+                :defaultBackground="selectedEvent.background.computedValue" 
+                :customStyle="customStyle"
                 :style="{ transform: `scale(${scale})` }"
                 style="transform-origin: top left;" />
         </section>
@@ -63,10 +64,22 @@ export default {
                 return null
             return this.screens.find((screen) => screen.id == this.selectedScreenId);
         },
+        paddingTop() {
+            if (this.selectedScreen == null)
+                return '0'
+            return `${Math.round(100*this.selectedScreen.size.height / this.selectedScreen.size.width)}%`
+        },
         scale() {
             if (this.selectedScreen == null)
                 return 0;
             return this.width / this.selectedScreen.size.width;
+        },
+        customStyle() {
+            return {
+                primaryColor: this.selectedEvent.style.primaryColor.computedValue,
+                primaryColorDark: this.selectedEvent.style.primaryColorDark.computedValue,
+                logo: this.selectedEvent.style.logo.computedValue
+            }
         }
     },
     watch: {

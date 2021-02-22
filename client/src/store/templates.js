@@ -8,32 +8,22 @@ export default {
         templates: []
     },
     mutations: {
-        setSelectedTemplateId: (state, value) => {
-            state.selectedTemplateId = value
-        },
+        setSelectedTemplateId: (state, value) => state.selectedTemplateId = value,
     },
     actions: {
-        bindTemplatesRef: firestoreAction(context => {
+        bindTemplates: firestoreAction(context => {
             return context.bindFirestoreRef('templates', context.getters.templatesRef)
         }),
         createTemplateFromEvent: firestoreAction((context, event) => {
             const templateId = event.templateName.toLowerCase().replaceAll(' ', '-')
             return context.getters.templatesRef.doc(templateId).set({
-                automaticFeedFrequency: event.automaticFeedFrequency,
-                canSendInquiries: event.canSendInquiries,
-                components: {
-                    atmosphere: event.components.atmosphere,
-                    banner: event.components.banner,
-                    feed: event.components.feed,
-                    livestream: event.components.livestream,
-                    logoStyle: event.components.logoStyle,
-                    logoUrl: event.components.logoUrl,
-                    program: event.components.program,
-                    testimonies: event.components.testimonies
-                },
-                feedApproval: event.feedApproval,
-                style: event.style,
-                testimonyMaxDurationSeconds: event.testimonyMaxDurationSeconds
+                background: event.background.value,
+                logo: event.logo.value,
+                style: {
+                    logo: event.style.logo.value,
+                    primaryColor: event.style.primaryColor.value,
+                    primaryColorDark: event.style.primaryColorDark.value
+                }
             })
         }),
         removeTemplate: firestoreAction((context, template) => {
@@ -53,5 +43,8 @@ export default {
         selectedTemplate: (state) => {
             return state.templates.find(template => template.id == state.selectedTemplateId);
         },
+        templateById: (state) => (templateId) => {
+            return state.templates.find(t => t.id == templateId)
+        }
     }
 }

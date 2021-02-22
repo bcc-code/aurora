@@ -10,7 +10,7 @@
                                 <div class="relative w-full mb-3">
                                     <label class="block uppercase text-gray-700 text-xs font-bold mb-2" for="grid-password">Password</label>
                                     <input type="password" v-model="password" class="px-3 py-3 placeholder-gray-400 text-gray-700 bg-white rounded text-sm shadow focus:outline-none focus:shadow-outline w-full" placeholder="Password" style="transition: all 0.15s ease 0s;">
-                                    <span class="text-red-500 text-xs" v-if="loginError">{{loginError}}</span>
+                                    <span class="text-cerise text-xs" v-if="loginError">{{loginError}}</span>
                                 </div>
                                 <div class="text-center mt-6">
                                     <button class="bg-gray-900 text-white active:bg-gray-700 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full" type="button" style="transition: all 0.15s ease 0s;"

@@ -5,7 +5,7 @@
 	</section>
 </template>
 <script>
-import { mapGetters, mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 export default {
     data: function() {
         return {
@@ -13,11 +13,11 @@ export default {
         }
     },
     methods: {
-        ...mapActions('events', ['bindEventsRef'])
+        ...mapActions('events', ['bindEvents'])
     },
     async mounted(){
         this.$store.commit('events/setSelectedEventId', this.$route.params.eventId);
-        await this.bindEventsRef().then(() => {
+        await this.bindEvents().then(() => {
             this.loaded = true;
         })
     },

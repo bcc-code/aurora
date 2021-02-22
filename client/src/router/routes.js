@@ -6,8 +6,7 @@ import EventTemplates from "@/views/Events/Templates/List"
 import EventTemplate from "@/views/Events/Templates/Single"
 
 import Questions from "@/views/Events/Modules/Questions"
-import InquiriesIncoming from "@/views/Events/Modules/Inquiries/Incoming"
-import InquiriesQueue from "@/views/Events/Modules/Inquiries/Queue"
+import Inquiries from "@/views/Events/Modules/Inquiries/Index"
 import Translation from '@/views/Events/Modules/Translation'
 import Feed from '@/views/Events/Modules/Feed/Index'
 import Queue from '@/views/Events/Modules/Feed/Queue'
@@ -35,11 +34,9 @@ export default [
 		{ path: "", name: "dashboard", component: EditEvent },
 		{ path: "gameboard", name: "gameboard", component: Questions },
 		{ path: "translations",	name: "translations", component: Translation, meta: { accessLevel : 'translate' } },
-		{ path: "inquiries", name: "inquiries", component: InquiriesIncoming },
-		{ path: "inquiries/queue", name: "inquiries-queue", component: InquiriesQueue },
+		{ path: "inquiries", name: "inquiries", component: Inquiries },
 		{ path: "feed", name: "feed", component: Feed, meta: { accessLevel : 'desk' } },
 		{ path: "desk", name: "desk", component: Info, meta: { accessLevel : 'desk' } },
-		{ path: "queue", name: "queue", component: Queue, meta: { accessLevel : 'desk' } },
 		{ path: "program", name: "program", component: Program },
 		{ path: "screens", name: "screens", component: ManageScreens, meta: { accessLevel : 'admin' } },
 		{ path: "profile-pictures",	name: "profile-pictures", component: ProfilePictures, meta: { accessLevel : 'desk' } },

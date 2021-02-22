@@ -17,6 +17,12 @@ module.exports = {
         'ebony': '#0D1623',
         'bluewood': '#32425A',
 
+        'seagull': '#6EB0E6',
+        'downy': '#71D2A4',
+        'cerise': '#E63C62',
+
+        'slate-gray': '#707C8E',
+        
         'tint-1': '#6EB0E6',
         'background-2': 'rgba(29,40,56,0.85)',
         'background-2-plain': 'rgb(29,40,56)',

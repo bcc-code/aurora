@@ -7,7 +7,7 @@
                 <option v-if="allowEmpty" value=""></option>
                 <option v-for="option in options" :key="option.id" :value="resolve(option, selectKey)">
                     <template v-if="typeof selectLabel == 'function'"> {{selectLabel(option)}}</template>
-                    <template v-else>{{resolve(option, selectLabel) | modelName}}</template>
+                    <template v-else>{{resolve(option, selectLabel) | capitalize}}</template>
                 </option>
             </select>
             <ToggleButton v-else-if="type == 'boolean'" v-model="model" class="mr-5" />

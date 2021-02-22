@@ -5,22 +5,13 @@
 import { mapGetters } from 'vuex'
 export default {
     computed: {
-        ...mapGetters('events', ['currentEvent']),
-        currentEventGroup() {
-            return {
-                defaultLogo: null
-            }
-        },
+        ...mapGetters('events', ['selectedEvent', 'currentEvent']),
         logoUrl() {
-            if (this.showCustomBanner)
-                return this.currentEvent.components.logoUrl
-            else if (this.notNullOrEmpty(this.currentEventGroup.defaultLogo))
-                return this.currentEventGroup.defaultLogo
-            else return '/images/bcco_logo.svg'
+            const event = this.selectedEvent || this.currentEvent;
+            if (this.notNullOrEmpty(event.logo.computedValue))
+                return event.logo.computedValue;
+            return '/images/bcco_logo.svg'
         },
-        showCustomBanner() {
-            return this.currentEvent.components.banner && this.currentEvent.components.logoUrl;
-        }
     },
     methods: {
         notNullOrEmpty(value) {

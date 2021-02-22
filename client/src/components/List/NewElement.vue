@@ -1,7 +1,7 @@
 <template>
     <li class="mb-2">
         <div class="list-item bg-background-2 justify-between">
-            <div class="w-1/2 flex">
+            <div class="w-1/2 flex items-center">
                 <div class="list-item-order"><span class="number">{{order}}</span></div>
                 <input type="text" class="form-input" v-model="elementText" :placeholder="placeholder"/>
             </div>

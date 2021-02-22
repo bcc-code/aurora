@@ -9,8 +9,8 @@
         <div class="w-full border-l-4 border-white shadow-text text-white leading-snug px-4 flex justify-center gap-5">
             <div :class="size =='small' ? showResults ? 'w-1/2' : 'w-full px-8' : 'w-2/3'">
                 <template v-if="isSmallWithResults">
-                    <p class="uppercase font-semibold text-4xl">KOLLEKT</p>
-                    <p class="italic text-3xl pb-2">til BCC</p>
+                    <p class="uppercase font-semibold text-3xl">BIDRA I BTV APP</p>
+                    <p class="italic text-3xl pb-2">eller på portalen</p>
                 </template>
                 <template v-else>
                     <p class="uppercase font-semibold text-4xl">KOLLEKT TIL BCC</p>
@@ -24,7 +24,7 @@
                 </div>
             </div>
             <div v-if="showResults" :class="size =='small' ? 'w-1/2': 'w-1/3'">
-                <p class="uppercase font-semibold text-4xl">Status</p>
+                <p class="uppercase font-semibold text-3xl">Status</p>
                 <p class="italic text-3xl pb-2">kollekt</p>
                 <div class="h-48 w-full bg-black bg-opacity-25 rounded-xl text-4xl leading-tight text-center pt-12">
                     <div class="">

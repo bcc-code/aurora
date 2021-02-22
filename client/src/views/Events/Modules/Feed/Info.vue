@@ -1,32 +1,35 @@
 <template>
-	<div class="lg:w-1/2 w-full mt-8 mx-auto">
-        <div class="flex flex-wrap -mx-3 mb-6">
-            <div class="flex justify-between w-full">
-                <div class="w-2/3 mb-3">
-                    <select v-model="newDeskEntry.type" required class="form-input" :value="ContributionTypes.INFORMATION">
-                        <option v-for="type in AllowedTypes" :key="type" :value="type">
-                            {{ContributionTypesLabels[type]}}
-                        </option>
-                    </select>
+	<OneColumn>
+        <Title class="mb-5" >Desk</Title>
+        <div class="lg:w-1/2 w-full mt-8 mx-auto">
+            <div class="flex flex-wrap -mx-3 mb-6">
+                <div class="flex justify-between w-full">
+                    <div class="w-2/3 mb-3">
+                        <select v-model="newDeskEntry.type" required class="form-input" :value="ContributionTypes.INFORMATION">
+                            <option v-for="type in AllowedTypes" :key="type" :value="type">
+                                {{ContributionTypesLabels[type]}}
+                            </option>
+                        </select>
+                    </div>
+                    <button class="btn btn-green mb-3" :class="{'disabled': isNotCompleted}" @click="addElement">{{$t('element.add')}}</button>
                 </div>
-                <button class="btn btn-green mb-3" :class="{'disabled': isNotCompleted}" @click="addElement">{{$t('element.add')}}</button>
-            </div>
-            <template v-if="newDeskEntry.type == ContributionTypes.QUOTE">
-                <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Quote" />
-                <input type="text" class="mb-3 form-input" v-model="newDeskEntry.author" placeholder="Author" />
-                <input type="text" class="mb-3 form-input" v-model="newDeskEntry.source" placeholder="Source" />
-            </template>
-            <template v-else>
-                <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Information" />
-            </template>
-            <List :elements="desk" :searchable="false">
-                <template v-slot:list="{ elements }">
-                    <DeskEntry v-for="element in elements" :key="element.id" :element="element"/>
+                <template v-if="newDeskEntry.type == ContributionTypes.QUOTE">
+                    <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Quote" />
+                    <input type="text" class="mb-3 form-input" v-model="newDeskEntry.author" placeholder="Author" />
+                    <input type="text" class="mb-3 form-input" v-model="newDeskEntry.source" placeholder="Source" />
                 </template>
-                <template v-slot:newElement></template>
-            </List>
+                <template v-else>
+                    <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Information" />
+                </template>
+                <List :elements="desk" :searchable="false">
+                    <template v-slot:list="{ elements }">
+                        <DeskEntry v-for="element in elements" :key="element.id" :element="element"/>
+                    </template>
+                    <template v-slot:newElement></template>
+                </List>
+            </div>
         </div>
-	</div>
+	</OneColumn>
 </template>
 
 <script>

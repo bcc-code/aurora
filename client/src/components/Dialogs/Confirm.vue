@@ -8,7 +8,7 @@
         </template>
         <template v-slot:footer>
             <button @click.stop="$emit('cancel')" class="flex-no-shrink text-white py-2 px-4 rounded bg-gray-600 hover:bg-gray-500">{{$t('actions.cancel')}}</button>
-            <button @click.stop="$emit('confirm')" class="flex-no-shrink text-white py-2 px-4 rounded bg-red-600 hover:bg-red-500">{{$t('actions.confirm')}}</button>
+            <button @click.stop="$emit('confirm')" class="flex-no-shrink text-white py-2 px-4 rounded bg-red-600 hover:bg-cerise">{{$t('actions.confirm')}}</button>
         </template>
     </Dialog>
 </template>

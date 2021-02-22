@@ -4,12 +4,20 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Barlow:wght@300;400;500;600;700&display=swap');
 
+button:focus {
+  outline:0
+}
+
 .handle {
   z-index: 100
 }
 
 .gradient-primary {
   background: linear-gradient(180deg, #E63C62 0%, #9B75A9 33.32%, #7A8DC8 58.94%, #57A7E9 100%);
+}
+
+.gradient-secondary {
+  background: linear-gradient(270deg, #71D2A4 0%, #6EB0E6 100%)
 }
 
 .gradient-active {
@@ -25,34 +33,19 @@
 }
 
 .btn-red {
-  @apply bg-red-500;
-}
-.btn-red:hover {
-  @apply bg-red-600;
+  @apply bg-cerise;
 }
 .btn-green {
-  @apply bg-green-500;
-}
-.btn-green:hover {
-  @apply bg-green-600;
+  @apply bg-downy;
 }
 .btn-blue {
-  @apply bg-blue-500;
-}
-.btn-blue:hover {
-  @apply bg-blue-600;
+  @apply bg-seagull;
 }
 .btn-delete {
-  @apply cursor-pointer text-red-500;
-}
-.btn-delete:hover {
-  @apply text-red-600;
+  @apply cursor-pointer text-cerise;
 }
 .btn-add {
-  @apply cursor-pointer text-green-500;
-}
-.btn-add:hover {
-  @apply text-green-600;
+  @apply cursor-pointer text-downy;
 }
 
 .disabled{
@@ -108,7 +101,7 @@
 .list-item-order {
   @apply w-8;
   @apply h-8;
-  @apply bg-blue-800;
+  @apply bg-bluewood;
   @apply p-1;
   @apply text-center;
   @apply rounded-md;

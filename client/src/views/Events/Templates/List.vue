@@ -1,11 +1,15 @@
 <template>
-    <section class="xl:w-2/3 mx-auto">
+    <OneColumn>
+        <div class="w-full flex justify-between">
+            <Title>{{$t('menu.templates')}}</Title>
+            <router-link :to="{ name: 'events' }" class="text-base self-end">Browse events</router-link>
+        </div>
         <List :elements="templates" :multiLang="false">
             <template v-slot:list="{ elements, searchQuery }">
                 <EventTemplate v-for="template in elements" :key="template.id" :template="template" :searchQuery="searchQuery"/>
             </template>
         </List>
-    </section>
+    </OneColumn>
 </template>
 
 <script>

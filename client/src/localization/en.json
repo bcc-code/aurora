@@ -4,6 +4,7 @@
     "search": "Search",
     "menu": {
         "templates": "Templates",
+        "template": "Template",
         "events": "Events",
         "event": "Event",
         "dashboard": "Dashboard",
@@ -24,32 +25,14 @@
         "competition": "Competition",
         "not-found": "Not found"
     },
-    "eventgroup": {
-        "canCheckin": "Users can checkin",
-        "defaultBackground": "Default background",
-        "defaultLogo": "Default logo"
-    },
     "event": {
         "syncRate": "Sync rate (s)",
         "switchRate": "Switch rate (s)",
-        "actions": "Actions",
         "checkins": "Checkins",
         "totalCheckins": "Total checkins",
-        "extraCheckins": "Extra checkins",
         "details": "Details",
         "name": "Name",
-        "components": "Components",
-        "banner": "Banner",
-        "logoUrl": "Logo url",
-        "livestream": "Livestream",
-        "livestreamUrl": "Livestream url",
-        "program": "Program",
-        "testimonies": "Testimonies",
-        "feed": "Feed",
         "additionalFeed": "Additional feed",
-        "feedApproval": "Requires approval",
-        "automaticFeed": "Publish automatically",
-        "automaticFeedFrequency": "Publish frequency (in seconds)",
         "testimonyMaxDurationSeconds": "Max duration of video (in seconds)",
         "atmosphere": "Atmosphere",
         "nextEvent": "Next event",
@@ -57,16 +40,28 @@
         "competitionActive": "Competition is active",
         "canSendInquiries": "Can send inquiries",
         "inquiries": "Inquiries",
+        "logo": { "value": "Logo" },
+        "background": { "value": "Background" },
         "style": {
             "title": "Custom style",
-            "primaryColor": "Primary color",
-            "primaryColorDark": "Primary color dark"
+            "background": { "value": "Background" },
+            "logo": { "value": "Logo" },
+            "primaryColor": { "value": "Primary color" },
+            "primaryColorDark": { "value": "Primary color dark" }
         },
         "template": "Template"
     },
     "template": {
         "name": "Name",
-        "overwrite": "Overwrite existing template"
+        "overwrite": "Overwrite existing template",
+        "id": "id",
+        "background": "Background",
+        "logo": "Logo",
+        "style": {
+            "logo": "Logo style",
+            "primaryColor": "Primary color",
+            "primaryColorDark": "Primary color dark"
+        }
     },
     "not-found": {
         "title": "Page not found",
@@ -141,17 +136,16 @@
         "autoSpin": "Spin"
     },
     "queue": {
-        "tabs": {
-            "all": "All",
-            "pictures": "Pictures",
-            "testimonies": "Testimonies"
-        },
+        "stop-auto-push": "Stop auto push",
+        "start-auto-push": "Start auto push",
         "element-added": "Element added",
         "number-selected": "{number} selected",
         "number-elements": "{number} element(s)",
+        "frequency": "Publish frequency (in seconds)",
         "push": "Push",
         "notice": "Notice",
-        "automatic-feed-activated": "Automatic push is activated. Elements will be automatically pushed every {frequency} seconds"
+        "pusher-notice": "Closing this window will stop the autopush.",
+        "auto-push-notice": "Automatic push is activated."
     },
     "messages": {
         "success": "Success!",
@@ -162,14 +156,17 @@
         "pictures-removed": "Pictures removed.",
         "text-copied": "Text copied!",
         "question-deleted": "Question deleted!",
-        "event-deleted": "Event deleted!"
+        "event-deleted": "Event deleted!",
+        "event-archived": "Event archived!"
     },
     "actions": {
         "start": "Start",
         "end": "End",
+        "archive": "Archive",
         "save": "Save",
         "save-as-template": "Save as template",
         "show": "Show",
+        "hide": "Hide",
         "cancel": "Cancel",
         "confirm": "Confirm",
         "show-more": "Show more",

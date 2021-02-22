@@ -16,6 +16,6 @@ export interface FeedEntry {
     countryName: string,
     text: string,
     imageUrl: string,
-    approvedDate?: FirebaseFirestore.FieldValue,
-    date?: FirebaseFirestore.FieldValue
+    approvedDate?: number,
+    date?: number
 }

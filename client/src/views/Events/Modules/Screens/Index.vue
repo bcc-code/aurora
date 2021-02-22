@@ -24,10 +24,10 @@ export default {
         ...mapState('screens', ['screens'])
     },
     async mounted(){
-        await this.bindScreensRef();
+        await this.bindScreens();
     },
     methods: {
-        ...mapActions('screens', ['bindScreensRef']),
+        ...mapActions('screens', ['bindScreens']),
         updateView(view) {
             this.view = view;
         }

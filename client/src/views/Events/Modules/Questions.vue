@@ -73,12 +73,12 @@ export default {
     },
     async mounted(){
         await this.bindQuestionsRef();
-        await this.bindGameboardRef();
+        await this.bindGameboard();
         this.loaded = true;
     },
     methods: {
         ...mapActions('questions', ['bindQuestionsRef', 'addQuestionRef', 'updateQuestionRef', 'updateAnswerRef', 'updateBatchQuestionsRef', 'startQuizzRef', 'stopQuizzRef']),
-        ...mapActions('gameboard', ['bindGameboardRef']),
+        ...mapActions('gameboard', ['bindGameboard']),
         async addQuestion(newQuestion){
             var computedNewQuestion = {
                 order: newQuestion.order,

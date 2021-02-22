@@ -8,46 +8,51 @@ export default {
         events: [],
     },
     mutations: {
-        setSelectedEventId: (state, value) => {
-            state.selectedEventId = value
-        },
+        setSelectedEventId: (state, value) => state.selectedEventId = value,
     },
     actions: {
-        bindEventsRef: firestoreAction(context => {
+        bindEvents: firestoreAction(context => {
             return context.bindFirestoreRef('events', context.getters.eventsRef.orderBy('order'))
         }),
-        removeEventRef: firestoreAction((context, eventId) => {
-            return context.getters.eventsRef.doc(eventId).delete()
-        }),
-        addEventRef: firestoreAction(async (context, event) => {
+        addEvent: firestoreAction(async (context, event) => {
             const eventId = `${context.getters.nextId()}`;
             await context.getters.eventsRef.doc(eventId).set({ ...event })
             return eventId
         }),
-        patchEventRef: firestoreAction((context, options) => {
-            return context.getters.eventsRef.doc(options.id).update(options.values)
-        }),
-        updateEventRef: firestoreAction((context, event) => {
+        updateEvent: firestoreAction((context, event) => {
+            delete event.currentProgramElement;
+            const template = context.rootGetters['templates/templateById'](event.template.id)
+            event.background.computedValue = event.background.useTemplate ? template.background : event.background.value || null
+            event.logo.computedValue = event.logo.useTemplate ? template.logo : event.logo.value || null
+            event.style.logo.computedValue = event.style.logo.useTemplate ? template.style.logo : event.style.logo.value || null
+            event.style.primaryColor.computedValue = event.style.primaryColor.useTemplate ? template.style.primaryColor : event.style.primaryColor.value || null
+            event.style.primaryColorDark.computedValue = event.style.primaryColorDark.useTemplate ? template.style.primaryColorDark : event.style.primaryColorDark.value || null
+            event.syncRate = parseInt(event.syncRate);
+            event.feed.frequency = parseInt(event.feed.frequency);
+            event.testimonyMaxDurationSeconds = parseInt(event.testimonyMaxDurationSeconds);
             event.nextEvent = (event.nextEvent != null) ? context.getters.eventsRef.doc(event.nextEvent.id) : null
             event.template = (event.template != null) ? context.rootGetters['templates/templatesRef'].doc(event.template.id) : null
             return context.getters.eventsRef.doc(event.id).update({ ...event })
         }),
-        startEventRef: firestoreAction((context, eventId) => {
+        archiveEvent: firestoreAction((context, event) => {
+            return context.getters.eventsRef.doc(event.id).update({ archived: true })
+        }),
+        startEvent: firestoreAction((context, event) => {
             var batch = db.batch();
-            const eventRef = context.getters.eventsRef.doc(eventId)
+            const eventRef = context.getters.eventsRef.doc(event.id)
             batch.update(eventRef, { isActive: true });
             batch.update(context.rootGetters['configs/configRef'], { currentEventPath: eventRef });
             batch.update(context.rootGetters['configs/btvConfigRef'], { currentEventPath: eventRef });
             return batch.commit();
         }),
-        endEventRef: firestoreAction((context, eventId) => {  
+        endEvent: firestoreAction((context, event) => {  
             var batch = db.batch();
             batch.update(context.rootGetters['configs/configRef'], { currentEventPath: null });
             batch.update(context.rootGetters['configs/btvConfigRef'], { currentEventPath: null });
-            batch.update(context.getters.eventsRef.doc(eventId), { isActive: false });
+            batch.update(context.getters.eventsRef.doc(event.id), { isActive: false });
             return batch.commit();
         }),
-        updateBatchEventsRef: firestoreAction((context, events) => {
+        updateBatchEvents: firestoreAction((context, events) => {
             var batch = db.batch();
             events.forEach((event) => {
                 batch.update(context.getters.eventsRef.doc(event.id), { order: event.order });
@@ -74,6 +79,13 @@ export default {
         },
         currentEvent: (_s, _g, rootState) => {
             return rootState.configs.config.currentEventPath
+        },
+
+        eventRef: (state, getters) => {
+            return state.selectedEventId ? getters.selectedEventRef : getters.currentEventRef
+        },
+        event: (state, getters) => {
+            return state.selectedEventId ? getters.selectedEvent : getters.currentEvent
         },
 
         nextId: (state) => () => {

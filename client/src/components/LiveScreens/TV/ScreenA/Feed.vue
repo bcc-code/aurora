@@ -36,12 +36,12 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('events', ['currentEvent']),
+        ...mapGetters('events', ['event']),
         ...mapGetters('contributions', ['latestFeed']),
     },
     async mounted(){
-        if (this.currentEvent != null) {
-            await this.bindFeedRef(this.currentEvent.components.additionalFeed);
+        if (this.event != null) {
+            await this.bindFeedRef(this.event.additionalFeed);
             this.loaded = true;
         }
     },
@@ -49,7 +49,7 @@ export default {
         ...mapActions('contributions', ['bindFeedRef']),
     },
     watch: {
-        async 'currentEvent.components.additionalFeed'(value) {
+        async 'event.additionalFeed'(value) {
             this.loaded = false;
             await this.bindFeedRef(value);
             this.loaded = true;

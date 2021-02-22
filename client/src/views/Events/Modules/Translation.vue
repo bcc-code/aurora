@@ -1,10 +1,11 @@
 <template>
-    <div class="w-full mt-8 flex">
+    <div class="w-full mt-8">
+        <Title class="mb-5" >Translations</Title>
         <template v-if="!loaded" />
-        <template v-else>
+        <div class="flex" v-else>
             <LanguageColumn :source="true" :questions="questions" :program="program" @languageChanged="updateSourceLanguage" />
             <LanguageColumn :questions="questions" :program="program" :sourceLanguage="sourceLanguage"  />
-        </template>
+        </div>
 	</div>
 </template>
 

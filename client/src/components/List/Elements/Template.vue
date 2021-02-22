@@ -37,7 +37,7 @@ export default {
     computed: {
         text() {
             return (this.searchQuery && this.searchQuery.trim()) 
-                ? this.template.id.replace(new RegExp(`(${this.searchQuery})`, "gi"), "<span class='bg-blue-500 rounded-sm'>\$1</span>") 
+                ? this.template.id.replace(new RegExp(`(${this.searchQuery})`, "gi"), "<span class='bg-seagull rounded-sm'>\$1</span>") 
                 : this.template.id;
         },
     },

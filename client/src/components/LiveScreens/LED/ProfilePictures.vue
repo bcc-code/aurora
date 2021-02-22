@@ -34,7 +34,7 @@ export default {
 		}
 	},
 	created: async function(){
-		await this.bindUsersRef();
+		await this.bindProfilePictures();
 		await this.bindCheckinsRef();
 		this.layer0 = await this.loadRandomPictures(true);
 		this.layer1 = await this.loadRandomPictures(false);
@@ -51,7 +51,7 @@ export default {
 		}
 	},
 	methods: {
-		...mapActions('users', ['bindUsersRef']),
+		...mapActions('users', ['bindProfilePictures']),
 		...mapActions('checkins', ['bindCheckinsRef']),
 		switchRandomPictures(){
 			var indexes = [];

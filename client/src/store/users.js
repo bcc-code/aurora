@@ -7,7 +7,7 @@ export default {
         profilePictures: [],
     },
     actions: {
-        bindUsersRef: firestoreAction(context => {
+        bindProfilePictures: firestoreAction(context => {
             return context.bindFirestoreRef('profilePictures', context.getters.usersRef
                 .where('profilePictureThumb', '>', 'https://firebasestorage.googleapis.com/')
                 .where('profilePictureThumb', '<', 'null'))

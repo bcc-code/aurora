@@ -1,6 +1,6 @@
 <template>
     <section class="w-full">
-        <div class="relative text-label-3 py-4" v-if="searchable">
+        <div class="relative text-slate-gray py-4" v-if="searchable">
             <input type="search" name="serch" :placeholder="searchPlaceholder" v-model="searchQuery" class="bg-background-2 h-10 px-5 pr-10 rounded-md w-full focus:outline-none">
         </div>
         <ul class="flex flex-col w-full">
@@ -8,7 +8,7 @@
                 <slot name="header"></slot>
                 <draggable v-model="sortedElements" tag="ul" ghost-class="ghost" @change="sort" handle=".handle" 
                     :class="{'flex flex-wrap -mx-4 items-top' : revert}" :animation="200" :disabled="!$can('update', sortedElements)">
-                    <slot name="list" v-bind:searchQuery="searchQuery" v-bind:elements="filteredElements"></slot>
+                    <slot name="list" v-bind:searchQuery="computedSearchQuery" v-bind:elements="filteredElements"></slot>
                 </draggable>
                 <slot name="newElement" v-bind:nextOrder="newElementOrder"></slot>
             </template>
@@ -47,21 +47,28 @@ export default {
         revert: {
             type: Boolean,
             default: false
+        },
+        unifiedSearchQuery: {
+            type: String,
+            default: ''
         }
     },
     mixins: [Translation],
     computed: {
+        computedSearchQuery() {
+            return this.unifiedSearchQuery || this.searchQuery
+        },
         searchPlaceholder(){
             return this.$t("search");
         },
         filteredElements(){
             return this.elements.filter((el) => {
-                if (this.searchQuery.trim() == "")
+                if (this.computedSearchQuery.trim() == "")
                     return true;
                 if (this.multiLang)
-                    return this.search(this.inLanguage(el, this.language), this.searchQuery)
+                    return this.search(this.inLanguage(el, this.language), this.computedSearchQuery)
                 else 
-                    return Object.keys(el).some(key => this.search(el[key], this.searchQuery))
+                    return Object.keys(el).some(key => this.search(el[key], this.computedSearchQuery))
             });
         },
         newElementOrder(){

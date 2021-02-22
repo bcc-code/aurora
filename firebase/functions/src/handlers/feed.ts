@@ -1,8 +1,8 @@
 import handler, { ErrorHandler } from "./handler";
 import { jwtCheck, syncUserAndClaims } from "../middleware";
 import { n, EventModel, UserModel } from "../model/index";
-import { FeedEntry } from "../model/modules/feed";
 import { IUser } from "../types/user";
+import { FeedEntry } from "../types/feed";
 
 var db = null;
 
@@ -19,7 +19,17 @@ feedHandler.post("/incoming", jwtCheck, syncUserAndClaims, async (req, res) => {
   const churchDoc = await userModel.refs.church(currentUser.churchId).get();
   currentUser.churchName = churchDoc.data().name
   currentUser.countryName = churchDoc.data().country
-  await eventModel.feed.actions.submitFeedEntry(new FeedEntry(currentUser, req.body.text, req.body.imageUrl));
+  let feedEntry: FeedEntry = {
+    personId: currentUser.personId,
+    firstName: currentUser.firstName || "",
+    lastName: currentUser.lastName || "",
+    displayName: currentUser.displayName || "",
+    churchName: currentUser.churchName || "",
+    countryName: currentUser.countryName || "",
+    text: req.body.text || "",
+    imageUrl: req.body.imageUrl || ""
+  }
+  await eventModel.feed.actions.submitFeedEntry(feedEntry)
   return res.sendStatus(200);
 });
 

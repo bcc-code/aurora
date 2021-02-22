@@ -3,7 +3,7 @@
         <Overscan />
         <LedScreen v-if="'LRME'.includes(screen.id[0])" :screen="screen"/>
         <ScreenF v-else-if="screen.id == 'F'" :screen="screen" />
-        <ScreenA v-else-if="screen.id == 'A'" :screen="screen" />
+        <ScreenA v-else-if="screen.id == 'A'" :screen="screen" :logoStyle="customStyle.logo" />
         <div v-if="screen.options.showBackground" class="absolute inset-0 bg-cover object-cover -z-1" :style="backgroundStyle">
             <video v-if="screen.options.background && !isColor(screen.options.background)" class="absolute inset-0 bg-cover object-cover -z-1" autoplay muted loop>
                 <source :src="screen.options.background" type="video/mp4">

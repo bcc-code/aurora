@@ -8,26 +8,28 @@
 <script>
 import { crono } from 'vue-crono'
 import Api from '@/utils/api.js'
-import { mapGetters, mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import EventBus from '@/utils/eventBus.js'
 export default {
     mounted: function(){
         this.updateSyncRate(this.syncRate);
     },
     computed: {
-		...mapGetters('events', ['currentEvent']),
+            ...mapGetters('events', ['currentEvent']),
         ...mapGetters('checkins', ['syncRate', 'userCount']),
     },
     methods: {
         async updateCheckinsNumber(){
-			await Api.updateUserCount(this.currentEvent.id).catch((error) => {
-                if (error.response.status == 401 
-                && error.response.data.error.code == 'invalid_token'
-                && error.response.data.error.message == 'jwt expired'){
-                    this.$cron.stop('updateCheckinsNumber')
-                    EventBus.$emit('TOKEN_EXPIRED');
-                }
-            })
+            if (this.currentEvent != null) {
+                await Api.updateUserCount(this.currentEvent.id).catch((error) => {
+                    if (error.response.status == 401 
+                    && error.response.data.error.code == 'invalid_token'
+                    && error.response.data.error.message == 'jwt expired'){
+                        this.$cron.stop('updateCheckinsNumber')
+                        EventBus.$emit('TOKEN_EXPIRED');
+                    }
+                })
+            }
 		},
 		updateSyncRate(value){
 			this.$cron.time('updateCheckinsNumber', Math.max(value, 5) * 1000)

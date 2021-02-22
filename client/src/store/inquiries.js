@@ -8,10 +8,10 @@ export default {
         queue: []
     },
     actions: {
-        bindInquiriesRef: firestoreAction(context => {
+        bindInquiries: firestoreAction(context => {
             return context.bindFirestoreRef('inquiries', context.getters.inquiriesRef.orderBy('date'))
         }),
-        bindInquiriesQueueRef: firestoreAction(context => {
+        bindInquiriesQueue: firestoreAction(context => {
             return context.bindFirestoreRef('queue', context.getters.inquiriesQueueRef.orderBy('order'))
         }),
         toggleSendInquiriesFlag: firestoreAction(async (context, flagValue) => {
@@ -19,27 +19,25 @@ export default {
                 canSendInquiries: flagValue
             });
         }),
-        approveInquiryRef: firestoreAction(async (context, inquiry) => {
+        approveInquiry: firestoreAction(async (context, inquiry) => {
             await context.getters.inquiriesQueueRef.doc(inquiry.id).set({ ...inquiry, order: -1 })
             return context.getters.inquiriesRef.doc(inquiry.id).delete()
         }),
-        showInquiryRef: firestoreAction((context, inquiryId) => {
+        showInquiry: firestoreAction((context, inquiry) => {
             return context.rootGetters['events/selectedEventRef'].update({ 
-                currentInquiry: inquiryId == null ? null : context.getters.inquiriesQueueRef.doc(inquiryId)
+                currentInquiry: inquiry == null ? null : context.getters.inquiriesQueueRef.doc(inquiry.id)
             });
         }),
-        hideInquiryRef: firestoreAction((context) => {
-            return context.rootGetters['events/selectedEventRef'].update({ 
-                currentInquiry: null
-            });
+        hideInquiry: firestoreAction((context) => {
+            return context.rootGetters['events/selectedEventRef'].update({ currentInquiry: null });
         }),
-        removeInquiryRef: firestoreAction((context, inquiryId) => {
-            return context.getters.inquiriesRef.doc(inquiryId).delete()
+        removeInquiry: firestoreAction((context, inquiry) => {
+            return context.getters.inquiriesRef.doc(inquiry.id).delete()
         }),
-        removeInquiryFromQueueRef: firestoreAction((context, inquiryId) => {
-            return context.getters.inquiriesQueueRef.doc(inquiryId).delete()
+        removeInquiryFromQueue: firestoreAction((context, inquiry) => {
+            return context.getters.inquiriesQueueRef.doc(inquiry.id).delete()
         }),
-        updateBatchInquiriesRef: firestoreAction((context, inquiries) => {
+        updateBatchInquiries: firestoreAction((context, inquiries) => {
             var batch = db.batch();
             inquiries.forEach((inquiry) => {
                 batch.update(context.getters.inquiriesQueueRef.doc(inquiry.id), { order: inquiry.order });
@@ -55,7 +53,7 @@ export default {
             return rootGetters['events/selectedEventRef'].collection('inquiries-queue')
         },
         currentInquiry: (state, getters, rootState, rootGetters) => {
-            var event = rootGetters['events/currentEvent'];
+            var event = rootGetters['events/event'];
             return (event == null) ? null : event['currentInquiry'];
         }
     }

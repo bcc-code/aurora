@@ -6,6 +6,7 @@ firebase/public
 dist/
 
 config.json
+firebase-key.json
 
 *.log
 

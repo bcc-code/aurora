@@ -25,7 +25,7 @@ export class InquiriesModule extends Module {
   }
 }
 
-export class Inquiry {
+export interface Inquiry {
   personId: number;
   firstName: string;
   lastName: string;
@@ -33,16 +33,5 @@ export class Inquiry {
   churchName: string;
   countryName: string;
   text: string;
-  date?: FirebaseFirestore.FieldValue;
-
-  constructor(user: IUser, text: string) {
-    this.personId = user.personId;
-    this.firstName = user.firstName;
-    this.lastName = user.lastName;
-    this.displayName = user.displayName;
-    this.churchName = user.churchName;
-    this.countryName = user.countryName;
-    this.text = text;
-    this.date = firebaseAdmin.firestore.FieldValue.serverTimestamp();
-  }
+  date?: number;
 }

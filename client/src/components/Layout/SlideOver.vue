@@ -53,15 +53,6 @@ export default {
         background: linear-gradient(45deg, rgba(0, 0, 0, 0.6), rgba(54, 54, 54, 0.5));
         backdrop-filter: blur(3px);
     }
-    
-    .fade-enter-active, .fade-leave-active {
-        @apply duration-500;
-        @apply ease-in-out;
-    }
-
-    .fade-enter, .fade-leave-to {
-        @apply opacity-0;
-    }
 
     .slide-enter-active, .slide-leave-active {
         @apply transform;

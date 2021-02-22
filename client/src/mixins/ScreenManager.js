@@ -25,7 +25,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('screens', ['updateScreenRef', 'refreshScreenRef']),
+        ...mapActions('screens', ['updateScreen', 'refreshScreen']),
         isObject(obj) {
             var type = typeof obj;
             return type === 'function' || type === 'object' && !!obj;
@@ -40,11 +40,11 @@ export default {
         },
         async apply(){
             if (this.hasChanged) {
-                this.updateScreenRef(this.updatedScreen)
+                this.updateScreen(this.updatedScreen)
             }
         },
         async refresh(){
-            await this.refreshScreenRef(this.screen.id)
+            await this.refreshScreen(this.screen.id)
         },
         getProperty(property){
             return (property == null) ? null : property;

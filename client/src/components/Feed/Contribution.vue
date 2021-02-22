@@ -12,7 +12,6 @@
 </template>
 <script>
 import DateHelper from '@/mixins/date.js'
-import exifr from 'exifr'
 import FeedPicture from '@/components/Pictures/FeedPicture.vue'
 export default {
     components: {

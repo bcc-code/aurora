@@ -1,6 +1,6 @@
 <template>
     <li class="mb-2" @click.stop="$emit('select', question)">
-        <div class="cursor-pointer list-item" :class="[ inQuizz ? 'bg-yellow-500' : pollQuestions.includes(question.id) ? 'bg-green-500' : 'bg-background-2']">
+        <div class="cursor-pointer list-item" :class="[ inQuizz ? 'bg-yellow-500' : pollQuestions.includes(question.id) ? 'bg-downy' : 'bg-background-2']">
             <div class="list-item-order handle">{{question.order}}</div>
             <div class="font-medium" v-html="text"></div>
             <div v-if="$can('update', question)" class="overlay">
@@ -39,7 +39,7 @@ export default {
         text() {
             var text = this.inLanguage(this.question, this.language);
             return (this.searchQuery && this.searchQuery.trim()) 
-                ? text.replace(new RegExp(`(${this.searchQuery})`, "gi"), "<span class='bg-blue-500 rounded-sm'>\$1</span>") 
+                ? text.replace(new RegExp(`(${this.searchQuery})`, "gi"), "<span class='bg-seagull rounded-sm'>\$1</span>") 
                 : text;
         }
     },

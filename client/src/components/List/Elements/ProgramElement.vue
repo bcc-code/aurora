@@ -1,6 +1,6 @@
 <template>
     <li class="mb-2">
-        <div class="list-item" :class="[isLive ? 'bg-green-500' : 'bg-background-2']">
+        <div class="list-item" :class="[isLive ? 'bg-downy' : 'bg-mirage']">
             <div class="list-item-order handle">{{programElement.order}}</div>
             <div class="flex-1 pl-1 mr-16">
                 <div class="font-medium"  v-html="text"></div>

@@ -5,7 +5,6 @@ import ToggleButton from 'vue-js-toggle-button'
 import VueClipboard from 'vue-clipboard2'
 import Toasted from 'vue-toasted';
 import OneColumn from '@/components/Layout/OneColumn'
-import TwoColumns from '@/components/Layout/TwoColumns'
 import Title from '@/components/Layout/Title'
 
 export default {
@@ -17,7 +16,6 @@ export default {
         Vue.component('Form', Form)
         Vue.component('Field', Field)
         Vue.component('OneColumn', OneColumn)
-        Vue.component('TwoColumns', TwoColumns)
         Vue.component('Title', Title)
     }
 }

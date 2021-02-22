@@ -24,13 +24,13 @@ export default {
 		...mapState('session', ['isAuthenticated'])
 	},
 	async mounted(){
-        await this.bindTemplatesRef();
+        await this.bindTemplates();
         await this.bindConfigRef();
         await this.bindCompetitionsRef();
         this.isMounted = true;
 	},
 	methods: {
-		...mapActions('templates', ['bindTemplatesRef']),
+		...mapActions('templates', ['bindTemplates']),
 		...mapActions('configs', ['bindConfigRef']),
 		...mapActions('competitions', ['bindCompetitionsRef']),
 	},

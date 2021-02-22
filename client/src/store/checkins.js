@@ -6,7 +6,7 @@ export default {
     },
     actions: {
         bindCheckinsRef: firestoreAction(context => {
-            return context.bindFirestoreRef('checkins', context.rootGetters['events/currentEventRef'].collection('checkins'))
+            return context.bindFirestoreRef('checkins', context.rootGetters['events/eventRef'].collection('checkins'))
         }),
     },
     getters: {
@@ -15,7 +15,7 @@ export default {
             return currentEvent == null ? null : currentEvent.syncRate;
         },
         getCheckins: (_s, _g, _r, rootGetters) => (time = 0) => {
-            return rootGetters['events/currentEventRef'].collection('checkins')
+            return rootGetters['events/eventRef'].collection('checkins')
                 .where('timestamp', '>=', time)
                 .get()
                 .then(snapshot => {

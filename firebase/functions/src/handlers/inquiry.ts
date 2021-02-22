@@ -15,7 +15,17 @@ feedHandler.post("/submit", jwtCheck, syncUserAndClaims, async (req, res) => {
   if (!currentUserObj.exists)
     return res.status(400).send({ message: "User does not exist" })
   const currentUser = currentUserObj.data() as IUser;
-  await eventModel.inquiries.actions.submitInquiry(new Inquiry(currentUser, req.body.text || ""));
+  let newInquiry: Inquiry = {
+    personId: currentUser.personId,
+    firstName: currentUser.firstName,
+    lastName: currentUser.lastName,
+    displayName: currentUser.displayName,
+    churchName: currentUser.churchName,
+    countryName: currentUser.countryName,
+    text: req.body.text || "",
+    date: Date.now()
+  }
+  await eventModel.inquiries.actions.submitInquiry(newInquiry);
   return res.sendStatus(200);
 });
 

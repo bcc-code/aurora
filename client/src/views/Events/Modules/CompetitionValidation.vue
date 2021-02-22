@@ -2,24 +2,27 @@
 	<div class="w-full mt-8">
         <template v-if="!loaded" />
         <template v-else>
-            <Form :entity="current" grid :columns="2" label-root="competition">
-                <Field name="competition" type="select" allowEmpty :options="competitions" select-label="id" />
-                <Field name="active" type="boolean" inline />
-            </Form>
-            <Form v-if="current.competition && current.competition.id" :entity="current.competition" grid :columns="2" label-root="competition">
-                <Field name="maxDistancePerEntry" label="competition.maxDistancePerEntry" type="number" />
-                <Field name="selectedContinent" label="competition.highlightedContinent" allowEmpty type="select" :options="Continents" />
-                <Field name="selectedMarker" label="competition.markerInFocus" allowEmpty type="select" :options="Markers" />
-            </Form>
-            <div class="mt-4 md:flex md:items-center md:justify-between">
-                <button class="shadow bg-teal-400 hover:bg-teal-500 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button"
-                    @click="updateCompetition">
-                    {{$t('actions.save')}}
-                </button>
+            <div class="bg-mirage p-4 rounded-lg">
+                <Form :entity="current" grid :columns="2" label-root="competition">
+                    <Field name="competition" type="select" allowEmpty :options="competitions" select-label="id" />
+                    <Field name="active" type="boolean" inline />
+                </Form>
+                <Form v-if="current.competition && current.competition.id" :entity="current.competition" grid :columns="2" label-root="competition">
+                    <Field name="maxDistancePerEntry" label="competition.maxDistancePerEntry" type="number" />
+                    <Field name="selectedContinent" label="competition.highlightedContinent" allowEmpty type="select" :options="Continents" />
+                    <Field name="selectedMarker" label="competition.markerInFocus" allowEmpty type="select" :options="Markers" />
+                    <div class="mt-4 md:flex md:items-center md:justify-between">
+                        <button class="btn btn-green" type="button"
+                            @click="updateCompetition">
+                            {{$t('actions.save')}}
+                        </button>
+                    </div>
+                </Form>
             </div>
             <template v-if="competition != null">
                 <List :elements="entriesToApprove" :multiLang="false" revert>
                     <template v-slot:list="{ elements, searchQuery }">
+                        <p class="text-gray-400 text-center w-full" v-if="elements.length == 0">There is no entry to approve</p>
                         <CompetitionEntry v-for="entry in elements" :key="entry.id" :entry="entry" :searchQuery="searchQuery" :competitionId="competition.id"/>
                     </template>
                 </List>

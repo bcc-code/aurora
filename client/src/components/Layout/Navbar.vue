@@ -1,13 +1,15 @@
 <template>
     <header class="bg-mirage">
-        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-6xl lg:px-8">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8">
             <div class="relative py-10 lg:py-5 flex items-center justify-center lg:justify-between">
                 <div class="absolute left-0 flex-shrink-0 lg:static">
                     <router-link to="/" class="text-lg lg:text-2xl font-bold text-white">
                         {{appName}}
                     </router-link>
                 </div>
-
+                <div class="hidden lg:block" v-if="selectedEvent">
+                    <p class="text-xl font-bold">{{selectedEvent.name}}</p>
+                </div>
                 <!-- Right section on desktop -->
                 <div class="hidden lg:ml-4 lg:flex lg:items-center lg:pr-0.5">
                     <div class="ml-4 relative flex-shrink-0" v-click-outside="() => { if (profileOpen) closeProfile() }">
@@ -77,7 +79,7 @@
 </template>
 <script>
 import ClickOutside from 'vue-click-outside'
-import { mapState, mapActions } from 'vuex'
+import { mapState, mapActions, mapGetters } from 'vuex'
 import keys from '@/utils/keys'
 export default {
     directives: { ClickOutside },
@@ -88,8 +90,12 @@ export default {
     },
     computed: {
         ...mapState('session', ['userInfo', 'profileOpen']),
+        ...mapGetters('events', ['selectedEvent', 'currentEvent']),
         appName() {
             return keys.APP.NAME
+        },
+        isCurrentEvent() {
+            return this.selectedEvent && this.currentEvent && this.selectedEvent.id == this.currentEvent.id
         }
     },
     methods: {

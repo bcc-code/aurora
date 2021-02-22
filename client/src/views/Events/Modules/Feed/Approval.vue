@@ -1,8 +1,9 @@
 <template>
 	<div class="w-full mt-8">
         <template v-if="!loaded" />
-        <List v-else :elements="filteredContributions" :multiLang="false" revert>
+        <List v-else :elements="filteredContributions" :searchable="false" :unifiedSearchQuery="$parent.searchQuery" :multiLang="false" revert>
             <template v-slot:list="{ elements, searchQuery }">
+                <p class="text-center w-full text-gray-400" v-if="filteredContributions.length == 0">There is nothing to approve</p>
                 <ApprovalEntry v-for="entry in elements" :key="entry.id" :entry="entry" :searchQuery="searchQuery"/>
             </template>
         </List>

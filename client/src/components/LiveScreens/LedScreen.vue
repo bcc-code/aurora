@@ -54,11 +54,11 @@ export default {
         }
     },
     methods: {
-        ...mapActions('screens', ['refreshedScreenRef', 'needRefreshScreenRef']),
+        ...mapActions('screens', ['refreshedScreen', 'needRefreshScreen']),
     },
     async mounted(){
-        await this.refreshedScreenRef(this.screen.id);
-        EventBus.$on('TOKEN_EXPIRED', async () => { await this.needRefreshScreenRef(this.screen.id) });
+        await this.refreshedScreen(this.screen.id);
+        EventBus.$on('TOKEN_EXPIRED', async () => { await this.needRefreshScreen(this.screen.id) });
         this.loaded = true
     },
     watch: {

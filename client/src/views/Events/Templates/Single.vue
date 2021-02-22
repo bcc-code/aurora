@@ -1,18 +1,24 @@
 <template>
-    <section class="xl:w-2/3 mx-auto">
-        <Form v-if="$can('update', selectedTemplate)" :entity="selectedTemplate" grid label-root="event-template">
-            <Field name="name" label="name" type="text" class="col-span-1" />
-            <Field name="canCheckin" inline type="boolean" class="col-start-3" />
-            <Field name="defaultBackground" type="text" class="col-span-full" />
-            <Field name="defaultLogo" type="text" class="col-span-2" />
-            <div class="flex items-center justify-end">
-                <button class=" mt-3 shadow bg-teal-500 hover:bg-teal-600 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded" type="button"
-                    @click="updateTemplate(selectedTemplate)">
-                    {{$t('actions.save')}}
-                </button>
-            </div>
+    <OneColumn>
+        <div class="w-full flex justify-between mb-3">
+            <Title>{{$t('menu.template')}}</Title>
+            <router-link :to="{ name: 'templates' }" class="text-base self-end"><i class="fas fa-long-arrow-alt-left mr-2"></i> Back to templates</router-link>
+        </div>
+        <Form v-if="$can('update', selectedTemplate)" :entity="selectedTemplate" grid :columns="2" label-root="template">
+            <Field name="id" type="text" readonly />
+            <Field name="background" type="text" class="col-span-full" />
+            <Field name="logo" type="text" />
+            <Field name="style.logo" type="textarea" />
+            <Field name="style.primaryColor" type="text" />
+            <Field name="style.primaryColorDark" type="text" />
         </Form>
-    </section>
+        <div class="flex items-center justify-end">
+            <button class="mt-3 btn btn-green" type="button"
+                @click="updateTemplate(selectedTemplate).then(showSuccess)">
+                {{$t('actions.save')}}
+            </button>
+        </div>
+    </OneColumn>
 </template>
 
 <script>

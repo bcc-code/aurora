@@ -3,7 +3,7 @@
         <div class="h-full relative transition-all" :class="{ 'w-8/12': isNormal, 'w-5/12': isDobbel }">
             <div class="faded-bg absolute inset-0 h-full pl-24 pr-6 flex flex-col justify-start" :class="{ 'py-12' : isNormal, 'py-16' : isDobbel }">
                 <div class="flex justify-center items-center mb-8" v-if="isDobbel">
-                    <Logo class="w-auto h-48" :style="logoStyleSize"/>
+                    <Logo class="w-auto h-48" :style="logoStyle.split(';').filter((el) => el.includes('transform')).join(';')"/>
                 </div>
                 <div class="flex flex-col items-center" :class="{ 'pt-2': isNormal }">
                     <div style="z-index:1;" class="overflow-hidden rounded-r-lg relative w-full pb-16/9 shadow-xl">
@@ -68,7 +68,7 @@ export default {
         QuestionWinner,
         DistanceTracker
     },
-    props: ['screen', 'logoUrl'],
+    props: ['screen', 'logoStyle'],
     computed: {
         ...mapModels(['ScreenAComponents', 'ScreenAQuestionViews']),
         ...mapGetters('events', ['currentEvent']),
@@ -89,17 +89,6 @@ export default {
         karaokeMode() {
             return this.isNormal && this.screen.options.karaokeMode
         },
-        logoStyle() {
-            if (this.showCustomBanner)
-                return this.currentEvent.components.logoStyle
-            else return ''
-        },
-        logoStyleSize() {
-            return this.logoStyle.split(';').filter((el) => el.includes('transform')).join(';')
-        },
-        showCustomBanner() {
-            return this.currentEvent.components.banner && this.currentEvent.components.logoUrl;
-        }
   }
 }
 </script>

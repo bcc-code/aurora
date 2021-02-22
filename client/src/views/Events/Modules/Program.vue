@@ -1,5 +1,6 @@
 <template>
 	<div class="w-full mt-8">
+        <Title>Program</Title>
         <template v-if="!loaded" />
         <List :elements="program" @sorted="onSorted">
             <template v-slot:list="{ elements, searchQuery }">

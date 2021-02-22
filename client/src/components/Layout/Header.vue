@@ -10,7 +10,7 @@
                         <span class="mx-3">-</span>
                         <router-link :to="{ name:'dashboard', params: { eventId: selectedEvent.id } }"
                             class="text-xs md:text-sm lg:text-lg font-semibold uppercase rounded-lg focus:outline-none focus:shadow-outline"
-                            :class="isCurrentEvent ? 'text-green-500' : 'text-white'">
+                            :class="isCurrentEvent ? 'text-downy' : 'text-white'">
                             {{selectedEvent.name}}
                         </router-link>
                     </template>
@@ -66,7 +66,7 @@
                                         </div>
                                         <div class="ml-3">
                                             <p class="font-semibold">{{$t('menu.screen')}} {{screen.id}}</p>
-                                            <p v-if="screen.component" class="text-sm">{{screen.component | modelName}}</p>
+                                            <p v-if="screen.component" class="text-sm">{{screen.component | capitalize}}</p>
                                         </div>
                                     </a>
                                 </div>
@@ -138,7 +138,7 @@ export default {
         }
     },
     methods: {
-        ...mapActions('screens', ['bindCurrentScreensRef']),
+        ...mapActions('screens', ['bindCurrentScreens']),
         hideScreen(){
             this.openScreen = false;
         },
@@ -149,7 +149,7 @@ export default {
     watch: {
         async currentEventRef(value){
             if (value != null) {
-                await this.bindCurrentScreensRef();
+                await this.bindCurrentScreens();
             }
         }
     }

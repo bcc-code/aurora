@@ -48,10 +48,10 @@ export default {
         }
     },
     created: async function(){
-        await this.bindUsersRef();
+        await this.bindProfilePictures();
     },
     methods: {
-        ...mapActions('users', ['bindUsersRef', 'rejectProfilePicturesRef']),
+        ...mapActions('users', ['bindProfilePictures', 'rejectProfilePicturesRef']),
         toggleRejectList(user){
             var index = this.rejectList.indexOf(user);
             if (index > -1)
@@ -64,7 +64,7 @@ export default {
                 await this.rejectProfilePicturesRef(this.rejectList)
                     .then(async () => {
                         this.showSuccess('messages.pictures-removed');
-                        await this.bindUsersRef()
+                        await this.bindProfilePictures()
                     })
                     .catch(this.showError);
         },

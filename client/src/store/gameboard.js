@@ -6,9 +6,12 @@ export default {
         gameboard: {},
     },
     actions: {
-        bindGameboardRef: firestoreAction(context => {
+        bindGameboard: firestoreAction(context => {
             return context.bindFirestoreRef('gameboard', context.getters.gameboardRef);
         }),
+        initGameboard: firestoreAction((context, eventId) => {
+            return context.rootGetters['events/eventRef'].doc(eventId).collection('gameboard').doc('current').set({ visible: false })
+        })
     },
     getters: {
         gameboardRef: (state, getters, rootState, rootGetters) => {
