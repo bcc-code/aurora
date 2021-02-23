@@ -75,6 +75,7 @@ service cloud.firestore {
       }
       match /responses/{responseId=**} {
         allow read: if isServiceAccount();
+        allow read: if isLoggedIn();
       }
       match /screens/{screenId=**} {
         allow read, write: if isServiceAccount();
