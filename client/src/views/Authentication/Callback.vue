@@ -5,8 +5,33 @@
 import keys from '@/utils/keys';
 import jwtDecode from 'jwt-decode';
 import firebase from "firebase/app";
+import loadjs from 'loadjs'
 export default {
+    methods: {
+        async registerSignOutUrl () {
+            return new Promise((resolve, reject) => {
+                loadjs("https://auth.bcc.no/signout/js", {
+                    async: false,
+                    error: function (path) {
+                        return reject(null);
+                    },
+                    success: function () {
+                        return resolve();
+                    },
+                    before: function (path, element) {
+                        element.setAttribute("signout-path", "/signout");
+                        document.body.appendChild(element);
+                        return false;
+                    }
+                });
+
+            });
+        }
+    },
     created: async function(){
+        await this.registerSignOutUrl().catch(function (err) {
+            console.error('Could not register signout path');
+        });
         const accessToken = this.$route.query.accessToken;
         const firebaseToken = this.$route.query.firebaseToken;
         if ( accessToken && firebaseToken) {

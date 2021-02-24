@@ -19,13 +19,16 @@ import CompetitionValidation from '@/views/Events/Modules/CompetitionValidation'
 
 import LiveScreen from '@/views/LiveScreens/Index'
 
-import Callback from '@/views/Callback'
+import Callback from '@/views/Authentication/Callback'
+import Signout from "@/views/Authentication/Signout"
+
 import Unauthorized from '@/views/Unauthorized'
 import NotFound from "@/views/NotFound"
 
 export default [
 	{ path: "/", name: "events", component: Events },
 	{ path: "/callback", name: "callback", component: Callback, meta: { unprotected: true }},
+	{ path: "/signout", name: "signout", component: Signout, meta: { unprotected: true }},
 	{ path: '/unauthorized', name: 'unauthorized', component: Unauthorized, meta: { unprotected: true } },
 	{ path: "/screens/:id", name: "livescreen", component: LiveScreen, meta: { unprotected: true } },
 	{ path: "/templates", name: "templates", component: EventTemplates },
