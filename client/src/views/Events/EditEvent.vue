@@ -1,5 +1,17 @@
 <template>
     <OneColumn v-if="$can('update', currentEvent) && selectedEvent != null">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-1 mb-5">
+            <a v-for="screen in formattedScreens" :key="screen.id" :href="`${origin}/screens/${screen.id}`"
+                class="flex flex row items-start rounded-lg bg-clay p-2 hover:bg-background-2-light focus:bg-background-2-light focus:outline-none focus:shadow-outline">
+                <div class="bg-bluewood text-white rounded-lg p-3 h-12 w-12 text-center">
+                    <i :class="`fa fa-${screen.icon}`"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="font-semibold">{{$t('menu.screen')}} {{screen.id}}</p>
+                    <p v-if="screen.component" class="text-sm">{{screen.component | capitalize}}</p>
+                </div>
+            </a>
+        </div>
         <Form :entity="selectedEvent" grid :columns="2" label-root="event" class="mb-5">
             <Field name="name" type="text" />
             <Field name="details" type="text" class="col-span-2" />
@@ -65,13 +77,34 @@ export default {
         }
     },
     computed: {
+        ...mapState('screens', ['screens']),
         ...mapState('events', ['events']),
         ...mapState('templates', ['templates']),
         ...mapGetters('events', ['selectedEvent', 'currentEvent']),
         isCurrent(){
             return (this.currentEvent != null 
                 && this.selectedEvent != null) ? this.selectedEvent.id == this.currentEvent.id : false
-        }
+        },
+        formattedScreens(){
+            if (this.screens != null)
+                return this.screens.map((screen) => {
+                    var result = { id: screen.id, component: screen.options.component};
+                    switch(screen.id){
+                        case 'A':
+                        case 'F':
+                            result.icon = 'tv';
+                            break;
+                        default:
+                            result.icon = 'th';
+                            break;
+                    }
+                    return result
+                })
+            return [{ id: 'L', icon: 'th'}, {id: 'M', icon: 'th'}, {id: 'R', icon: 'th'}, {id: 'A', icon: 'tv'}, {id: 'E', icon: 'tv'}, {id: 'F', icon: 'tv'}]
+        },
+        origin(){
+            return window.location.origin
+        },
     },
     methods: {
         ...mapActions('events', ['updateEvent', 'archiveEvent', 'startEvent', 'endEvent']),

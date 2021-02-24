@@ -13,13 +13,14 @@ export default {
         }
     },
     methods: {
-        ...mapActions('events', ['bindEvents'])
+        ...mapActions('events', ['bindEvents']),
+        ...mapActions('screens', ['bindScreens'])
     },
     async mounted(){
         this.$store.commit('events/setSelectedEventId', this.$route.params.eventId);
-        await this.bindEvents().then(() => {
-            this.loaded = true;
-        })
+        await this.bindEvents()
+        await this.bindScreens()
+        this.loaded = true;
     },
 }
 </script>
