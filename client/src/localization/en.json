@@ -157,7 +157,8 @@
         "text-copied": "Text copied!",
         "question-deleted": "Question deleted!",
         "event-deleted": "Event deleted!",
-        "event-archived": "Event archived!"
+        "event-archived": "Event archived!",
+        "event-restored": "Event restored!"
     },
     "actions": {
         "start": "Start",
@@ -170,7 +171,9 @@
         "cancel": "Cancel",
         "confirm": "Confirm",
         "show-more": "Show more",
-        "approve": "Approve"
+        "approve": "Approve",
+        "restore": "Restore",
+        "delete": "Delete"
     },
     "dialogs": {
         "are-you-sure": "Are you sure?",

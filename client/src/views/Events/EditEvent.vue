@@ -39,41 +39,58 @@
             <Field name="style.primaryColorDark.useTemplate" label="Use template" type="boolean" inline />
         </Form>
         <div class="mt-4 md:flex md:items-center md:justify-between">
-            <button class="btn btn-green" type="button"
-                @click="() => updateEvent(selectedEvent).then(showSuccess('messages.event-saved')).catch(showError)">
-                {{$t('actions.save')}}
-            </button>
-            <button class="btn btn-green" type="button"
-                @click="showEventTemplateName = true">
-                {{$t('actions.save-as-template')}}
-            </button>
-            <button v-if="!isCurrent" class="btn btn-green" type="button"
-                @click="startEvent(selectedEvent)">
-                {{$t('actions.start')}}
-            </button>
-            <button v-else class="btn btn-red" type="button"
-                @click="endEvent(selectedEvent)">
-                {{$t('actions.end')}}
-            </button>
-            <button v-if="!isCurrent" class="btn btn-blue" type="button"
-                @click="archiveEvent(selectedEvent).then(() => $router.push({ name: 'events' }), showSuccess('messages.event-archived')).catch(showError)">
-                {{$t('actions.archive')}}
-            </button>
+            <template v-if="!selectedEvent.archived">
+                <button class="btn btn-green" type="button"
+                    @click="() => updateEvent(selectedEvent).then(showSuccess('messages.event-saved')).catch(showError)">
+                    {{$t('actions.save')}}
+                </button>
+                <button class="btn btn-green" type="button"
+                    @click="showEventTemplateName = true">
+                    {{$t('actions.save-as-template')}}
+                </button>
+                <button v-if="!isCurrent" class="btn btn-green" type="button"
+                    @click="startEvent(selectedEvent)">
+                    {{$t('actions.start')}}
+                </button>
+                <button v-else class="btn btn-red" type="button"
+                    @click="endEvent(selectedEvent)">
+                    {{$t('actions.end')}}
+                </button>
+                <button v-if="!isCurrent" class="btn btn-blue" type="button"
+                    @click="archiveEvent(selectedEvent).then(() => $router.push({ name: 'events' }), showSuccess('messages.event-archived')).catch(showError)">
+                    {{$t('actions.archive')}}
+                </button>
+            </template>
+            <template v-else>
+                <button class="btn btn-blue" type="button"
+                    @click="restoreEvent(selectedEvent).then(() => showSuccess('messages.event-restored')).catch(showError)">
+                    {{$t('actions.restore')}}
+                </button>
+                <button class="btn btn-red" type="button"
+                    @click="showDeleteConfirm = true">
+                    {{$t('actions.delete')}}
+                </button>
+            </template>
         </div>
+        <Confirm v-if="showDeleteConfirm" @cancel="showDeleteConfirm = false" @confirm="deleteEvent" :message="$t('dialogs.confirm-delete-event')" />
         <EventTemplateName v-if="showEventTemplateName" @cancel="showEventTemplateName = false" @confirm="(name) => { saveAsTemplate(name), showEventTemplateName = false }" />
     </OneColumn>
 </template>
 
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex';
+import Confirm from '@/components/Dialogs/Confirm.vue'
 import EventTemplateName from '@/components/Dialogs/EventTemplateName'
+import Api from '@/utils/api'
 export default {
     components: {
-        EventTemplateName
+        EventTemplateName,
+        Confirm
     },
     data: function () {
         return {
-            showEventTemplateName: false
+            showEventTemplateName: false,
+            showDeleteConfirm: false,
         }
     },
     computed: {
@@ -107,13 +124,21 @@ export default {
         },
     },
     methods: {
-        ...mapActions('events', ['updateEvent', 'archiveEvent', 'startEvent', 'endEvent']),
+        ...mapActions('events', ['updateEvent', 'archiveEvent', 'startEvent', 'endEvent', 'restoreEvent']),
         ...mapActions('templates', ['createTemplateFromEvent']),
         async saveAsTemplate(templateName) {
             delete this.selectedEvent.currentProgramElement;
             this.selectedEvent.templateName = templateName;
             await this.createTemplateFromEvent(this.selectedEvent)
                 .then(this.showSuccess('messages.template-saved'))
+                .catch(this.showError)
+        },
+        async deleteEvent() {
+            await Api.deleteEvent(this.selectedEvent.id)
+                .then(() => {
+                    this.$router.push({ name: 'events' })
+                    this.showSuccess('messages.event-deleted')
+                })
                 .catch(this.showError)
         }
     },

@@ -12,14 +12,14 @@
                 <Event v-for="event in elements" :key="event.id" :event="event" :searchQuery="searchQuery"/>
             </template>
             <template v-slot:newElement="{ nextOrder }">
-                <NewElement v-if="$can('create', 'event')" :order="nextOrder" @add="addEventHandler" />
+                <NewElement v-if="$can('create', 'event') && selectedTab != 'archive'" :order="nextOrder" @add="addEventHandler" />
             </template>
         </List>
     </OneColumn>
 </template>
 
 <script>
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import Event from '@/components/List/Elements/Event.vue'
 import NewElement from '@/components/List/NewElement.vue'
 import List from '@/components/List/List.vue'

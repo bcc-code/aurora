@@ -37,6 +37,9 @@ export default {
         archiveEvent: firestoreAction((context, event) => {
             return context.getters.eventsRef.doc(event.id).update({ archived: true })
         }),
+        restoreEvent: firestoreAction((context, event) => {
+            return context.getters.eventsRef.doc(event.id).update({ archived: false })
+        }),
         startEvent: firestoreAction((context, event) => {
             var batch = db.batch();
             const eventRef = context.getters.eventsRef.doc(event.id)
