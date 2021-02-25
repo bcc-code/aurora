@@ -5,7 +5,7 @@ const googleServiceKey = require("../firebase-key.json");
 var firebaseServiceAccount = {
   projectId: googleServiceKey.project_id,
   clientEmail: googleServiceKey.client_email,
-  privateKey: googleServiceKey.private_key,
+  privateKey: googleServiceKey.private_key.replace(/\\n/g, '\n'),
 };
 
 // !!! This is being replaced in pipeline with configs/config.json, in lack of a better solution
