@@ -37,6 +37,10 @@ jobs:
       with:
         source: "client/src/configs/config.json.template"
         target: "client/src/configs/config.json"
+    - name: Grant write permissions to config file
+      run: |
+        chmod 777 firebase/functions/src/configs/config.json
+        chmod 777 client/src/configs/config.json
     - name: Replace config tokens
       uses: microsoft/variable-substitution@v1 
       with:
