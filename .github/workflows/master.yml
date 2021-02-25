@@ -27,6 +27,16 @@ jobs:
       if: endsWith(github.ref, '/master')
       run: |
         echo "ENVIRONMENT=PROD" >> $GITHUB_ENV
+    - name: Copy firebase config file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "firebase/functions/src/configs/config.json.template"
+        target: "firebase/functions/src/configs/config.json"
+    - name: Copy client config file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "client/src/configs/config.json.template"
+        target: "client/src/configs/config.json"
     - name: Replace config tokens
       uses: microsoft/variable-substitution@v1 
       with:
