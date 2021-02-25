@@ -32,6 +32,11 @@ jobs:
       with:
         source: "firebase/functions/src/configs/config.json.template"
         target: "firebase/functions/src/configs/config.json"
+    - name: Copy firebase-key file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "firebase/functions/firebase-key.json.template"
+        target: "firebase/functions/firebase-key.json"
     - name: Copy client config file
       uses: canastro/copy-action@0.0.2
       with:
@@ -40,6 +45,7 @@ jobs:
     - name: Grant write permissions to config file
       run: |
         sudo chmod 777 firebase/functions/src/configs/config.json
+        sudo chmod 777 firebase/functions/firebase-key.json
         sudo chmod 777 client/src/configs/config.json
     - name: Replace config tokens
       uses: microsoft/variable-substitution@v1 
