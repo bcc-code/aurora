@@ -14,7 +14,7 @@
                 </section>
             </template>
             <section v-else class="w-full flex flex-wrap justify-end">
-                <template v-if="element.type == ContributionTypes.QUOTE">
+                <template v-if="element.type == ContributionTypes.QUOTE  || ContributionTypes.BIBLEVERSE">
                     <textarea rows="3" class="form-input mb-2" v-model="elementContent" placeholder="Quote" />
                     <input type="text" class="form-input mb-2" v-model="elementAuthor" placeholder="Author" />
                     <input type="text" class="form-input mb-2" v-model="elementSource" placeholder="Source" />
@@ -30,6 +30,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+
 import { ContributionTypes } from '@/models/contribution.js'
 import DateHelper from '@/mixins/date.js'
 import ClickOutside from 'vue-click-outside'
@@ -58,7 +59,7 @@ export default {
     },
     mixins: [DateHelper],
     methods: {
-        ...mapActions('contributions', ['updateDeskElementRef', 'removeDeskElementRef', 'sendDeskToFeedRef']),
+        ...mapActions('contributions', ['updateDeskElement', 'removeDeskElement', 'sendDeskToFeed']),
         async removeElement(){
             await this.removeDeskElementRef(this.element.id);
         },

@@ -31,7 +31,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <div :class="profileOpen ? 'opacity-100 scale-100': 'opacity-0 scale-95'" class="origin-top-right z-40 absolute -right-2 mt-2 w-48 rounded-md shadow-lg py-1 bg-clay ring-1 ring-black ring-opacity-5 tranfsorm transition ease-in duration-75" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+                        <div :class="profileOpen ? 'opacity-100 scale-100': 'opacity-0 pointer-events-none scale-95'" class="origin-top-right z-40 absolute -right-2 mt-2 w-48 rounded-md shadow-lg py-1 bg-clay ring-1 ring-black ring-opacity-5 tranfsorm transition ease-in duration-75" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
                             <a href="#" @click="signOut" class="block px-4 py-2 text-sm text-white" role="menuitem">Sign out</a>
                         </div>
                     </div>
