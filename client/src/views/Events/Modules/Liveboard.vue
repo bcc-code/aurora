@@ -5,7 +5,7 @@
         <div class="w-full grid grid-cols-4 gap-4">
             <List class="col-span-full lg:col-span-3" :searchable="false" :elements="liveboard" @sorted="onSorted">
                 <template v-slot:list="{ elements }">
-                    <Liveboard v-for="element in elements" :key="element.id" :element="element" :editing="editingId == element.id" @edit="editingId = element.id" />
+                    <Liveboard v-for="element in elements" :key="element.id" :element="element" :editing="editingId == element.id" @edit="editingId = element.id" @close="editingId = 0" />
                 </template>
                 <template v-slot:newElement="{ nextOrder }">
                     <div v-if="$can('create', 'liveboard')" class="w-full max-w-lg mx-auto h-16 rounded-lg border-dashed border-2 border-gray-400 text-center pt-4"
@@ -65,7 +65,7 @@ export default {
             await this.addLiveboardElement(computedElement);
         },
         async onSorted(sortedElements){
-            await this.updateBatchProgramElementsRef(sortedElements);
+            await this.reorderLiveboardElements(sortedElements);
         },
         startDrag(evt, item) {
 			evt.dataTransfer.dropEffect = 'move'

@@ -3,8 +3,8 @@
         <Title class="mb-5" >Translations</Title>
         <template v-if="!loaded" />
         <div class="flex" v-else>
-            <LanguageColumn :source="true" :questions="questions" :program="program" @languageChanged="updateSourceLanguage" />
-            <LanguageColumn :questions="questions" :program="program" :sourceLanguage="sourceLanguage"  />
+            <LanguageColumn :source="true" @languageChanged="updateSourceLanguage" />
+            <LanguageColumn :sourceLanguage="sourceLanguage"  />
         </div>
 	</div>
 </template>
@@ -24,18 +24,19 @@ export default {
         }
     },
     async mounted(){
-        await this.bindQuestionsRef();
-        await this.bindProgramRef();
+        await this.bindQuestions();
+        await this.bindProgram();
+        await this.bindLiveboard();
         await Promise.all(this.questions.map(async (question) => {
-            await this.bindAnswersRef(question.id)
+            await this.bindAnswers(question.id)
         }));
         this.loaded = true;
     },
     computed: {
-        ...mapState('translation', ['questions', 'program']),
+        ...mapState('translation', ['questions', 'program', 'liveboard']),
     },
     methods: {
-        ...mapActions('translation', ['bindQuestionsRef', 'bindProgramRef', 'bindAnswersRef']),
+        ...mapActions('translation', ['bindQuestions', 'bindProgram', 'bindAnswers', 'bindLiveboard']),
         updateSourceLanguage(value){
             this.sourceLanguage = value;
         }

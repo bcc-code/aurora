@@ -8,14 +8,14 @@
             <Field name="background.image" type="text" />
             <Field name="background.gradient.from" type="text" />
             <Field name="background.gradient.to" type="text" />
-            <p class="font-bold col-span-full">Action</p>
-            <Field name="actionPredefined" type="select" :options="actions" />
-            <Field name="actionCustom" type="text" />
-            <Field :name="`label.${language}`" label="label" type="text" />
-            <button class="col-start-1 btn btn-green" @click.stop="updateLiveboardElement(element)"><i class="fas fa-save"></i></button>
+            <p class="font-bold col-span-full">Button</p>
+            <Field name="button.action" type="select" :options="actions" />
+            <Field name="button.url" type="text" />
+            <Field :name="`button.label.${language}`" label="label" type="text" />
+            <button class="btn btn-green" @click.stop="updateLiveboardElement(element), $emit('close')"><i class="fas fa-save"></i></button>
             <button class="btn btn-red" @click.stop="removeLiveboardElement(element)"><i class="fas fa-trash"></i></button>
         </Form>
-        <LiveboardPreview :element="element" />
+        <LiveboardPreview class="handle" :element="element" />
     </li>
 </template>
 
@@ -31,22 +31,19 @@ export default {
             required: true
         },
         editing: {
-
+            type: Boolean,
+            default: false
         }
     },
     mixins: [Translations],
     data: function () {
         return {
             icons: ['icon'],
-            actions: ['event_post']
+            actions: ['post', 'feed', 'testimony', 'inquiry', 'quizz', 'url', 'deeplink']
         }
-    },
-    computed: {
-
     },
     methods: {
         ...mapActions('liveboard', ['updateLiveboardElement', 'removeLiveboardElement']),
-
     }
 }
 </script>
