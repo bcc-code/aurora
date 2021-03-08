@@ -1,4 +1,5 @@
 import { firestoreAction  } from 'vuexfire'
+import { db } from '@/data/db'
 
 export default {
     namespaced: true,
@@ -74,7 +75,7 @@ export default {
             return getters.feed.slice(0,20);
         },
         feed: (state) => {
-            return state.feed.concat(state.additionalFeed);
+            return state.feed.concat(state.additionalFeed).sort((a, b) => b.publishedDate - a.publishedDate);
         },
         feedByEventIdRef: (state, getters, rootState, rootGetters) => (eventId) => {
             return db.collection('events').doc(eventId).collection('feed-outgoing')

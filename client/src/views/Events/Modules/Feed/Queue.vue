@@ -14,7 +14,7 @@
                             <input class="form-input" type="number" :readonly="selectedEvent.feed.autoPush" v-model="selectedEvent.feed.frequency">
                         </div>
                         <div class="w-full lg:w-2/3 px-3 mb-6 md:mb-0 text-right self-end">
-                            <button class="btn" :class="selectedEvent.feed.autoPush ? 'btn-red': 'btn-green'" @click="toggleAutoPush">{{selectedEvent.feed.autoPush ? $t('queue.stop-auto-push') : $t('event.start-auto-push')}}</button>
+                            <button class="btn" :class="selectedEvent.feed.autoPush ? 'btn-red': 'btn-green'" @click="toggleAutoPush">{{selectedEvent.feed.autoPush ? $t('queue.stop-auto-push') : $t('queue.start-auto-push')}}</button>
                         </div>
                     </div>
                 </div>
