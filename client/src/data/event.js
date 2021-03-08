@@ -7,6 +7,7 @@ export const NewEvent = (name, order) => {
         details: "",
         archived: false,
         /* USED BY BTV APP */
+        banner: "",
         testimonyMaxDurationSeconds: 60,
         currentProgramElement: null,
         isActive: false,

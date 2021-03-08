@@ -21,6 +21,7 @@
                 :options="templates" />
             <Field name="additionalFeed" type="select" allowEmpty class="col-span-full"
                 :options="events.filter(el => el.id != selectedEvent.id)" select-key="id" select-label="name" />
+            <Field name="banner" type="text" />
             <p class="col-span-full uppercase font-bold">{{$t('event.checkins')}}</p>
             <Field name="syncRate" type="number" />
             <Field name="totalCheckins">

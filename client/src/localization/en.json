@@ -194,7 +194,10 @@
         "selectedChurch": "Church in focus"
     },
     "liveboard": {
-        "icon": "Icon",
+        "icon": {
+            "icon": "Icon",
+            "color": "Color"
+        },
         "title": "Title",
         "description": "Description",
         "background": {
@@ -204,9 +207,11 @@
                 "to": "Gradient to"
             }
         },
-        "actionPredefined": "Predefined Action",
-        "actionCustom": "Custom Action",
-        "action": "Action",
-        "label": "Label"
+        "button": {
+            "action": "Action",
+            "url": "Url",
+            "label": "Label",
+            "color": "Color"
+        }
     }
 }

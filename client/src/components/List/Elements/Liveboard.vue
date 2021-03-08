@@ -1,18 +1,21 @@
 <template>
     <li class="mb-2" @click="() => { if (!editing) $emit('edit') }">
         <Form v-if="editing" class="bg-mirage p-4 mb-3" grid :columns="3" :entity="element" label-root="liveboard">
-            <Field name="icon" type="select" :options="icons" />
             <Field :name="`title.${language}`" label="title" type="text" />
             <Field :name="`description.${language}`" label="description" type="text" />
+            <p class="font-bold col-span-full">Icon</p>
+            <Field name="icon.icon" type="select" :options="icons" />
+            <Field name="icon.color" type="select" :options="colors" />
             <p class="font-bold col-span-full">Background</p>
             <Field name="background.image" type="text" />
             <Field name="background.gradient.from" type="text" />
             <Field name="background.gradient.to" type="text" />
             <p class="font-bold col-span-full">Button</p>
             <Field name="button.action" type="select" :options="actions" />
-            <Field name="button.url" type="text" />
-            <Field :name="`button.label.${language}`" label="label" type="text" />
-            <button class="btn btn-green" @click.stop="updateLiveboardElement(element), $emit('close')"><i class="fas fa-save"></i></button>
+            <Field name="button.url" class="col-span-2" type="text" />
+            <Field :name="`button.label.${language}`" label="liveboard.button.label" type="text" />
+            <Field name="button.color" type="select" :options="colors" />
+            <button class="col-start-1 btn btn-green" @click.stop="updateLiveboardElement(element), $emit('close')"><i class="fas fa-save"></i></button>
             <button class="btn btn-red" @click.stop="removeLiveboardElement(element)"><i class="fas fa-trash"></i></button>
         </Form>
         <LiveboardPreview class="handle" :element="element" />
@@ -39,7 +42,8 @@ export default {
     data: function () {
         return {
             icons: ['icon'],
-            actions: ['post', 'feed', 'testimony', 'inquiry', 'quizz', 'url', 'deeplink']
+            actions: ['post', 'feed', 'testimony', 'inquiry', 'quizz', 'url', 'deeplink'],
+            colors: ['white', 'blue', 'red']
         }
     },
     methods: {
