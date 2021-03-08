@@ -29,6 +29,7 @@ export default {
                 { name: 'feed', icon: 'envelope', ability: 'desk' },
                 { name: 'desk', icon: 'info-circle', ability: 'desk' },
                 { name: 'gameboard', icon: 'question-circle', ability: 'admin' },
+                { name: 'liveboard', icon: 'question-circle', ability: 'admin' },
                 { name: 'translations', icon: 'language', ability: 'translate' },
                 { name: 'inquiries', icon: 'question', ability: 'desk' },
                 { name: 'profile-pictures', icon: 'user-circle', ability: 'desk' },

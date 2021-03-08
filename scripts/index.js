@@ -22,7 +22,7 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-const eventId = 1001
+const eventId = 1015
 const eventRef = db.collection('events').doc(`${eventId}`);
 
 async function generateFeedElements(amount) { 
@@ -61,13 +61,31 @@ async function generateQuote() {
     await eventRef.collection('desk').add({ type: 0, date: Date.now(), content: lorem.generateParagraphs(1), author: random(), source: random.place() })
 }
 
+async function generateBibleVerse() {
+    await eventRef.collection('desk').add({ type: 3, date: Date.now(), content: lorem.generateParagraphs(1), author: random(), source: random.place() })
+}
+
+async function generateDefaultDesk() {
+    await eventRef.collection('desk').add({ type: 4, date: Date.now(), title: lorem.generateSentences(1), content: lorem.generateParagraphs(1) })
+}
+
 async function generateDeskElements(amount) {
     for (var i=0; i<amount; i++) {
-        let type = Math.round(Math.random())
-        if (type == 0)
-            await generateInformation();
-        else
-            await generateQuote();
+        let type = Math.floor(Math.random() * 5)
+        switch(type){
+            case 0:
+                await generateInformation();
+                break;
+            case 1:
+                await generateQuote();
+                break;
+            case 3:
+                await generateBibleVerse();
+                break;
+            case 4:
+                await generateDefaultDesk();
+                break;
+        }
     }
 }
 

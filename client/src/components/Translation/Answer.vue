@@ -10,7 +10,7 @@
 
 <script>
 import Translation from '@/mixins/translation'
-import { mapState, mapActions } from 'vuex'
+import { mapActions } from 'vuex'
 export default {
     props: ['source', 'answer', 'selectedLanguage', 'questionId'],
     data: function() {
@@ -23,7 +23,7 @@ export default {
         this.updateText();
     },
     methods: {
-        ...mapActions('translation', ['updateAnswerRef']),
+        ...mapActions('translation', ['updateAnswer']),
         updateText(){
             this.answerText = this.inLanguage(this.answer, this.selectedLanguage);
         },
@@ -32,7 +32,7 @@ export default {
             this.updateTimeout = setTimeout(async () => {
                 this.translateTo(this.answer, this.selectedLanguage, this.answerText);
                 this.answer.questionId = this.questionId;
-                await this.updateAnswerRef(this.answer)
+                await this.updateAnswer(this.answer)
             }, 1000);
            
         }

@@ -24,7 +24,7 @@ export default {
         this.updateText();
     },
     methods: {
-        ...mapActions('translation', ['updateProgramElement']),
+        ...mapActions('translation', ['updateLiveboardElement']),
         updateText(){
             this.elementText = this.inLanguage(this.element, this.selectedLanguage);
         },
@@ -32,7 +32,7 @@ export default {
             clearTimeout(this.updateTimeout)
             this.updateTimeout = setTimeout(async () => {
                 this.translateTo(this.element, this.selectedLanguage, this.elementText);
-                await this.updateProgramElement(this.element)
+                await this.updateLiveboardElement(this.element)
             }, 1000);
         }
     },

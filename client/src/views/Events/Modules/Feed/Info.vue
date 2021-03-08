@@ -5,7 +5,7 @@
             <div class="flex flex-wrap -mx-3 mb-6">
                 <div class="flex justify-between w-full">
                     <div class="w-2/3 mb-3">
-                        <select v-model="newDeskEntry.type" required class="form-input" :value="ContributionTypes.INFORMATION">
+                        <select v-model="newDeskEntry.type" required class="form-input">
                             <option v-for="type in AllowedTypes" :key="type" :value="type">
                                 {{ContributionTypesLabels[type]}}
                             </option>
@@ -13,13 +13,17 @@
                     </div>
                     <button class="btn btn-green mb-3" :class="{'disabled': isNotCompleted}" @click="addElement">{{$t('element.add')}}</button>
                 </div>
-                <template v-if="newDeskEntry.type == ContributionTypes.QUOTE">
+                <template v-if="newDeskEntry.type == ContributionTypes.QUOTE || newDeskEntry.type == ContributionTypes.BIBLEVERSE">
                     <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Quote" />
                     <input type="text" class="mb-3 form-input" v-model="newDeskEntry.author" placeholder="Author" />
                     <input type="text" class="mb-3 form-input" v-model="newDeskEntry.source" placeholder="Source" />
                 </template>
-                <template v-else>
+                <template v-else-if="newDeskEntry.type == ContributionTypes.INFORMATION">
                     <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Information" />
+                </template>
+                <template v-else>
+                    <input type="text" class="mb-3 form-input" v-model="newDeskEntry.title" placeholder="Title" />
+                    <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Content" />
                 </template>
                 <List :elements="desk" :searchable="false">
                     <template v-slot:list="{ elements }">
@@ -34,7 +38,7 @@
 
 <script>
 import { ContributionTypes, ContributionTypesLabels } from '@/models/contribution.js'
-import { mapState, mapActions, mapGetters } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import List from '@/components/List/List.vue'
 import DeskEntry from '@/components/List/Elements/Contribution/Desk.vue'
 export default {
@@ -44,13 +48,13 @@ export default {
     },
     data: function() {
         return {
-            newDeskEntry: { type: 1 }
+            newDeskEntry: { type: 4 }
         }
     },
     computed: {
         ...mapState('contributions', ['desk']),
         AllowedTypes(){
-            return [ContributionTypes.QUOTE, ContributionTypes.INFORMATION];
+            return [ContributionTypes.DEFAULT, ContributionTypes.INFORMATION, ContributionTypes.QUOTE, ContributionTypes.BIBLEVERSE];
         },
         ContributionTypes(){
             return ContributionTypes

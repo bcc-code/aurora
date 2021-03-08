@@ -23,7 +23,8 @@
         "screen": "Screen",
         "profile-pictures": "Profile pictures",
         "competition": "Competition",
-        "not-found": "Not found"
+        "not-found": "Not found",
+        "liveboard": "Liveboard"
     },
     "event": {
         "syncRate": "Sync rate (s)",
@@ -191,5 +192,21 @@
         "highlightedContinent": "Highlighted continent",
         "markerInFocus": "Marker in focus",
         "selectedChurch": "Church in focus"
+    },
+    "liveboard": {
+        "icon": "Icon",
+        "title": "Title",
+        "description": "Description",
+        "background": {
+            "image": "Image",
+            "gradient": {
+                "from": "Gradient from",
+                "to": "Gradient to"
+            }
+        },
+        "actionPredefined": "Predefined Action",
+        "actionCustom": "Custom Action",
+        "action": "Action",
+        "label": "Label"
     }
 }

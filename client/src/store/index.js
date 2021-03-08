@@ -16,6 +16,7 @@ import inquiries from '@/store/inquiries'
 import bukgames from '@/store/bukgames'
 import translation from '@/store/translation'
 import templates from '@/store/templates'
+import liveboard from '@/store/liveboard'
 import { vuexfireMutations } from 'vuexfire'
 
 Vue.use(Vuex)
@@ -35,7 +36,8 @@ export default new Vuex.Store({
         inquiries,
         bukgames,
         translation,
-        templates
+        templates,
+        liveboard
     },
     mutations: {
         ...vuexfireMutations
