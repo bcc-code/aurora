@@ -22,6 +22,7 @@ const strategy = new Auth0Strategy(
   }
 );
 
+
 const sess = {
   secret: 'bcconlinesecret',
   cookie: {},

@@ -13,7 +13,7 @@ export class UserModel {
     this.refs = {};
     this.getters = {};
     this.actions = {};
-    
+
     this.refs.churches = () => db.collection(n.churches);
     this.refs.church = (churchId) => this.refs.churches().doc(`${churchId}`);
     this.refs.users = () => db.collection(n.users);
@@ -289,5 +289,5 @@ export class UserModel {
       await this.refs.user(personId).update({ profilePicture: imageUrl, profilePictureThumb: thumbnailUrl, updatedAt: Date.now(), approved: false });
     };
   }
-} 
+}
 
