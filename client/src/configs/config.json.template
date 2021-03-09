@@ -10,8 +10,7 @@
   "app": {
     "baseUrl": "http://localhost:8080",
     "name": "BCC Online | LOCAL",
-    "id": "bcc-online",
-    "packageUrl": "tv.brunstad.app"
+    "id": "bcc-online"
   },
   "firebase": {
     "apiKey": "**secret**",
