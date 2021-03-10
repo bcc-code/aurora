@@ -6,7 +6,7 @@
             <select v-if="type == 'select'" class="form-input" v-model="model">
                 <option v-if="allowEmpty" value=""></option>
                 <option v-for="option in options" :key="option.id" :value="resolve(option, selectKey)">
-                    <template v-if="typeof selectLabel == 'function'"> {{selectLabel(option)}}</template>
+                    <span v-if="typeof selectLabel == 'function'" v-html="selectLabel(option)"></span>
                     <template v-else>{{resolve(option, selectLabel) | capitalize}}</template>
                 </option>
             </select>

@@ -22,7 +22,8 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-const eventId = 1015
+const eventId = 0
+
 const eventRef = db.collection('events').doc(`${eventId}`);
 
 async function generateFeedElements(amount) { 
@@ -139,8 +140,8 @@ async function generateInquiries(amount) {
     }
 }
 
-//generateFeedElements(50)
+generateFeedElements(10)
 //generateProgramElements(20)
 //generateDeskElements(5)
 //generateQuestions(5)
-generateInquiries(10)
+//generateInquiries(10)

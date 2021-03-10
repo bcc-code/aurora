@@ -195,7 +195,7 @@
     },
     "liveboard": {
         "icon": {
-            "icon": "Icon",
+            "name": "Name",
             "color": "Color"
         },
         "title": "Title",
