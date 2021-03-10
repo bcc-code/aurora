@@ -1,6 +1,7 @@
 <template>
     <section class="flex h-full w-full text-left" v-if="loaded">
         <div class="h-full overflow-y-auto py-12 px-2"
+		style="scrollbar-width: none;"
         :class="columns == 2 ? 'w-1/2' : 'w-full'"
         v-for="columnIndex in Array.from(Array(columns).keys())"
         :key="columnIndex">
