@@ -34,7 +34,7 @@ export default {
                 this.answer.questionId = this.questionId;
                 await this.updateAnswer(this.answer)
             }, 1000);
-           
+
         }
     },
     watch: {

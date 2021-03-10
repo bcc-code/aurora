@@ -59,7 +59,7 @@ export default {
     },
     mixins: [DateHelper],
     methods: {
-        ...mapActions('contributions', ['updateDeskElement', 'removeDeskElement', 'sendDeskToFeed']),
+        ...mapActions('contributions', ['updateDeskElement', 'removeDeskElement', 'sendDeskToFeed', 'sendDeskToFeedRef']),
         async removeElement(){
             await this.removeDeskElementRef(this.element.id);
         },

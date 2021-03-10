@@ -18,9 +18,11 @@ export default {
             return context.bindFirestoreRef('queue', context.getters.queueRef.orderBy('approvedDate', 'asc'))
         }),
         bindFeedRef: firestoreAction( async (context, additionalFeed = null) => {
-            if (additionalFeed && additionalFeed.length > 0)
+            if (additionalFeed && additionalFeed.length > 0 && additionalFeed > 0)
                 await context.bindFirestoreRef('additionalFeed', context.getters.feedByEventIdRef(additionalFeed).orderBy('publishedDate', 'desc'))
-            else context.state.additionalFeed = [];
+            else
+				context.state.additionalFeed = [];
+
             return context.bindFirestoreRef('feed', context.getters.feedRef.orderBy('publishedDate', 'desc'))
         }),
         bindDeskRef: firestoreAction(context => {

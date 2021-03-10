@@ -1,6 +1,5 @@
 import { asyncForEachParallel, calculateAge, sumDeep} from "./model/utils";
-
-const googleServiceKey = require("../firebase-key.json");
+import * as googleServiceKey from "../firebase-key.json"
 
 var firebaseServiceAccount = {
   projectId: googleServiceKey.project_id,

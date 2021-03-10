@@ -48,7 +48,7 @@ export default {
             batch.update(context.rootGetters['configs/btvConfigRef'], { currentEventPath: eventRef });
             return batch.commit();
         }),
-        endEvent: firestoreAction((context, event) => {  
+        endEvent: firestoreAction((context, event) => {
             var batch = db.batch();
             batch.update(context.rootGetters['configs/configRef'], { currentEventPath: null });
             batch.update(context.rootGetters['configs/btvConfigRef'], { currentEventPath: null });
@@ -69,7 +69,7 @@ export default {
         },
 
         selectedEventRef: (state, getters) => {
-            return getters.eventsRef.doc(state.selectedEventId)
+            return getters.eventsRef.doc(state.selectedEventId || getters.currentEvent.id)
         },
         selectedEvent: (state) => {
             return state.events.find(event => event.id == state.selectedEventId)
@@ -94,10 +94,10 @@ export default {
         nextId: (state) => () => {
             return  state.events.reduce((a, c) => {
                 const eventId = parseInt(c.id) || 0
-                return a > eventId  ? a : eventId 
+                return a > eventId  ? a : eventId
             }, 999) + 1
         },
 
-        
+
     }
 }

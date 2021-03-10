@@ -1,4 +1,4 @@
-<template> 
+<template>
     <JustifiedLayout id="grid" ref="grid" class="mx-10"
         :options="gridOptions"
         :layoutOptions="layoutOptions">
@@ -31,7 +31,7 @@ export default {
                 horizontal: false,
                 align: 'center',
             },
-            
+
         }
     },
     computed: {
@@ -84,7 +84,7 @@ export default {
     },
     async mounted(){
         if (this.currentEvent != null) {
-            await this.bindFeedRef(this.currentEvent.components.additionalFeed);
+            await this.bindFeedRef(this.currentEvent.additionalFeed);
             await this.bindQueueRef();
             this.loadPictures();
             this.$cron.start('checkLoaded');
@@ -104,7 +104,7 @@ export default {
 </script>
 
 <style scoped>
-.grid-animate { 
+.grid-animate {
   animation: moveUp linear infinite;
   --height: -1080px;
 }

@@ -43,14 +43,14 @@ export default {
 </script>
 <style>
 .preview {
-    border: 1px solid rgba(204, 221, 255, 0.0980392);
-    box-sizing: border-box;
-    border-radius: 12px;
+	border: 1px solid rgba(204, 221, 255, 0.0980392);
+	box-sizing: border-box;
+	border-radius: 12px;
 }
 
 .preview-button {
-    border: 1px solid rgba(204, 221, 255, 0.0980392);
-    box-sizing: border-box;
-    border-radius: 20px;
+	border: 1px solid rgba(204, 221, 255, 0.0980392);
+	box-sizing: border-box;
+	border-radius: 20px;
 }
 </style>

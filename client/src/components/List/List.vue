@@ -6,7 +6,7 @@
         <ul class="flex flex-col w-full">
             <template>
                 <slot name="header"></slot>
-                <draggable v-model="sortedElements" tag="ul" ghost-class="ghost" @change="sort" handle=".handle" 
+                <draggable v-model="sortedElements" tag="ul" ghost-class="ghost" @change="sort" handle=".handle"
                     :class="{'flex flex-wrap -mx-4 items-top' : revert}" :animation="200" :disabled="!$can('update', sortedElements)">
                     <slot name="list" v-bind:searchQuery="computedSearchQuery" v-bind:elements="filteredElements"></slot>
                 </draggable>
@@ -67,7 +67,7 @@ export default {
                     return true;
                 if (this.multiLang)
                     return this.search(this.inLanguage(el, this.language), this.computedSearchQuery)
-                else 
+                else
                     return Object.keys(el).some(key => this.search(el[key], this.computedSearchQuery))
             });
         },
@@ -89,7 +89,7 @@ export default {
             if (this.sortable)
                 this.sortedElements.sort((a,b) => a.order - b.order)
         },
-        sort(e){            
+        sort(e){
             this.sortedElements.map((element, index) => element.order = index + 1);
             this.sortedElements.sort((a,b) => a.order - b.order);
             this.$emit('sorted', this.sortedElements);

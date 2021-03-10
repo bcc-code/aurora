@@ -44,19 +44,19 @@ export class CheckinModule extends Module {
     super(event);
     const db = firestore;
     const userModel = new UserModel(firestore);
-    
+
     this.refs = {};
     this.actions = {};
 
     this.refs.checkins = () => this.event.event().collection(n.checkins);
     this.refs.checkin = (personId) => this.refs.checkins().doc(`${personId}`);
-    
+
     this.actions.getCheckinStatus = async (personId) => {
       const checkinEnabled = true;
-  
+
       // lookup user document for logged on user
       var userCheckingInDoc = await userModel.refs.user(personId).get();
-  
+
       if (userCheckingInDoc.exists) {
         const existingCheckin = await this.refs.checkin(personId).get();
         const userCheckingIn = userCheckingInDoc.data() as IUser;
@@ -65,7 +65,7 @@ export class CheckinModule extends Module {
           !existingCheckin.exists && checkinEnabled && userCheckingIn.hasMembership,
           existingCheckin.exists,
           userCheckingIn)
-  
+
         if (Array.isArray(userCheckingIn.linkedUserIds)) {
           checkinStatus.linkedUsers = await asyncForEachParallel(
             userCheckingIn.linkedUserIds,
@@ -90,14 +90,14 @@ export class CheckinModule extends Module {
         return { message: msg, checkedIn: false };
       }
     };
-  
+
     this.actions.checkin = async (currentPersonId, userIds, coords) => {
       // TODO: reject if event not open for checkin
-  
+
       const currentUser = await userModel.refs.user(currentPersonId).get();
-  
+
       var batch = db.batch();
-  
+
       if (currentUser.exists) {
         var currentStatus = await this.actions.getCheckinStatus(currentPersonId);
         if (userIds.includes(currentPersonId) && currentStatus.canCheckin) {
@@ -128,7 +128,7 @@ export class CheckinModule extends Module {
       }
       await batch.commit();
     };
-  
+
     this.actions.updateCheckinCount = async () => {
       var allCheckins = await this.refs.checkins().get();
       var count = allCheckins.size;
