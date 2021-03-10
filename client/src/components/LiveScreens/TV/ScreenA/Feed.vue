@@ -6,10 +6,10 @@
         v-for="columnIndex in Array.from(Array(columns).keys())"
         :key="columnIndex">
             <transition-group name="list" class="animate-height" tag="div">
-                <FeedEntry v-for="(element) in latestFeed.filter((el, i) => i%columns == (columnIndex + columnOffset)%columns)" 
+                <FeedEntry v-for="(element) in latestFeed.filter((el, i) => i%columns == (columnIndex + columnOffset)%columns)"
                     :key="element.id"
                     :entry="element"
-                    size="big" 
+                    size="big"
                     theme="tv"/>
             </transition-group>
         </div>
