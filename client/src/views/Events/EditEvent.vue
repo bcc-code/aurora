@@ -49,6 +49,14 @@
                     @click="showEventTemplateName = true">
                     {{$t('actions.save-as-template')}}
                 </button>
+                <button v-if="!isEventPage" class="btn btn-blue" type="button"
+                    @click="setEventPage(selectedEvent)">
+                    Set as event page
+                </button>
+                <button v-else class="btn btn-red" type="button"
+                    @click="setEventPage(null)">
+                    Remove from event page
+                </button>
                 <button v-if="!isCurrent" class="btn btn-green" type="button"
                     @click="startEvent(selectedEvent)">
                     {{$t('actions.start')}}
@@ -98,10 +106,13 @@ export default {
         ...mapState('screens', ['screens']),
         ...mapState('events', ['events']),
         ...mapState('templates', ['templates']),
-        ...mapGetters('events', ['selectedEvent', 'currentEvent']),
+        ...mapGetters('events', ['selectedEvent', 'currentEvent', 'eventPage']),
         isCurrent(){
             return (this.currentEvent != null 
                 && this.selectedEvent != null) ? this.selectedEvent.id == this.currentEvent.id : false
+        },
+        isEventPage() {
+            return this.eventPage != null && this.selectedEvent.id == this.eventPage.id;
         },
         formattedScreens(){
             if (this.screens != null)
@@ -125,7 +136,7 @@ export default {
         },
     },
     methods: {
-        ...mapActions('events', ['updateEvent', 'archiveEvent', 'startEvent', 'endEvent', 'restoreEvent']),
+        ...mapActions('events', ['updateEvent', 'archiveEvent', 'startEvent', 'endEvent', 'restoreEvent', 'setEventPage']),
         ...mapActions('templates', ['createTemplateFromEvent']),
         async saveAsTemplate(templateName) {
             delete this.selectedEvent.currentProgramElement;

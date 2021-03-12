@@ -50,7 +50,8 @@
             "primaryColor": { "value": "Primary color" },
             "primaryColorDark": { "value": "Primary color dark" }
         },
-        "template": "Template"
+        "template": "Template",
+        "banner": "Banner"
     },
     "template": {
         "name": "Name",
