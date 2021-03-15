@@ -10,7 +10,7 @@
                 </button>
             </div>
         </Form>
-        
+
         <div class="w-full flex flex-wrap lg:flex-nowrap gap-y-3 justify-between">
             <Tabs :tabs="tabs" :selected="selectedTab" @select="(tab) => selectedTab = tab" />
             <input type="search" name="serch" placeholder="Search" v-model="searchQuery" class="bg-background-2 h-10 px-5 pr-10 rounded-full w-full focus:outline-none">
@@ -45,6 +45,6 @@ export default {
     methods: {
         ...mapActions('events', ['updateEvent'])
     }
-    
+
 }
 </script>
