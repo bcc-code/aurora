@@ -55,6 +55,13 @@ export default {
             batch.update(context.getters.eventsRef.doc(event.id), { isActive: false });
             return batch.commit();
         }),
+        setEventPage: firestoreAction((context, event) => {
+            var batch = db.batch();
+            const eventRef = event ? context.getters.eventsRef.doc(event.id) : null
+            batch.update(context.rootGetters['configs/configRef'], { eventPagePath: eventRef });
+            batch.update(context.rootGetters['configs/btvConfigRef'], { eventPagePath: eventRef });
+            return batch.commit();
+        }),
         updateBatchEvents: firestoreAction((context, events) => {
             var batch = db.batch();
             events.forEach((event) => {
@@ -89,6 +96,10 @@ export default {
         },
         event: (state, getters) => {
             return state.selectedEventId ? getters.selectedEvent : getters.currentEvent
+        },
+
+        eventPage: (_s, _g, rootState) => {
+            return rootState.configs.config.eventPagePath
         },
 
         nextId: (state) => () => {
