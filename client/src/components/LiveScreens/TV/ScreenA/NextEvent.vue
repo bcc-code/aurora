@@ -18,6 +18,5 @@ export default {
     computed: {
         ...mapGetters('events', ['currentEvent']),
     },
-    
 }
 </script>
