@@ -32,7 +32,7 @@
             <Field name="background.useTemplate" label="Use template" type="boolean" inline />
             <Field name="logo.value" type="text" />
             <Field name="logo.useTemplate" label="Use template" type="boolean" inline />
-            <Field name="style.logo.value" type="textarea" />
+            <Field name="style.logo.value" type="textarea" label="Logo style" />
             <Field name="style.logo.useTemplate" label="Use template" type="boolean" inline />
             <Field name="style.primaryColor.value" type="text" />
             <Field name="style.primaryColor.useTemplate" label="Use template" type="boolean" inline />
@@ -108,7 +108,7 @@ export default {
         ...mapState('templates', ['templates']),
         ...mapGetters('events', ['selectedEvent', 'currentEvent', 'eventPage']),
         isCurrent(){
-            return (this.currentEvent != null 
+            return (this.currentEvent != null
                 && this.selectedEvent != null) ? this.selectedEvent.id == this.currentEvent.id : false
         },
         isEventPage() {
