@@ -15,10 +15,10 @@ export class PollModule extends Module {
     super(event);
     const db = firestore;
     const userModel = new UserModel(firestore);
-    
+
     this.refs = {};
     this.actions = {};
-    
+
     this.refs.gameboardCol = () => this.event.event().collection(n.gameboard);
     this.refs.gameboard = () => this.event.event().collection(n.gameboard).doc("current");
 
@@ -59,6 +59,9 @@ export class PollModule extends Module {
     }
 
     this.actions.startPolls = async (questionIds) => {
+      if (!(await this.refs.gameboard().get()).exists){
+        await this.refs.gameboard().set({});
+      }
       var batch = db.batch();
       let pollQuestions = {};
       let pollAnswers = {};
@@ -146,7 +149,7 @@ export class PollModule extends Module {
           batch.update(this.refs.qaShard(questionId, answerId, shardId), updatedDoc, { merge: true });
         })
       });
-      
+
       selectedAnswers.forEach((answerId) => {
         batch.update(this.refs.qaShard(questionId, answerId, shardId), {
           total: increment(1)
@@ -191,7 +194,7 @@ export class PollModule extends Module {
         default:
           break;
       }
-      if (candidates.length == 0) 
+      if (candidates.length == 0)
         return {};
       var i = Math.floor(Math.random() * candidates.length);
       var winnerPersonId = candidates[i];
