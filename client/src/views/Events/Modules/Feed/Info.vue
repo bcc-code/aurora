@@ -13,10 +13,13 @@
                     </div>
                     <button class="btn btn-green mb-3" :class="{'disabled': isNotCompleted}" @click="addElement">{{$t('element.add')}}</button>
                 </div>
-                <template v-if="newDeskEntry.type == ContributionTypes.QUOTE || newDeskEntry.type == ContributionTypes.BIBLEVERSE">
+                <template v-if="newDeskEntry.type == ContributionTypes.QUOTE">
                     <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Quote" />
                     <input type="text" class="mb-3 form-input" v-model="newDeskEntry.author" placeholder="Author" />
                     <input type="text" class="mb-3 form-input" v-model="newDeskEntry.source" placeholder="Source" />
+                </template>
+                <template v-else-if="newDeskEntry.type == ContributionTypes.BIBLEVERSE">
+                    <BibleVerse v-model="newDeskEntry" />
                 </template>
                 <template v-else-if="newDeskEntry.type == ContributionTypes.INFORMATION">
                     <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Information" />
@@ -41,10 +44,12 @@ import { ContributionTypes, ContributionTypesLabels } from '@/models/contributio
 import { mapState, mapActions } from 'vuex';
 import List from '@/components/List/List.vue'
 import DeskEntry from '@/components/List/Elements/Contribution/Desk.vue'
+import BibleVerse from '@/components/Forms/BibleVerse.vue';
 export default {
     components: {
         List,
-        DeskEntry
+        DeskEntry,
+        BibleVerse,
     },
     data: function() {
         return {
@@ -62,8 +67,11 @@ export default {
         ContributionTypesLabels(){
             return ContributionTypesLabels;
         },
+        isCompleted(){
+            return this.newDeskEntry.content && this.newDeskEntry.content.length > 0;
+        },
         isNotCompleted(){
-            return this.newDeskEntry.content == null || this.newDeskEntry.content.length == 0;
+            return !this.isCompleted
         }
     },
     async mounted(){
@@ -73,7 +81,7 @@ export default {
         ...mapActions('contributions', ['addToDeskRef']),
         ...mapActions('contributions', ['bindDeskRef']),
         async addElement(){
-            if (!this.isNotCompleted) {
+            if (this.isCompleted) {
                 this.newDeskEntry.date = Date.now();
                 await this.addToDeskRef(this.newDeskEntry).then((result) => {
                     this.$toasted.success(this.$t('queue.element-added'));

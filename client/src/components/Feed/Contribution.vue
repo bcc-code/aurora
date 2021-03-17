@@ -1,6 +1,6 @@
 <template>
     <div class="rounded-xl m-2 mb-8" :class="theme == 'tv' ? 'bg-primary': 'bg-slate'">
-        <div class="text-white leading-tight py-6 px-8 text-left"> 
+        <div class="text-white leading-tight py-6 px-8 text-left">
             <p class="font-semibold" :class="isBig ? 'text-4xl' : 'text-xl'">{{ displayName }}</p>
             <p class="opacity-50" :class="isBig ? 'text-3xl' : 'text-lg'">{{ churchAndCountry }}</p>
         </div>
@@ -40,7 +40,7 @@ export default {
             return this.contribution.churchName != null && this.contribution.countryName != null && this.contribution.countryName.length > 0
         },
         displayName(){
-            return this.contribution.displayName == null 
+            return this.contribution.displayName == null
                 ? `${this.contribution.firstName} ${this.contribution.lastName}`
                 : this.contribution.displayName
         },
