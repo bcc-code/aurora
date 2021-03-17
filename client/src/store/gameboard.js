@@ -10,7 +10,7 @@ export default {
             return context.bindFirestoreRef('gameboard', context.getters.gameboardRef);
         }),
         initGameboard: firestoreAction((context, eventId) => {
-            return context.rootGetters['events/eventRef'].doc(eventId).collection('gameboard').doc('current').set({ visible: false })
+            return context.rootGetters['events/eventsRef'].doc(eventId).collection('gameboard').doc('current').set({ visible: false })
         })
     },
     getters: {
