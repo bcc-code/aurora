@@ -21,17 +21,17 @@ export default {
         }),
         updateEvent: firestoreAction((context, event) => {
             delete event.currentProgramElement;
-            const template = context.rootGetters['templates/templateById'](event.template.id)
-            event.background.computedValue = event.background.useTemplate ? template.background : event.background.value || null
-            event.logo.computedValue = event.logo.useTemplate ? template.logo : event.logo.value || null
-            event.style.logo.computedValue = event.style.logo.useTemplate ? template.style.logo : event.style.logo.value || null
-            event.style.primaryColor.computedValue = event.style.primaryColor.useTemplate ? template.style.primaryColor : event.style.primaryColor.value || null
-            event.style.primaryColorDark.computedValue = event.style.primaryColorDark.useTemplate ? template.style.primaryColorDark : event.style.primaryColorDark.value || null
+            const template = (event.template != null && event.template.id != null) ? context.rootGetters['templates/templateById'](event.template.id) : null
+            event.background.computedValue = template && event.background.useTemplate ? template.background : event.background.value || null
+            event.logo.computedValue = template && event.logo.useTemplate ? template.logo : event.logo.value || null
+            event.style.logo.computedValue = template && event.style.logo.useTemplate ? template.style.logo : event.style.logo.value || null
+            event.style.primaryColor.computedValue = template && event.style.primaryColor.useTemplate ? template.style.primaryColor : event.style.primaryColor.value || null
+            event.style.primaryColorDark.computedValue = template && event.style.primaryColorDark.useTemplate ? template.style.primaryColorDark : event.style.primaryColorDark.value || null
             event.syncRate = parseInt(event.syncRate);
             event.feed.frequency = parseInt(event.feed.frequency);
             event.testimonyMaxDurationSeconds = parseInt(event.testimonyMaxDurationSeconds);
             event.nextEvent = (event.nextEvent != null) ? context.getters.eventsRef.doc(event.nextEvent.id) : null
-            event.template = (event.template != null) ? context.rootGetters['templates/templatesRef'].doc(event.template.id) : null
+            event.template = (event.template != null && event.template.id != null) ? context.rootGetters['templates/templatesRef'].doc(event.template.id) : null
             return context.getters.eventsRef.doc(event.id).update({ ...event })
         }),
         archiveEvent: firestoreAction((context, event) => {
