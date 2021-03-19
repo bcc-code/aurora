@@ -1,5 +1,5 @@
 <template>
-    <div class="bg-cover max-w-lg mx-auto preview px-2 py-3" :style="previewBackground">
+    <div class="bg-cover max-w-lg mx-auto preview px-2 py-3" :style="previewBackground" :class="{ 'opacity-30': element.isLocked }">
         <div class="flex flex-wrap justify-between items-center" v-if="element.title">
             <div class="flex items-center font-bold">
                 <img v-if="element.icon" class="w-5 h-5 inline-block mr-5" :class="colorClass(element.icon.color)"

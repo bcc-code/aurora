@@ -201,6 +201,7 @@
         },
         "title": "Title",
         "description": "Description",
+        "isLocked": "Is Locked",
         "background": {
             "image": "Image",
             "gradient": {
