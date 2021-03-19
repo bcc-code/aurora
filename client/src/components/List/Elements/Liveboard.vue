@@ -3,6 +3,7 @@
         <Form v-if="editing" class="bg-mirage p-4 mb-3" grid :columns="3" :entity="element" label-root="liveboard">
             <Field :name="`title.${language}`" label="title" type="text" />
             <Field :name="`description.${language}`" label="description" type="text" />
+            <Field name="isLocked" type="boolean" inline/>
             <p class="font-bold col-span-full">Icon</p>
             <Field name="icon.name" type="select" :options="icons" />
             <Field name="icon.color" type="select" :options="colors" selectKey="value" selectLabel="label" />
