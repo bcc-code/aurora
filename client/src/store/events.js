@@ -21,21 +21,24 @@ export default {
         }),
         updateEvent: firestoreAction((context, event) => {
             delete event.currentProgramElement;
-            const template = context.rootGetters['templates/templateById'](event.template.id)
-            event.background.computedValue = event.background.useTemplate ? template.background : event.background.value || null
-            event.logo.computedValue = event.logo.useTemplate ? template.logo : event.logo.value || null
-            event.style.logo.computedValue = event.style.logo.useTemplate ? template.style.logo : event.style.logo.value || null
-            event.style.primaryColor.computedValue = event.style.primaryColor.useTemplate ? template.style.primaryColor : event.style.primaryColor.value || null
-            event.style.primaryColorDark.computedValue = event.style.primaryColorDark.useTemplate ? template.style.primaryColorDark : event.style.primaryColorDark.value || null
+            const template = (event.template != null && event.template.id != null) ? context.rootGetters['templates/templateById'](event.template.id) : null
+            event.background.computedValue = template && event.background.useTemplate ? template.background : event.background.value || null
+            event.logo.computedValue = template && event.logo.useTemplate ? template.logo : event.logo.value || null
+            event.style.logo.computedValue = template && event.style.logo.useTemplate ? template.style.logo : event.style.logo.value || null
+            event.style.primaryColor.computedValue = template && event.style.primaryColor.useTemplate ? template.style.primaryColor : event.style.primaryColor.value || null
+            event.style.primaryColorDark.computedValue = template && event.style.primaryColorDark.useTemplate ? template.style.primaryColorDark : event.style.primaryColorDark.value || null
             event.syncRate = parseInt(event.syncRate);
             event.feed.frequency = parseInt(event.feed.frequency);
             event.testimonyMaxDurationSeconds = parseInt(event.testimonyMaxDurationSeconds);
             event.nextEvent = (event.nextEvent != null) ? context.getters.eventsRef.doc(event.nextEvent.id) : null
-            event.template = (event.template != null) ? context.rootGetters['templates/templatesRef'].doc(event.template.id) : null
+            event.template = (event.template != null && event.template.id != null) ? context.rootGetters['templates/templatesRef'].doc(event.template.id) : null
             return context.getters.eventsRef.doc(event.id).update({ ...event })
         }),
         archiveEvent: firestoreAction((context, event) => {
             return context.getters.eventsRef.doc(event.id).update({ archived: true })
+        }),
+        restoreEvent: firestoreAction((context, event) => {
+            return context.getters.eventsRef.doc(event.id).update({ archived: false })
         }),
         startEvent: firestoreAction((context, event) => {
             var batch = db.batch();
@@ -45,11 +48,18 @@ export default {
             batch.update(context.rootGetters['configs/btvConfigRef'], { currentEventPath: eventRef });
             return batch.commit();
         }),
-        endEvent: firestoreAction((context, event) => {  
+        endEvent: firestoreAction((context, event) => {
             var batch = db.batch();
             batch.update(context.rootGetters['configs/configRef'], { currentEventPath: null });
             batch.update(context.rootGetters['configs/btvConfigRef'], { currentEventPath: null });
             batch.update(context.getters.eventsRef.doc(event.id), { isActive: false });
+            return batch.commit();
+        }),
+        setEventPage: firestoreAction((context, event) => {
+            var batch = db.batch();
+            const eventRef = event ? context.getters.eventsRef.doc(event.id) : null
+            batch.update(context.rootGetters['configs/configRef'], { eventPagePath: eventRef });
+            batch.update(context.rootGetters['configs/btvConfigRef'], { eventPagePath: eventRef });
             return batch.commit();
         }),
         updateBatchEvents: firestoreAction((context, events) => {
@@ -66,7 +76,7 @@ export default {
         },
 
         selectedEventRef: (state, getters) => {
-            return getters.eventsRef.doc(state.selectedEventId)
+            return getters.eventsRef.doc(state.selectedEventId || getters.currentEvent.id)
         },
         selectedEvent: (state) => {
             return state.events.find(event => event.id == state.selectedEventId)
@@ -88,13 +98,17 @@ export default {
             return state.selectedEventId ? getters.selectedEvent : getters.currentEvent
         },
 
+        eventPage: (_s, _g, rootState) => {
+            return rootState.configs.config.eventPagePath
+        },
+
         nextId: (state) => () => {
             return  state.events.reduce((a, c) => {
                 const eventId = parseInt(c.id) || 0
-                return a > eventId  ? a : eventId 
+                return a > eventId  ? a : eventId
             }, 999) + 1
         },
 
-        
+
     }
 }

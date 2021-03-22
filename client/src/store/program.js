@@ -38,6 +38,9 @@ export default {
         },
         currentProgramElement: (state, getters, rootState, rootGetters) => {
             var event = rootGetters['events/selectedEvent'];
+			if (event == null) {
+				event = rootGetters['events/currentEvent'];
+			}
             return (event == null) ? null : event['currentProgramElement'];
         },
         upcoming: (state, getters) => {

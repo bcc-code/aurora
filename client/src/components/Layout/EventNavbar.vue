@@ -4,14 +4,14 @@
             <div class="flex flex-nowrap mx-auto">
                 <template v-for="tab in eventTabs">
                     <div :key="tab.name" class="inline-block px-3">
-                        <button class="w-20 h-20 lg:w-24 lg:h-24 max-w-xs overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out text-white"
-                            @click="$router.push({ name: tab.name })" v-if="$can(tab.ability)"
+                        <router-link :to="{ name: tab.name }" class="inline-block text-center w-20 h-20 lg:w-24 lg:h-24 py-1 lg:py-2 max-w-xs overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out text-white"
+                            v-if="$can(tab.ability)"
                             :class="$route.name == tab.name ? 'gradient-active' : 'bg-bluewood'">
                             <div class="text-white rounded-lg p-2 text-center text-2xl lg:text-3xl">
                                 <i :class="`fa fa-${tab.icon}`"></i>
                             </div>
                             <p class="font-semibold text-xs lg:text-sm">{{$t(`menu.${tab.name}`)}} {{tab.id}}</p>
-                        </button>
+                        </router-link>
                     </div>
                 </template>
             </div>
@@ -29,6 +29,7 @@ export default {
                 { name: 'feed', icon: 'envelope', ability: 'desk' },
                 { name: 'desk', icon: 'info-circle', ability: 'desk' },
                 { name: 'gameboard', icon: 'question-circle', ability: 'admin' },
+                { name: 'liveboard', icon: 'question-circle', ability: 'admin' },
                 { name: 'translations', icon: 'language', ability: 'translate' },
                 { name: 'inquiries', icon: 'question', ability: 'desk' },
                 { name: 'profile-pictures', icon: 'user-circle', ability: 'desk' },

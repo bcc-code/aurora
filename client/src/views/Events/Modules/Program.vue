@@ -29,11 +29,12 @@ import { ProgramElementType,  ProgramElementTypeLabel } from '@/models/program.j
 import ProgramElement from '@/components/List/Elements/ProgramElement.vue'
 import NewElement from '@/components/List/NewElement.vue'
 import List from '@/components/List/List.vue'
+
 export default {
     components: {
         List,
         ProgramElement,
-        NewElement
+        NewElement,
     },
     data: function(){
         return {

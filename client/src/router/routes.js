@@ -9,7 +9,7 @@ import Questions from "@/views/Events/Modules/Questions"
 import Inquiries from "@/views/Events/Modules/Inquiries/Index"
 import Translation from '@/views/Events/Modules/Translation'
 import Feed from '@/views/Events/Modules/Feed/Index'
-import Queue from '@/views/Events/Modules/Feed/Queue'
+import Liveboard from '@/views/Events/Modules/Liveboard'
 import Info from '@/views/Events/Modules/Feed/Info'
 import Program from '@/views/Events/Modules/Program'
 import ManageScreens from '@/views/Events/Modules/Screens/Index'
@@ -36,6 +36,7 @@ export default [
 	{ path: "/:eventId", component: Event, children: [
 		{ path: "", name: "dashboard", component: EditEvent },
 		{ path: "gameboard", name: "gameboard", component: Questions },
+		{ path: "liveboard", name: "liveboard", component: Liveboard },
 		{ path: "translations",	name: "translations", component: Translation, meta: { accessLevel : 'translate' } },
 		{ path: "inquiries", name: "inquiries", component: Inquiries },
 		{ path: "feed", name: "feed", component: Feed, meta: { accessLevel : 'desk' } },

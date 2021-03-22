@@ -23,7 +23,8 @@
         "screen": "Screen",
         "profile-pictures": "Profile pictures",
         "competition": "Competition",
-        "not-found": "Not found"
+        "not-found": "Not found",
+        "liveboard": "Liveboard"
     },
     "event": {
         "syncRate": "Sync rate (s)",
@@ -49,7 +50,8 @@
             "primaryColor": { "value": "Primary color" },
             "primaryColorDark": { "value": "Primary color dark" }
         },
-        "template": "Template"
+        "template": "Template",
+        "banner": "Banner"
     },
     "template": {
         "name": "Name",
@@ -157,7 +159,8 @@
         "text-copied": "Text copied!",
         "question-deleted": "Question deleted!",
         "event-deleted": "Event deleted!",
-        "event-archived": "Event archived!"
+        "event-archived": "Event archived!",
+        "event-restored": "Event restored!"
     },
     "actions": {
         "start": "Start",
@@ -170,7 +173,9 @@
         "cancel": "Cancel",
         "confirm": "Confirm",
         "show-more": "Show more",
-        "approve": "Approve"
+        "approve": "Approve",
+        "restore": "Restore",
+        "delete": "Delete"
     },
     "dialogs": {
         "are-you-sure": "Are you sure?",
@@ -188,5 +193,27 @@
         "highlightedContinent": "Highlighted continent",
         "markerInFocus": "Marker in focus",
         "selectedChurch": "Church in focus"
+    },
+    "liveboard": {
+        "icon": {
+            "name": "Name",
+            "color": "Color"
+        },
+        "title": "Title",
+        "description": "Description",
+        "isLocked": "Is Locked",
+        "background": {
+            "image": "Image",
+            "gradient": {
+                "from": "Gradient from",
+                "to": "Gradient to"
+            }
+        },
+        "button": {
+            "action": "Action",
+            "url": "Url",
+            "label": "Label",
+            "color": "Color"
+        }
     }
 }

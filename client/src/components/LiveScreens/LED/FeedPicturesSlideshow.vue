@@ -1,4 +1,4 @@
-<template> 
+<template>
     <transition-group name="fade" tag="section">
         <img :src="imageUrl" :key="`image-${imageUrl}`" class="absolute top-0 object-contain w-full h-full z-10">
     </transition-group>
@@ -37,7 +37,7 @@ export default {
     },
     async mounted(){
         if (this.currentEvent != null) {
-            await this.bindFeedRef(this.currentEvent.components.additionalFeed);
+            await this.bindFeedRef(this.currentEvent.additionalFeed);
             await this.bindQueueRef();
         }
     },

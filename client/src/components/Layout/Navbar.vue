@@ -7,8 +7,14 @@
                         {{appName}}
                     </router-link>
                 </div>
-                <div class="hidden lg:block" v-if="selectedEvent">
-                    <p class="text-xl font-bold">{{selectedEvent.name}}</p>
+                <div class="flex items-center" v-if="selectedEvent">
+                    <div v-if="isCurrentEvent" class="flex items-center h-6 bg-cerise rounded-full px-2">
+                        <svg class="w-2.5 h-2.5 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8" fill="none">
+                            <path d="M7.21115 3.10557C7.9482 3.4741 7.94819 4.5259 7.21115 4.89443L1.44721 7.77639C0.782311 8.10884 0 7.62535 0 6.88197V1.11803C0 0.374652 0.782312 -0.108844 1.44721 0.223607L7.21115 3.10557Z" fill="white"/>
+                        </svg>
+                        <span class="uppercase font-bold">live</span>
+                    </div>
+                    <span class="hidden lg:block ml-5 text-xl font-bold">{{selectedEvent.name}}</span>
                 </div>
                 <!-- Right section on desktop -->
                 <div class="hidden lg:ml-4 lg:flex lg:items-center lg:pr-0.5">
@@ -25,7 +31,7 @@
                                 </svg>
                             </button>
                         </div>
-                        <div :class="profileOpen ? 'opacity-100 scale-100': 'opacity-0 scale-95'" class="origin-top-right z-40 absolute -right-2 mt-2 w-48 rounded-md shadow-lg py-1 bg-clay ring-1 ring-black ring-opacity-5 tranfsorm transition ease-in duration-75" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
+                        <div :class="profileOpen ? 'opacity-100 scale-100': 'opacity-0 pointer-events-none scale-95'" class="origin-top-right z-40 absolute -right-2 mt-2 w-48 rounded-md shadow-lg py-1 bg-clay ring-1 ring-black ring-opacity-5 tranfsorm transition ease-in duration-75" role="menu" aria-orientation="vertical" aria-labelledby="user-menu">
                             <a href="#" @click="signOut" class="block px-4 py-2 text-sm text-white" role="menuitem">Sign out</a>
                         </div>
                     </div>

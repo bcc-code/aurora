@@ -68,7 +68,7 @@ export default {
     computed: {
         ...mapModels(['ScreenAComponents'])
     },
-    
+
     methods: {
         ...mapActions('contributions', ['bindFeedRef', 'bindDeskRef']),
         ...mapActions('questions', ['bindQuestionsRef']),

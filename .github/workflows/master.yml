@@ -27,11 +27,32 @@ jobs:
       if: endsWith(github.ref, '/master')
       run: |
         echo "ENVIRONMENT=PROD" >> $GITHUB_ENV
+    - name: Copy firebase config file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "firebase/functions/src/configs/config.json.template"
+        target: "firebase/functions/src/configs/config.json"
+    - name: Copy firebase-key file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "firebase/functions/firebase-key.json.template"
+        target: "firebase/functions/firebase-key.json"
+    - name: Copy client config file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "client/src/configs/config.json.template"
+        target: "client/src/configs/config.json"
+    - name: Grant write permissions to config file
+      run: |
+        sudo chmod 777 firebase/functions/src/configs/config.json
+        sudo chmod 777 firebase/functions/firebase-key.json
+        sudo chmod 777 client/src/configs/config.json
     - name: Replace config tokens
       uses: microsoft/variable-substitution@v1 
       with:
         files: "**/config.json"
       env:
+        auth0.clientSecret: ${{ secrets.AUTH0_CLIENT_SECRET }}
         api.baseUrl: ${{ secrets[format('{0}_API_BASE_URL', env.ENVIRONMENT)] }}
         app.baseUrl: ${{ secrets[format('{0}_APP_BASE_URL', env.ENVIRONMENT)] }}
         firebase.apiKey: ${{ secrets[format('{0}_FIREBASE_API_KEY', env.ENVIRONMENT)] }}

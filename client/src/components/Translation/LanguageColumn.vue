@@ -17,9 +17,17 @@
         </ul>
         <div class="uppercase tracking-wide text-md font-bold px-4">{{$t('menu.program')}}</div>
         <ul class="flex flex-col p-4 w-full">
-            <Program v-for="programElement in program"
-                :key="selectedLanguageCode + programElement.id"
-                :programElement="programElement"
+            <Program v-for="element in program"
+                :key="selectedLanguageCode + element.id"
+                :element="element"
+                :selectedLanguage="selectedLanguageCode"
+                :source="source" />
+        </ul>
+        <div class="uppercase tracking-wide text-md font-bold px-4">{{$t('menu.liveboard')}}</div>
+        <ul class="flex flex-col p-4 w-full">
+            <Liveboard v-for="element in liveboard"
+                :key="selectedLanguageCode + element.id"
+                :element="element"
                 :selectedLanguage="selectedLanguageCode"
                 :source="source" />
         </ul>
@@ -29,12 +37,15 @@
 <script>
 import Question from './Question'
 import Program from './Program'
+import Liveboard from './Liveboard'
+import { mapState } from 'vuex'
 export default {
     components: {
         Question,
-        Program
+        Program,
+        Liveboard
     },
-    props: ['source', 'questions', 'program', 'sourceLanguage'],
+    props: ['source', 'sourceLanguage'],
     data: function() {
         return {
             language: 'Norsk',
@@ -57,6 +68,7 @@ export default {
         this.language = this.source ? 'Norsk' : 'English';
     },
     computed: {
+        ...mapState('translation', ['questions', 'program', 'liveboard']),
         filteredLocales(){
             return this.locales.filter((lang) => lang.name != this.sourceLanguage);
         },

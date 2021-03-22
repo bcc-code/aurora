@@ -6,18 +6,11 @@ import { Module } from "./module";
 import { IUser } from "../../types/user";
 
 
-class CheckinDoc {
+interface CheckinDoc {
   personId: number;
   checkedInBy: number;
   coords: any;
   timestamp: number;
-
-  constructor(personId: number, checkedInBy: number, coords: any) {
-      this.personId = personId;
-      this.checkedInBy = checkedInBy;
-      this.coords = coords;
-      this.timestamp = Date.now()
-  }
 }
 
 export class CheckinStatus {
@@ -51,19 +44,19 @@ export class CheckinModule extends Module {
     super(event);
     const db = firestore;
     const userModel = new UserModel(firestore);
-    
+
     this.refs = {};
     this.actions = {};
 
     this.refs.checkins = () => this.event.event().collection(n.checkins);
     this.refs.checkin = (personId) => this.refs.checkins().doc(`${personId}`);
-    
+
     this.actions.getCheckinStatus = async (personId) => {
       const checkinEnabled = true;
-  
+
       // lookup user document for logged on user
       var userCheckingInDoc = await userModel.refs.user(personId).get();
-  
+
       if (userCheckingInDoc.exists) {
         const existingCheckin = await this.refs.checkin(personId).get();
         const userCheckingIn = userCheckingInDoc.data() as IUser;
@@ -72,7 +65,7 @@ export class CheckinModule extends Module {
           !existingCheckin.exists && checkinEnabled && userCheckingIn.hasMembership,
           existingCheckin.exists,
           userCheckingIn)
-  
+
         if (Array.isArray(userCheckingIn.linkedUserIds)) {
           checkinStatus.linkedUsers = await asyncForEachParallel(
             userCheckingIn.linkedUserIds,
@@ -97,25 +90,37 @@ export class CheckinModule extends Module {
         return { message: msg, checkedIn: false };
       }
     };
-  
+
     this.actions.checkin = async (currentPersonId, userIds, coords) => {
       // TODO: reject if event not open for checkin
-  
+
       const currentUser = await userModel.refs.user(currentPersonId).get();
-  
+
       var batch = db.batch();
-  
+
       if (currentUser.exists) {
         var currentStatus = await this.actions.getCheckinStatus(currentPersonId);
         if (userIds.includes(currentPersonId) && currentStatus.canCheckin) {
-          batch.set(this.refs.checkin(currentPersonId), new CheckinDoc(currentPersonId, currentPersonId, coords));
+          let newCheckin: CheckinDoc = {
+            personId: currentPersonId,
+            checkedInBy: currentPersonId,
+            coords: coords,
+            timestamp: Date.now()
+          }
+          batch.set(this.refs.checkin(currentPersonId), newCheckin);
         }
         if (Array.isArray(currentStatus.linkedUsers)) {
           await asyncForEachParallel(
             currentStatus.linkedUsers,
             async (linkedUser: CheckinStatus) => {
               if (userIds.includes(linkedUser.personId) && linkedUser.canCheckin) {
-                batch.set(this.refs.checkin(linkedUser.personId), new CheckinDoc(linkedUser.personId, currentPersonId, coords));
+                let newCheckin: CheckinDoc = {
+                  personId: linkedUser.personId,
+                  checkedInBy: currentPersonId,
+                  coords: coords,
+                  timestamp: Date.now()
+                }
+                batch.set(this.refs.checkin(linkedUser.personId), newCheckin);
               }
             }
           );
@@ -123,7 +128,7 @@ export class CheckinModule extends Module {
       }
       await batch.commit();
     };
-  
+
     this.actions.updateCheckinCount = async () => {
       var allCheckins = await this.refs.checkins().get();
       var count = allCheckins.size;

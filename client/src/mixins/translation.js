@@ -1,19 +1,24 @@
 import { mapState } from 'vuex'
+import set from 'set-value';
 export default {
     computed: {
         ...mapState('session', ['appLanguage'])
     },
     methods: {
-        inLanguage(element, iso2code, fallback = false) {
-            return (iso2code in element.texts && element.texts[iso2code] != null && element.texts[iso2code].length > 0)
-                ? element.texts[iso2code] 
-                : fallback ? element.texts['no'] : null;
+        inLanguage(element, iso2code, fallback = false, property = 'texts') {
+            const resolved = this.resolve(element, `${property}.${iso2code}`)
+            return (resolved != null && resolved.length > 0) 
+                ? resolved 
+                : fallback ? this.resolve(element, `${property}.no`) : null
         },
-        translateTo(element, iso2code, value) {
-            element.texts[iso2code] = value;
+        translateTo(element, iso2code, value, property = 'texts') {
+            set(element, `${property}.${iso2code}`, value)
         },
-        inCurrentLanguage(element) {
-            return this.inLanguage(element, this.appLanguage, true);
+        inCurrentLanguage(element, property = 'texts') {
+            return this.inLanguage(element, this.appLanguage, true, property);
+        },
+        resolve(obj, path) {
+            return path ? path.split('.').reduce((o, p) => o ? o[p] : null, obj) : obj
         }
     }
 }

@@ -1,6 +1,7 @@
 {
     "compilerOptions": {
       "lib": ["es6"],
+	  "strict": true,
       "module": "commonjs",
       "noImplicitReturns": true,
       "outDir": "dist",
@@ -8,6 +9,7 @@
       "target": "es6",
       "allowSyntheticDefaultImports": true,
       "esModuleInterop": true,
+	  "resolveJsonModule": true,
       "typeRoots": [
         "./src/types"
       ]

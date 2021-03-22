@@ -41,6 +41,10 @@ button:focus {
 .btn-blue {
   @apply bg-seagull;
 }
+.btn-gray {
+  @apply bg-bluewood;
+}
+
 .btn-delete {
   @apply cursor-pointer text-cerise;
 }
