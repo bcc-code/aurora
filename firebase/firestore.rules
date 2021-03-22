@@ -58,6 +58,9 @@ service cloud.firestore {
       match /gameboard/{gameboardId=**} {
         allow read: if isLoggedIn();
       }
+      match /liveboard/{componentId=**} {
+    		allow read: if isLoggedIn();
+    	}
       match /program/{programId=**} {
         allow read: if isLoggedIn();
       }
