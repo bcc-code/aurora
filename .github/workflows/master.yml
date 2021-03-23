@@ -48,13 +48,13 @@ jobs:
         sudo chmod 777 firebase/functions/firebase-key.json
         sudo chmod 777 client/src/configs/config.json
     - name: Replace config tokens
-      uses: microsoft/variable-substitution@v1 
+      uses: microsoft/variable-substitution@v1
       with:
         files: "**/config.json"
       env:
         auth0.clientSecret: ${{ secrets.AUTH0_CLIENT_SECRET }}
-        api.baseUrl: ${{ secrets[format('{0}_API_BASE_URL', env.ENVIRONMENT)] }}
         app.baseUrl: ${{ secrets[format('{0}_APP_BASE_URL', env.ENVIRONMENT)] }}
+        app.sharedApiKey: ${{ secrets[format('{0}_SHARED_API_KEY', env.ENVIRONMENT)] }}
         firebase.apiKey: ${{ secrets[format('{0}_FIREBASE_API_KEY', env.ENVIRONMENT)] }}
         firebase.authDomain: ${{ secrets[format('{0}_FIREBASE_AUTH_DOMAIN', env.ENVIRONMENT)] }}
         firebase.databaseURL: ${{ secrets[format('{0}_FIREBASE_DATABASE_URL', env.ENVIRONMENT)] }}
@@ -65,7 +65,7 @@ jobs:
         firebase.measurementId: ${{ secrets[format('{0}_FIREBASE_MEASUREMENT_ID', env.ENVIRONMENT)] }}
         firebase.storageBaseUrl: ${{ secrets[format('{0}_FIREBASE_STORAGE_BASE_URL', env.ENVIRONMENT)] }}
     - name: Replace firebase key
-      uses: microsoft/variable-substitution@v1 
+      uses: microsoft/variable-substitution@v1
       with:
         files: "**/firebase-key.json"
       env:
@@ -76,14 +76,14 @@ jobs:
         client_id: ${{ secrets[format('{0}_FIREBASE_CLIENT_ID', env.ENVIRONMENT)] }}
         client_x509_cert_url: ${{ secrets[format('{0}_FIREBASE_CLIENT_CERT_URL', env.ENVIRONMENT)] }}
     - name: Replace firebase.json tokens
-      uses: microsoft/variable-substitution@v1 
+      uses: microsoft/variable-substitution@v1
       with:
         files: "**/firebase.json"
       env:
         hosting.site: ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
     - name: npm install and build (client)
       working-directory: ./client
-      run: | 
+      run: |
         npm ci
         npm run build
     - name: npm install and build (functions)
