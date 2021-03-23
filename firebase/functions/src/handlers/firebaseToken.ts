@@ -10,24 +10,24 @@ import { Request } from "../types";
 const gaxios = require('gaxios');
 
 const strategy = new Auth0Strategy(
-  {
-    domain: config.auth0.domain,
-    clientID: config.auth0.clientId,
-    clientSecret: config.auth0.clientSecret,
-    callbackURL: config.api.baseUrl + "firebase/callback"
-  },
-  function(_accessToken, _refreshToken, extraParams, profile, done) {
-    profile.accessToken = extraParams.id_token;
-    return done(null, profile);
-  }
+	{
+		domain: config.auth0.domain,
+		clientID: config.auth0.clientId,
+		clientSecret: config.auth0.clientSecret,
+		callbackURL: config.api.baseUrl + "firebase/callback"
+	},
+	function(_accessToken, _refreshToken, extraParams, profile, done) {
+		profile.accessToken = extraParams.id_token;
+		return done(null, profile);
+	}
 );
 
 
 const sess = {
-  secret: 'bcconlinesecret',
-  cookie: {},
-  resave: false,
-  saveUninitialized: true
+	secret: 'bcconlinesecret',
+	cookie: {},
+	resave: false,
+	saveUninitialized: true
 };
 
 const firebaseToken = handler();
