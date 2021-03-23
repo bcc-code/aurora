@@ -3,14 +3,19 @@ import { n, UserModel } from "../model/index";
 import handler, { ErrorHandler } from "./handler";
 import { jwtCheck, syncUserAndClaims } from "../middleware";
 import { IUser } from "../types/user";
+import { config } from '../utils';
 
 var db = null;
 
 const userProfileHandler = handler();
 userProfileHandler.post("/profile", async (req, res) => {
-  if (req.header("X-API-Key") != "4GHM&StQv7UJTR#acU80E!qRw!") {
+  if (
+	  !config.app.sharedApiKey || config.app.sharedApiKey.length < 10 || // Guard against missconfiguration
+	  req.header("X-API-Key") != config.app.sharedApiKey
+  ) {
     return res.status(401).send({ error: `Invalid api key` });
   }
+
   var userData: Array<IUser> = req.body;
   const userModel = new UserModel(db);
   var users = [];
