@@ -98,5 +98,7 @@ describe("BCC.online", () => {
 		await firebase.assertSucceeds(db.collection("/configs").doc("test-config").get());
 		await firebase.assertSucceeds(db.collection("/churches").doc("1").get());
 		await firebase.assertSucceeds(db.collection("/competitions").doc("1").get());
+		await firebase.assertSucceeds(db.collection("/events").doc("22").get());
 	});
+
 });
