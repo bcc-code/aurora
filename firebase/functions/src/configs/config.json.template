@@ -10,7 +10,7 @@
     "key": "**secret**"
   },
   "app": {
-    "baseUrl": "http://localhost:8080"
+    "baseUrl": "http://localhost:8080",
 	"sharedApiKey": ""
   }
 }
