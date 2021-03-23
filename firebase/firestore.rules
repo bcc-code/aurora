@@ -20,13 +20,13 @@ service cloud.firestore {
     match /user-groups/bcc {
       allow read: if true;
       allow write: if false;
-        
+
       match /users/{userId} {
       	allow read: if isServiceAccount();
         allow read, update: if isAdmin() || isPerson(userId);
         allow write: if false;
       }
-    }    
+    }
 
     match /{documentId=**} {
       allow read, write: if isAdmin();
@@ -49,6 +49,9 @@ service cloud.firestore {
     }
 
     match /events/{eventId} {
+
+	  allow get: if isLoggedIn();
+
       match /checkins/{checkinId} {
         allow create: if isLoggedIn();
         allow get, update: if isPerson(checkinId);
