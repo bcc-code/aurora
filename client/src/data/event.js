@@ -3,7 +3,7 @@ import { Components } from '@/models/components.js'
 export const NewEvent = (name, order) => {
     return {
         name: name,
-        order: order, 
+        order: order,
         details: "",
         archived: false,
         /* USED BY BTV APP */
@@ -12,7 +12,7 @@ export const NewEvent = (name, order) => {
         currentProgramElement: null,
         isActive: false,
         checkedInUsers: 0,
-        
+
         /* ONLY USED IN BCC ONLINE */
         syncRate: 120,
         canSendInquiries: false,
@@ -51,7 +51,7 @@ export const NewEvent = (name, order) => {
 }
 
 export const NewScreen = (id, order) => {
-    var newScreen = { 
+    var newScreen = {
         order: order,
         options: { showBackground: true },
         size: { width: 1920, height: 1080 }
@@ -90,8 +90,9 @@ export const NewScreen = (id, order) => {
             newScreen.options.donation = { view: null }
             newScreen.options.question = { question: null, view: null, showCorrectAnswer: true, finished: false }
             newScreen.options.information = { information: null }
+            newScreen.options.verse = { displayTime: 10, displayPrevious: false }
             break;
     }
     Object.defineProperty(newScreen, "id", { enumerable : false, value : id });
-    return newScreen;      
+    return newScreen;
 }
