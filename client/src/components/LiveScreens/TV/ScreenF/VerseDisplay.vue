@@ -26,7 +26,6 @@ export default {
         return {
             loaded: false,
             verseToDisplay: null,
-            initialLoad: true,
         }
     },
     computed: {
