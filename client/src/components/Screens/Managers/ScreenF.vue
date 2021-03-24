@@ -6,6 +6,7 @@
         <Information v-if="screenOptions.component === ScreenFComponents.INFORMATION" option="information" />
         <Question v-if="screenOptions.component === ScreenFComponents.QUESTION" option="question" />
         <Donation v-if="screenOptions.component === ScreenFComponents.DONATION" option="donation" />
+        <Verse v-if="screenOptions.component === ScreenFComponents.VERSE" option="verse" />
         <Actions :canSave="hasChanged" @apply="apply" />
     </Form>
 </template>
@@ -18,12 +19,15 @@ import ScreenManager from '@/mixins/ScreenManager.js'
 import Information from '../Components/Information'
 import Question from '../Components/Question'
 import Donation from '../Components/Donation'
+import Verse from '../Components/Verse.vue'
+
 export default {
     components: {
         Actions,
         Information,
         Question,
-        Donation
+        Donation,
+        Verse,
     },
     props: ['screen'],
     data: function() {
@@ -33,6 +37,10 @@ export default {
                 information: null,
                 background: null,
                 showBackground: null,
+                verse: {
+                    displayTime: 10,
+                    displayPrevious: false,
+                },
                 donation: {
                     view: null,
                     ...this.screen.options.donation
