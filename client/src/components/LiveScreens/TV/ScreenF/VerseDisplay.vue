@@ -1,9 +1,23 @@
 <template>
-    <section class="flex h-full w-full text-left" v-if="loaded">
-    <div>
-    </div>
-        <transition class="animate-height" mode="out-in" tag="div">
-            <div v-if="verseToDisplay" class="verse font-bold text-white shadow-text text-4xl px-4"
+    <section class="
+                absolute
+                fpl-20
+                px-4
+                flex
+                verse
+    "v-if="loaded">
+        <transition name="slide">
+            <div v-if="verseToDisplay" class="
+                bg-primary-dark
+                font-bold
+                rounded-xl
+                justify-start
+                hadow-text
+                text-4xl
+                verse-inner
+                text-left
+                text-white
+                "
                 :key="verseToDisplay.id"
                 >
                 {{ verseToDisplay.content }}
@@ -76,22 +90,23 @@ export default {
 }
 </script>
 <style scoped>
-.list-enter-active {
-    transition: all 1s;
-    max-height: 100vh;
-    opacity: 1;
-}
-.list-enter  {
-  max-height: 0px;
-  opacity: 0;
-}
 .verse {
-    border: red 2px solid;
-    background-color: rgba(51, 50, 200, 0.3);
-    padding: 20px;
-    border-radius: 20px;
-    position: absolute;
-    bottom: 150px;
-    left: 150px;
+    left: 124px;
+    top: 866px;
 }
+
+.verse-inner {
+    padding: 18px 38px;
+}
+
+.slide-enter-active,
+.slide-leave-active {
+    transition: opacity 1.3s, transform 1.3s;
+}
+
+.slide-enter, .slide-leave-to {
+    opacity: 0;
+    translateX: 10%;
+}
+
 </style>
