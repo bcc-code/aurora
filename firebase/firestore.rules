@@ -22,7 +22,7 @@ service cloud.firestore {
       allow write: if false;
 
       match /users/{userId} {
-          allow read: if isServiceAccount();
+        allow read: if isServiceAccount();
         allow read, update: if isAdmin() || isPerson(userId);
         allow write: if false;
       }
@@ -48,6 +48,14 @@ service cloud.firestore {
       allow read: if isLoggedIn();
     }
 
+	match /templates/{templateId=**} {
+      allow read: if isServiceAccount();
+	}
+
+	match /event-groups/{egId=**} {
+      allow read: if isServiceAccount();
+	}
+
     match /events/{eventId} {
 
       allow get: if isLoggedIn();
@@ -62,8 +70,8 @@ service cloud.firestore {
         allow read: if isLoggedIn();
       }
       match /liveboard/{componentId=**} {
-            allow read: if isLoggedIn();
-        }
+        allow read: if isLoggedIn();
+      }
       match /program/{programId=**} {
         allow read: if isLoggedIn();
       }
