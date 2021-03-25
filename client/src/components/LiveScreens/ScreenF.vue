@@ -15,6 +15,7 @@
         v-else-if="screen.options.component == ScreenFComponents.DONATION"
         :donationView="screen.options.donation.view"
         class="fix-bottom" />
+        <VerseDisplay v-else-if="screen.options.component == ScreenFComponents.VERSE" :displayTime="screen.options.verse.displayTime" :displayPrevious="screen.options.verse.displayPrevious" />
     </transition>
 </template>
 <script>
@@ -25,6 +26,7 @@ import Question from '@/components/LiveScreens/TV/ScreenF/Question.vue'
 import QuestionWinner from '@/components/LiveScreens/TV/Question/QuestionWinner.vue'
 import DonationStatus from '@/components/LiveScreens/TV/ScreenF/Donation.vue'
 import CheckinsCount from '@/components/LiveScreens/shared/CheckinsCount.vue'
+import VerseDisplay from '@/components/LiveScreens/TV/ScreenF/VerseDisplay.vue'
 import { mapModels } from '@/mixins/mapModels'
 import { mapGetters } from 'vuex'
 export default {
@@ -35,7 +37,8 @@ export default {
         Question,
         QuestionWinner,
         CheckinsCount,
-        DonationStatus
+        DonationStatus,
+        VerseDisplay,
     },
     props: ['screen', 'logo'],
     computed: {
@@ -45,11 +48,11 @@ export default {
             return this.currentScreenFromId('A').options.squeezeBackSize;
         }
     }
-    
+
 }
 </script>
 <style scoped>
-.slide-up-enter-active, 
+.slide-up-enter-active,
 .slide-up-leave-active {
     transition: opacity 1.3s, transform 1.3s;
 }

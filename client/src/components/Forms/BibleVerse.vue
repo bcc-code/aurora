@@ -91,7 +91,7 @@ export default {
                     return out;
                 }
 
-                out += "/" + this.verse_from;
+                out += ":" + this.verse_from;
                 verse.verse_from = this.verse_from;
 
                 if (this.verse_to < 0 || this.verse_to <= this.verse_from) {
