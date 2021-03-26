@@ -15,6 +15,7 @@
             <Field name="button.action" type="select" :options="actions" />
             <Field name="button.url" class="col-span-2" type="text" />
             <Field :name="`button.label.${language}`" label="liveboard.button.label" type="text" />
+            <Field name="button.icon" type="select" allowEmpty :options="icons" />
             <Field name="button.color" type="select" :options="colors" selectKey="value" selectLabel="label" />
             <button class="col-start-1 btn btn-green" @click.stop="updateLiveboardElement(element), $emit('close')"><i class="fas fa-save"></i></button>
             <button class="btn btn-red" @click.stop="removeLiveboardElement(element)"><i class="fas fa-trash"></i></button>
@@ -42,7 +43,7 @@ export default {
     mixins: [Translations],
     data: function () {
         return {
-            icons: ['book', 'camera', 'cycling', 'explore', 'feed', 'fire', 'game', 'happy', 'heart', 'information', 'location', 'post', 'question', 'running', 'support', 'survey', 'url', 'video'],
+            icons: ['book', 'camera', 'cycling', 'explore', 'feed', 'fire', 'game', 'happy', 'heart', 'information', 'location', 'plus', 'post', 'question', 'running', 'support', 'survey', 'url', 'video'],
             actions: ['post', 'feed', 'testimony', 'inquiry', 'quizz', 'url', 'deeplink'],
             colors: [{ label: 'white', value: '#fff' }, { label: 'blue', value:'#6eb0e6' }, { label: 'red', value: '#e63c62' }]
         }
