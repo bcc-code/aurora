@@ -213,7 +213,8 @@
             "action": "Action",
             "url": "Url",
             "label": "Label",
-            "color": "Color"
+            "color": "Color",
+            "icon": "Icon"
         }
     }
 }

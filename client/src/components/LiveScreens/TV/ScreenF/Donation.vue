@@ -3,9 +3,8 @@
         <div class="w-full shadow-text  leading-snug px-4 flex justify-center gap-5">
             <transition name="fade" mode="out-in">
                 <div key="qrcode" class="relative bg-primary-dark bg-opacity-25 rounded-xl text-3xl leading-tight text-left" v-if="donationView == 'qrcode'">
-                    <div class="w-full flex items-center justify-between">
-                        <Vipps class="h-48 w-auto p-6"/>
-                        <QRCode v-if="!isSmallWithResults" class="h-48 w-48 p-6"/>
+                    <div class="flex flex-wrap items-center justify-center">
+                        <p class="py-5 px-2 leading-snug text-4xl text-center">Bidra via <strong class="italic">BrunstadTV-appen</strong><br>eller<br>på <strong class="italic">donation.bcc.no</strong></p>
                     </div>
                 </div>
                 <div key="results" class="relative bg-primary-dark bg-opacity-25 rounded-xl text-3xl leading-tight text-left"  v-if="donationView == 'results'">

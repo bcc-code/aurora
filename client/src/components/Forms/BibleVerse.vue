@@ -65,7 +65,7 @@ export default {
 
                 if (this.book < 0) {
                     this.incoming_value.content = out;
-                    this.incoming_value.source = verse;
+                    this.incoming_value.verse = verse;
                     this.$emit('input', this.incoming_value);
                     return out;
                 }
@@ -76,7 +76,7 @@ export default {
 
                 if (this.chapter < 0 || !this.bible[this.book].chapters[this.chapter]) {
                     this.incoming_value.content = out;
-                    this.incoming_value.source = verse;
+                    this.incoming_value.verse = verse;
                     this.$emit('input', this.incoming_value);
                     return out;
                 }
@@ -86,17 +86,17 @@ export default {
 
                 if (this.verse_from < 0) {
                     this.incoming_value.content = out;
-                    this.incoming_value.source = verse;
+                    this.incoming_value.verse = verse;
                     this.$emit('input', this.incoming_value);
                     return out;
                 }
 
-                out += "/" + this.verse_from;
+                out += ":" + this.verse_from;
                 verse.verse_from = this.verse_from;
 
                 if (this.verse_to < 0 || this.verse_to <= this.verse_from) {
                     this.incoming_value.content = out;
-                    this.incoming_value.source = verse;
+                    this.incoming_value.verse = verse;
                     this.$emit('input', this.incoming_value);
                     return out;
                 }
@@ -105,12 +105,12 @@ export default {
                 verse.verse_to = this.verse_to;
 
                 this.incoming_value.content = out;
-                this.incoming_value.source = verse;
+                this.incoming_value.verse = verse;
                 this.$emit('input', this.incoming_value);
                 return out
             },
             set: function(val) {
-                if (!val || !val.source) {
+                if (!val || !val.verse) {
                     return
                 }
 
@@ -118,16 +118,16 @@ export default {
 
                 // Internally we use the index
                 for (let index in this.bible) {
-                    if (this.bible[index].abbr == val.source.book) {
+                    if (this.bible[index].abbr == val.verse.book) {
                         this.book = index;
                         break;
                     }
                 }
 
                 // Internally we use the index so ch 1 == index 0
-                this.chapter = val.source.chapter - 1
-                this.verse_from = val.source.verse_from
-                this.verse_to = val.source.verse_from
+                this.chapter = val.verse.chapter - 1
+                this.verse_from = val.verse.verse_from
+                this.verse_to = val.verse.verse_from
             },
         },
     },

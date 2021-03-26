@@ -48,13 +48,13 @@ service cloud.firestore {
       allow read: if isLoggedIn();
     }
 
-	match /templates/{templateId=**} {
+    match /templates/{templateId=**} {
       allow read: if isServiceAccount();
-	}
+    }
 
-	match /event-groups/{egId=**} {
+    match /event-groups/{egId=**} {
       allow read: if isServiceAccount();
-	}
+    }
 
     match /events/{eventId} {
 
@@ -72,6 +72,7 @@ service cloud.firestore {
       match /liveboard/{componentId=**} {
         allow read: if isLoggedIn();
       }
+
       match /program/{programId=**} {
         allow read: if isLoggedIn();
       }

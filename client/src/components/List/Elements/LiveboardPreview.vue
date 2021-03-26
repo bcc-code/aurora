@@ -12,6 +12,8 @@
             <div :class="{ 'w-full' : hasDescription }" class="text-right" v-if="element.button.label">
                 <button class="preview-button font-bold px-2 py-1" :class="colorClass(element.button.color)">
                     {{element.button.label[language]}}
+                    <img v-if="element.button.icon" class="ml-1 mb-0.5 w-3 h-3 inline-block"
+                    :src="require(`@/assets/img/icons/${element.button.icon}.png`)">
                 </button>
             </div>
         </div>

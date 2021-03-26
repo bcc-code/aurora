@@ -57,6 +57,7 @@ jobs:
         app.baseUrl: ${{ secrets[format('{0}_APP_BASE_URL', env.ENVIRONMENT)] }}
         api.key: ${{ secrets[format('{0}_FIREBASE_API_KEY', env.ENVIRONMENT)] }}
         app.sharedApiKey: ${{ secrets[format('{0}_SHARED_API_KEY', env.ENVIRONMENT)] }}
+        app.name: ${{ format('BCC Online | {0}', env.ENVIRONMENT) }}
         firebase.apiKey: ${{ secrets[format('{0}_FIREBASE_API_KEY', env.ENVIRONMENT)] }}
         firebase.authDomain: ${{ secrets[format('{0}_FIREBASE_AUTH_DOMAIN', env.ENVIRONMENT)] }}
         firebase.databaseURL: ${{ secrets[format('{0}_FIREBASE_DATABASE_URL', env.ENVIRONMENT)] }}
