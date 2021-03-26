@@ -13,14 +13,14 @@
     "id": "bcc-online"
   },
   "firebase": {
-    "apiKey": "**secret**",
+    "apiKey": "<REPLACE>",
     "authDomain": "brunstadtv-online-dev.firebaseapp.com",
     "databaseURL": "https://brunstadtv-online-dev.firebaseio.com",
     "projectId": "brunstadtv-online-dev",
     "storageBucket": "brunstadtv-online-dev.appspot.com",
-    "messagingSenderId": "**secret**",
-    "appId": "**secret**",
-    "measurementId": "**secret**",
+    "messagingSenderId": "<REPLACE>",
+    "appId": "<REPLACE>",
+    "measurementId": "<REPLACE>",
     "storageBaseUrl": "https://firebasestorage.googleapis.com/v0/b/brunstadtv-online.appspot.com/o/"
   }
 }

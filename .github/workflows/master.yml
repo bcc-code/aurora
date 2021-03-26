@@ -55,6 +55,7 @@ jobs:
         auth0.clientSecret: ${{ secrets.AUTH0_CLIENT_SECRET }}
         api.baseUrl: ${{ secrets[format('{0}_API_BASE_URL', env.ENVIRONMENT)] }}
         app.baseUrl: ${{ secrets[format('{0}_APP_BASE_URL', env.ENVIRONMENT)] }}
+        api.key: ${{ secrets[format('{0}_FIREBASE_API_KEY', env.ENVIRONMENT)] }}
         app.sharedApiKey: ${{ secrets[format('{0}_SHARED_API_KEY', env.ENVIRONMENT)] }}
         app.name: ${{ format('BCC Online | {0}', env.ENVIRONMENT) }}
         firebase.apiKey: ${{ secrets[format('{0}_FIREBASE_API_KEY', env.ENVIRONMENT)] }}
