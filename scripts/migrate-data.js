@@ -4,7 +4,7 @@ var serviceAccount = require("./firebase-key.json");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://brunstadtv-online-dev.firebaseio.com"
+  databaseURL: "https://brunstadtv-online.firebaseio.com"
 });
 
 const db = admin.firestore();
@@ -22,7 +22,8 @@ async function unarchiveAllEvents() {
         await db.collection('events').doc(doc.id).update({ archived: false })
     }));
 }
+
 //moveCollection(db.collection('user-groups').doc('bcc').collection('users'), db.collection('users'))
 //moveCollection(db.collection('user-groups').doc('bcc').collection('permissions'), db.collection('permissions'))
-//moveCollection(db.collection('event-groups').doc('0').collection('events'), db.collection('events'))
+//moveCollection(db.collection('event-groups').doc('nvFmYfCG0CZpLGRa072B').collection('events'), db.collection('events'))
 unarchiveAllEvents()
