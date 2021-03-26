@@ -13,19 +13,16 @@
                     <p class="italic text-3xl pb-2">eller på portalen</p>
                 </template>
                 <template v-else>
-                    <p class="uppercase font-semibold text-4xl">KOLLEKT TIL BCC</p>
-                    <p class="italic text-3xl pb-2">skann QR-kode</p>
+                    <p class="uppercase font-semibold text-4xl pb-2">KOLLEKT TIL BCC</p>
                 </template>
                 <div class="relative bg-black bg-opacity-25 rounded-xl text-3xl leading-tight text-left">
                     <div class="flex flex-wrap items-center justify-center">
-                        <QRCode class="h-40 w-full p-2"/>
-                        <p class="text-3xl italic">donation.bcc.no</p>
+                        <p class="py-5 px-2 leading-snug text-4xl text-center">Bidra via <strong class="italic">BrunstadTV-appen</strong><br>eller<br>på <strong class="italic">donation.bcc.no</strong></p>
                     </div>
                 </div>
             </div>
             <div v-if="showResults" :class="size =='small' ? 'w-1/2': 'w-1/3'">
-                <p class="uppercase font-semibold text-3xl">Status</p>
-                <p class="italic text-3xl pb-2">kollekt</p>
+                <p class="uppercase font-semibold text-3xl pb-2">Status</p>
                 <div class="h-48 w-full bg-black bg-opacity-25 rounded-xl text-4xl leading-tight text-center pt-12">
                     <div class="">
                         <p class="font-semibold">{{collected.toLocaleString('nb-NO')}}</p>
