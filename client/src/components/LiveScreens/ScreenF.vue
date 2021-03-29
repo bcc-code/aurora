@@ -1,7 +1,7 @@
 <template>
     <transition name="slide-up">
         <Information v-if="screen.options.component == ScreenFComponents.INFORMATION && screen.options.information && screen.options.information.information"
-            class="absolute ml-32 mb-20 bottom-0 w-4/6"
+            class="absolute ml-32 mb-20 left-0 bottom-0 w-4/6"
             :information="screen.options.information.information"
             showTitle  size="big"/>
         <template v-else-if="screen.options.component === ScreenFComponents.QUESTION && screen.options.question && screen.options.question.question">
