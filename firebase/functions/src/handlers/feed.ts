@@ -20,7 +20,6 @@ feedHandler.post("/incoming", jwtCheck, syncUserAndClaims, async (req, res) => {
   currentUser.churchName = churchDoc.data().name
   currentUser.countryName = churchDoc.data().country
   let feedEntry: FeedEntry = {
-    personId: currentUser.personId,
     firstName: currentUser.firstName || "",
     lastName: currentUser.lastName || "",
     displayName: currentUser.displayName || "",
@@ -29,7 +28,7 @@ feedHandler.post("/incoming", jwtCheck, syncUserAndClaims, async (req, res) => {
     text: req.body.text || "",
     imageUrl: req.body.imageUrl || ""
   }
-  await eventModel.feed.actions.submitFeedEntry(feedEntry)
+  await eventModel.feed.actions.submitFeedEntry(personId, feedEntry)
   return res.sendStatus(200);
 });
 

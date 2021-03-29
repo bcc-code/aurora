@@ -15,12 +15,14 @@ export class FeedModule extends Module {
     this.refs.feedIncoming = () => event.event().collection(n.feedIncoming);
     this.refs.feedApproved = () => event.event().collection(n.feedApproved);
 
-    this.actions.submitFeedEntry = async (feedEntry) => {
+    this.actions.submitFeedEntry = async (personId, feedEntry) => {
       feedEntry.date = Date.now()
       let feed: FirebaseFirestore.DocumentData;
       const eventDoc = await event.event().get()
       feed = this.refs.feedIncoming().doc();
-      await feed.set(feedEntry);
+      var entry = await feed.set(feedEntry);
+      var privateDoc = entry.collection("private").doc("person");
+      await privateDoc.set({personId});
     };
   }
 };

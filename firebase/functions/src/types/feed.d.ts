@@ -4,11 +4,10 @@ export interface FeedRefs {
 }
 
 export interface FeedActions {
-    submitFeedEntry? (input: FeedEntry): Promise<void>,
+    submitFeedEntry? (personId: number, input: FeedEntry): Promise<void>,
 }
 
 export interface FeedEntry {
-    personId: number,
     firstName: string,
     lastName: string,
     displayName: string,
