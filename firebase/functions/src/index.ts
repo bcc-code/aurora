@@ -3,7 +3,9 @@ import * as firebaseAdmin from "firebase-admin";
 
 import { config } from "./utils";
 import { app, checkin, feed, inquiry, poll, user, firebaseToken, competition, bukGames, deleteHandler } from "./handlers";
-import { generateResizedImage } from './middleware'
+import { generateResizedImage } from './middleware';
+import { logger } from './log';
+
 
 const firebaseApp = firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.cert(
@@ -12,10 +14,10 @@ const firebaseApp = firebaseAdmin.initializeApp({
   databaseURL: `https://${config.firebaseServiceAccount.projectId}.firebaseio.com`
 });
 
-console.log("Cloud functions initializing...");
-console.log("Functions config:", JSON.stringify(config));
+logger.info("Cloud functions initializing...");
+logger.debug("Functions config:", JSON.stringify(config));
 
-const exp = {
+export const exp = {
   app: functions
     .region("europe-west1", "us-central1")
     .https.onRequest(app),
@@ -51,6 +53,4 @@ const exp = {
     .https.onRequest(deleteHandler)
 };
 
-console.log("Ready.");
-
-module.exports = exp;
+logger.info("Ready.");

@@ -1,13 +1,13 @@
 import jwt from "express-jwt";
 import jwks from "jwks-rsa";
-
+import { logger } from "../log";
 import { config } from "../utils";
 
 export const jwtCheck = (req, res, next) => {
   // get audience header
   var audience = req.headers.audience;
   if (!audience) {
-    console.log(
+    logger.info(
       `audience header missing, falling back to '${config.auth0.clientId}`
     );
     audience = config.auth0.clientId;
@@ -25,7 +25,7 @@ export const jwtCheck = (req, res, next) => {
     algorithm: "RS256",
   })(req, res, (err) => {
     if (err) {
-      console.error(`Error in jwtCheck: ${err}`);
+      logger.error(`Error in jwtCheck: ${err}`);
       res
         .status(401)
         .json({

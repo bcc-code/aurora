@@ -22,6 +22,7 @@ import { spawn } from "child-process-promise";
 import * as os from "os";
 import * as path from "path";
 import { v4 as uuidv4 } from 'uuid';
+import { logger } from '../log';
 
 
 import { ObjectMetadata } from "firebase-functions/lib/providers/storage";
@@ -129,7 +130,7 @@ export const generateResizedImage = async (object, db): Promise<void> => {
         return;
       }
     } catch (err) {
-      console.log(err)
+      logger.log({"labels": {"function": "generateResizedImage"}}, err)
     } finally {
 
       if (originalFile) {

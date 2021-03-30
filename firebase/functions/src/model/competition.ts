@@ -12,7 +12,7 @@ export class CompetitionModel {
 
         this.refs = {};
         this.actions = {};
-        
+
         this.refs.competition = () => db.collection(n.competitions).doc(inputParams.competitionId);
         this.refs.entry = (personId) => this.refs.competition().collection(n.entries).doc(`${personId}`);
         this.refs.distanceShards = () => this.refs.competition().collection(n.distanceShards);

@@ -48,7 +48,7 @@ firebaseToken.get("/", jwtCheck, syncUserAndClaims, async (req: Request, res) =>
 		const userRole = await userModel.getters.role(req.user[n.claims.personId]);
 		return res.send({ firebaseToken, userRole });
 	} catch (err) {
-		console.error(err);
+    logger.error({labels: {function: '/'}, err});
 		return res.status(500).send({
 			message: "Something went wrong acquiring a Firebase token.",
 			error: err
@@ -76,7 +76,7 @@ firebaseToken.get("/callback", (req: Request, res, next) => {
 	})(req, res, next);
 });
 
-firebaseToken.post("/idtoken", async (req, res, next) => {
+firebaseToken.post("/idtoken", async (req, res, _) => {
 	try{
 		const result = await gaxios.request({
 			method: 'POST',
@@ -86,18 +86,21 @@ firebaseToken.post("/idtoken", async (req, res, next) => {
 				returnSecureToken: true
 			}
 		});
+
 		if (result.status == 200 && result.data.idToken) {
 			res.send({
 				idToken: result.data.idToken,
 				refreshToken: result.data.refreshToken,
 				expirationDate: Date.now() + parseInt(result.data.expiresIn) * 1000
 			});
+      return
 		}
+
 		res.status(500).send({
 			message: "Something went wrong acquiring an ID Token.",
 		});
 	} catch (e) {
-		console.log("idtoken throws: ", e);
+    logger.error({labels: {function: '/idtoken'}, e});
 		res.status(500).send({
 			message: "Something went wrong acquiring an ID Token.",
     });

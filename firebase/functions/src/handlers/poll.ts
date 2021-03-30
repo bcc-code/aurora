@@ -4,6 +4,7 @@ import { adminCheck, jwtCheck } from "../middleware";
 import { UserModel } from "../model/user";
 import { Request } from "../types";
 import { NextFunction, Response } from "express";
+import { logger } from '../log';
 var db = null;
 
 const pollHandler = handler();
@@ -24,7 +25,7 @@ pollHandler.post("/generate", jwtCheck, adminCheck, async (req: Request, res) =>
 
   await Promise.all(userDocs.map(async (userDoc) => {
 
-    console.log(`Generating poll responses for personId: ${userDoc.data().personId}`);
+    logger.info(`Generating poll responses for personId: ${userDoc.data().personId}`);
 
     await Promise.all(questions.docs.map(async (questionDoc) => {
 
@@ -38,7 +39,7 @@ pollHandler.post("/generate", jwtCheck, adminCheck, async (req: Request, res) =>
           const randomAnswerIndex = Math.floor(Math.random() * (answersForQuestion.length - 1));
           const randomAnswerDoc = answersForQuestion[randomAnswerIndex];
 
-          console.log(`generate poll response - personId: ${personId}: question '${questionDoc.id}' - answer '${randomAnswerDoc.id}'`)
+          logger.info(`generate poll response - personId: ${personId}: question '${questionDoc.id}' - answer '${randomAnswerDoc.id}'`)
           var result = await eventModel.poll.actions.setPollResponse(
             userDoc,
             questionDoc.id,

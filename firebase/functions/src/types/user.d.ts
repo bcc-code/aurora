@@ -1,4 +1,3 @@
-
 export interface IUser {
   personId: number;
   uid?: string;
@@ -23,11 +22,13 @@ export interface UserRefs {
   users? (): FirebaseFirestore.CollectionReference,
   user? (personId: number): FirebaseFirestore.DocumentReference
   permissions? (): FirebaseFirestore.CollectionReference
-} 
+}
+
 export interface UserGetters {
   isAdmin? (personId: number): Promise<boolean>,
   role? (personId: number): Promise<string>
 }
+
 export interface UserActions {
   createOrUpdate? (update: IUser): Promise<FirebaseFirestore.DocumentData>,
   syncUserAndClaims? (loggedInUser: any): any,

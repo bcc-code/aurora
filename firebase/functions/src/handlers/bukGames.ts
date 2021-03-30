@@ -1,8 +1,9 @@
 import { n, BukGameModel } from "../model/index";
 import handler from "./handler";
 import { jwtCheck } from "../middleware";
+import { firestore } from 'firebase-admin';
 
-var db = null;
+var db : firestore.Firestore | null = null;
 
 const bukGamesHandler = handler();
 bukGamesHandler.get("/rank", jwtCheck, async(req, res) => {

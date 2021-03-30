@@ -2,6 +2,7 @@ import * as firebaseAdmin from "firebase-admin";
 import { n, CompetitionModel } from "../model/index";
 
 import handler from "./handler";
+import { logger } from "../log";
 import { jwtCheck, syncUserAndClaims } from "../middleware";
 
 var db = null;
@@ -23,7 +24,7 @@ competitionHandler.post("/entry", jwtCheck, syncUserAndClaims, async (req, res) 
     return res.json(result);
   } catch (err) {
     const msg = `error - POST /competition/entry for user ID: ${personId}`;
-    console.error(msg, `message: ${err.message}`);
+    logger.error({"labels": {"function": "/competition/entry"}}, msg, `message: ${err.message}`);
     return res.status(500).send({ message: msg, error: err });
   }
 });
