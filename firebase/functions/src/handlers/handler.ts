@@ -2,6 +2,9 @@ import express from "express";
 import cors from "cors";
 import { Request } from "../types";
 import { NextFunction, Response } from "express";
+import { logger } from '../log';
+
+const log = logger('handlers/handler');
 
 export default () => {
     const handler = express();
@@ -16,6 +19,6 @@ export default () => {
 }
 
 export const ErrorHandler = (err: Error, _req: Request, res: Response, _next: NextFunction) => {
-    console.error(err.message);
+    log.error(err);
     return res.status(500).send({ message: err.message, error: err });
 }

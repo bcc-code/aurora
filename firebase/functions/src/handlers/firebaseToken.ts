@@ -7,6 +7,9 @@ import Auth0Strategy from "passport-auth0";
 import { jwtCheck, syncUserAndClaims } from "../middleware";
 import { n, UserModel} from "../model/index";
 import { Request } from "../types";
+import { logger } from './log';
+
+const log = logger('handler/firebaseToken');
 const gaxios = require('gaxios');
 
 const strategy = new Auth0Strategy(
@@ -48,7 +51,7 @@ firebaseToken.get("/", jwtCheck, syncUserAndClaims, async (req: Request, res) =>
 		const userRole = await userModel.getters.role(req.user[n.claims.personId]);
 		return res.send({ firebaseToken, userRole });
 	} catch (err) {
-		console.error(err);
+		log.error(err);
 		return res.status(500).send({
 			message: "Something went wrong acquiring a Firebase token.",
 			error: err
@@ -97,7 +100,7 @@ firebaseToken.post("/idtoken", async (req, res, next) => {
 			message: "Something went wrong acquiring an ID Token.",
 		});
 	} catch (e) {
-		console.log("idtoken throws: ", e);
+		log.log("idtoken throws: ", e);
 		res.status(500).send({
 			message: "Something went wrong acquiring an ID Token.",
     });

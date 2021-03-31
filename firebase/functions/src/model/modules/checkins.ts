@@ -4,7 +4,9 @@ import { CheckinActions, CheckinRefs } from "../../types/checkins";
 import { EventRefs } from "../../types/event";
 import { Module } from "./module";
 import { IUser } from "../../types/user";
+import { logger } from '../../log';
 
+const log = logger('index');
 
 interface CheckinDoc {
   personId: number;
@@ -86,7 +88,7 @@ export class CheckinModule extends Module {
       }
       else {
         const msg = `Could not get checkin status for personId ${personId}, non-existent user.`;
-        console.error(msg);
+        log.error(msg);
         return { message: msg, checkedIn: false };
       }
     };
