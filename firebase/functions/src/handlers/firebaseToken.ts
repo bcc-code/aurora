@@ -99,8 +99,9 @@ firebaseToken.post("/idtoken", async (req, res, next) => {
 		res.status(500).send({
 			message: "Something went wrong acquiring an ID Token.",
 		});
+    return
 	} catch (e) {
-		log.log("idtoken throws: ", e);
+		log.error("idtoken throws: ", e);
 		res.status(500).send({
 			message: "Something went wrong acquiring an ID Token.",
     });
