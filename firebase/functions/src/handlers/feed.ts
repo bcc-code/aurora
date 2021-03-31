@@ -3,7 +3,6 @@ import { jwtCheck, syncUserAndClaims } from "../middleware";
 import { n, EventModel, UserModel } from "../model/index";
 import { IUser } from "../types/user";
 import { FeedEntry } from "../types/feed";
-
 var db = null;
 
 const feedHandler = handler();

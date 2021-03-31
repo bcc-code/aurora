@@ -2,6 +2,9 @@ import * as firebaseAdmin from "firebase-admin";
 import equal from "fast-deep-equal";
 import { n } from "./index";
 import { IUser, UserActions, UserRefs, UserGetters } from "../types/user";
+import { logger } from '../log';
+
+const log = logger('model/user');
 
 export class UserModel {
   refs: UserRefs;
@@ -132,7 +135,7 @@ export class UserModel {
       }
 
       if (userChanged || guardiansChanged) {
-        console.log(`Saving changes to user ID: ${update.personId}`);
+        log.info(`Saving changes to user ID: ${update.personId}`);
         await localBatch.commit();
 
         var result = await userRef.get();
@@ -143,7 +146,7 @@ export class UserModel {
 
     // assumes user does not exist, if it did, the input will override the existing
     const createInternal = async (created: IUser) => {
-      console.log(
+      log.info(
         `Creating new user, ID: ${created.personId}, displayName: ${created.displayName}`
       );
       const localBatch = db.batch();
@@ -180,7 +183,7 @@ export class UserModel {
         const auth = firebaseAdmin.auth();
         return await auth.getUser(uid);
       } catch (error) {
-        console.error(`getUser('${uid}) - error: ${error.message}`);
+        log.error(`getUser('${uid})`, error);
         return null;
       }
     };
@@ -190,7 +193,7 @@ export class UserModel {
       const userDisplayName = user.displayName ?? `${user.firstName} ${user.lastName}`.trim();
 
       if (!firebaseUser) {
-        console.warn(`No user found for uid: ${user.uid}, creating user...`);
+        log.warn(`No user found for uid: ${user.uid}, creating user...`);
         try {
           firebaseUser = await firebaseAdmin.auth().createUser({
             uid: user.uid,
@@ -198,10 +201,10 @@ export class UserModel {
             displayName: userDisplayName,
           });
         } catch (error) {
-          console.error(`Error creating user ID: ${user.personId}, '${user.uid} - ${error.message}`);
+          log.error(`Error creating user ID: ${user.personId}, ${user.uid}`, error);
         }
       } else {
-        console.log(`Found user uid: ${firebaseUser.uid}, custom claims: ${JSON.stringify(firebaseUser.customClaims)}`);
+        log.info(`Found user uid: ${firebaseUser.uid}, custom claims: ${JSON.stringify(firebaseUser.customClaims)}`);
         if (firebaseUser.displayName != userDisplayName || firebaseUser.email != `${user.personId}@person.id`)
           firebaseUser = await firebaseAdmin.auth().updateUser(user.uid, {
             displayName: userDisplayName,
@@ -213,9 +216,9 @@ export class UserModel {
         // need to update custom claims
         try {
           await firebaseAdmin.auth().setCustomUserClaims(user.uid, customClaims);
-          console.log(`Updated claims for uid ${user.uid} to: ${JSON.stringify(customClaims)}`);
+          log.info (`Updated claims for uid ${user.uid} to: ${JSON.stringify(customClaims)}`);
         } catch (error) {
-          console.error(`Error attempting to update user claims for user ID ${user.personId}, '${user.uid} - ${error.message}`);
+          log.error(`Error attempting to update user claims for user ID ${user.personId}, '${user.uid} - ${error.message}`);
         }
       }
       return customClaims;
@@ -224,22 +227,22 @@ export class UserModel {
     this.actions.syncUserAndClaims = async (loggedInUser) => {
       if (!loggedInUser) {
         const msg = "Could not create user, req.user not set.";
-        console.error(msg);
+        log.error(msg);
         throw new Error(msg);
       }
       if (!loggedInUser[n.claims.personId]) {
         const msg = "Could not create user, req.user missing PersonID";
-        console.error(msg);
+        log.error(msg);
         throw new Error(msg);
       }
       if (!loggedInUser[n.claims.uid]) {
         const msg = "Could not create user, req.user missing uid";
-        console.error(msg);
+        log.error(msg);
         throw new Error(msg);
       }
       if (!loggedInUser[n.claims.uid].startsWith("auth0|")) {
         const msg = `User ID: ${loggedInUser[n.claims.personId]}: ${loggedInUser[n.claims.uid]}`;
-        console.error(msg);
+        log.error(msg);
         throw new Error(msg);
       }
 

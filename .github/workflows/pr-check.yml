@@ -1,0 +1,40 @@
+name: Test build
+
+on: [ pull_request ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      ENV: DEV
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Copy firebase config file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "firebase/functions/src/configs/config.json.template"
+        target: "firebase/functions/src/configs/config.json"
+    - name: Copy firebase-key file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "firebase/functions/firebase-key.json.template"
+        target: "firebase/functions/firebase-key.json"
+    - name: Copy client config file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "client/src/configs/config.json.template"
+        target: "client/src/configs/config.json"
+    - name: npm install and build (client)
+      working-directory: ./client
+      run: |
+        npm ci
+        npm run build
+    - name: npm install and build (functions)
+      working-directory: ./firebase/functions
+      run: |
+        npm ci
+        npm run build

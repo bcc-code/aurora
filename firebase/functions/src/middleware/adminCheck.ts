@@ -2,6 +2,9 @@ import * as firebaseAdmin from "firebase-admin";
 import { Request } from "../types";
 import { Response, NextFunction} from "express";
 import { n, UserModel } from "../model";
+import { logger } from '../log';
+
+const log = logger('adminCheck');
 
 export const adminCheck = (req: Request, res: Response, next: NextFunction) => {
     const userModel = new UserModel(firebaseAdmin.firestore());
@@ -10,7 +13,7 @@ export const adminCheck = (req: Request, res: Response, next: NextFunction) => {
         if (!userModel.getters.isAdmin(personId)) return res.status(403);
     } catch (error) {
         const msg = `Error occurred while checkin admin role for: ${personId}.`;
-        console.error(msg, error.message);
+        log.error(msg, error.message);
         return res.status(500).send({ message: msg, error: error }).end();
     }
     if (typeof next === "function") {

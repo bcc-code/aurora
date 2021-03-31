@@ -1,5 +1,8 @@
 import { CompetitionActions, CompetitionRefs, CompetitionUpdate } from "../types/competition";
 import { n } from "./index"
+import { logger } from '../log';
+
+const log = logger('models/competition');
 
 export class CompetitionModel {
     refs: CompetitionRefs;
@@ -12,7 +15,7 @@ export class CompetitionModel {
 
         this.refs = {};
         this.actions = {};
-        
+
         this.refs.competition = () => db.collection(n.competitions).doc(inputParams.competitionId);
         this.refs.entry = (personId) => this.refs.competition().collection(n.entries).doc(`${personId}`);
         this.refs.distanceShards = () => this.refs.competition().collection(n.distanceShards);
@@ -23,11 +26,11 @@ export class CompetitionModel {
 
         this.actions.updateEntry = async (personId, distance, overrideMax = 0) => {
 
-            console.log(`POST /competition/entry?competitionId=${inputParams.competitionId}, personId: ${personId}, distance: ${distance}, overrideMax: ${overrideMax}`)
+            log.debug(`POST /competition/entry?competitionId=${inputParams.competitionId}, personId: ${personId}, distance: ${distance}, overrideMax: ${overrideMax}`)
 
             var entryDoc = await this.refs.entry(personId).get();
 
-            console.log(`entryDoc for personId: ${personId} exists: ${entryDoc.exists}`)
+            log.info(`entryDoc for personId: ${personId} exists: ${entryDoc.exists}`)
 
             // TODO: add check on user if overrideMax > 0
             const calculatedMaxDistance = (overrideMax > MAX_DISTANCE) ? overrideMax : MAX_DISTANCE;
@@ -44,7 +47,7 @@ export class CompetitionModel {
 
                 // ensure distancePerChurch doc exists
                 var userRef = this.refs.user(personId);
-                console.log(`userRef: ${userRef.toString()}`);
+                log.debug(`userRef: ${userRef.toString()}`);
 
                 var userDoc = await userRef.get();
                 if (!userDoc.exists) {
@@ -59,11 +62,11 @@ export class CompetitionModel {
                     var distancePerChurchDoc = await this.refs.distancePerChurch(userData.churchId).get();
 
                     if (!distancePerChurchDoc.exists) {
-                        console.log(`Initializing distancePerChurch doc for churchId ${userData.churchId}`);
+                        log.info(`Initializing distancePerChurch doc for churchId ${userData.churchId}`);
                         await this.refs.distancePerChurch(userData.churchId).set({ distance: 0 });
                     }
                 } else {
-                    console.error(`PersonId ${personId} is missing churchId. User: ${JSON.stringify(userData)}`);
+                    log.error(`PersonId ${personId} is missing churchId. User: ${JSON.stringify(userData)}`);
                 }
             }
 
@@ -78,7 +81,7 @@ export class CompetitionModel {
             update.distance += distanceDelta;
             update.distanceToBeApproved += distanceToBeApprovedDelta;
 
-            console.log(`Updating competition entry for personId: ${personId} /` +
+            log.info(`Updating competition entry for personId: ${personId} /` +
                 `update.distance: ${update.distance} /` +
                 `update.distanceToBeApproved: ${update.distanceToBeApproved} /` +
                 `distanceDelta: ${distanceDelta} /` +
