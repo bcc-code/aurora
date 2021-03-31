@@ -23,8 +23,10 @@ import * as os from "os";
 import * as path from "path";
 import { v4 as uuidv4 } from 'uuid';
 
-
 import { ObjectMetadata } from "firebase-functions/lib/providers/storage";
+import { logger } from '../log';
+
+const log = logger('generateThumbnails');
 
 interface ResizedImageResult {
   size: string;
@@ -129,7 +131,7 @@ export const generateResizedImage = async (object, db): Promise<void> => {
         return;
       }
     } catch (err) {
-      console.log(err)
+      log.error(err)
     } finally {
 
       if (originalFile) {
