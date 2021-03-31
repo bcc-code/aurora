@@ -61,7 +61,9 @@ export default {
                 { code: 'pt', name: 'Português' },
                 { code: 'ru', name: 'Pусский' },
                 { code: 'sl', name: 'Slovenščina' },
-                { code: 'tr', name: 'Türkçe' }]
+                { code: 'tr', name: 'Türkçe' },
+                { code: 'ro', name: 'Română' },
+                { code: 'it', name: 'Italiano' }]
         }
     },
     created: function(){
