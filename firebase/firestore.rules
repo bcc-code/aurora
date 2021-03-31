@@ -16,6 +16,17 @@ service cloud.firestore {
     function isLoggedIn() {
       return request.auth != null;
     }
+    
+    function fieldsExist(required, optional) {
+      let allAllowedFields = required;
+      if (optional) allAllowedFields = required.concat(optional);
+      return request.resource.data.keys().hasAll(required) &&
+        request.resource.data.keys().hasOnly(allAllowedFields);
+    }
+
+    function isUpdatingFields(fields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
+    }
 
     match /user-groups/bcc {
       allow read: if true;
@@ -61,8 +72,11 @@ service cloud.firestore {
       allow get: if isLoggedIn();
 
       match /checkins/{checkinId} {
-        allow create: if isLoggedIn();
-        allow get, update: if isPerson(checkinId);
+        allow create: if fieldsExist(['checkedInBy', 'coords', 'personId', 'timestamp'])
+        && isPerson(request.resource.data.checkedInBy)
+        && request.resource.data.personId == checkinId;
+        allow update: if (isPerson(checkinId) || isPerson(resource.data.checkedInBy)) && !isUpdatingFields(['personId', 'checkedInBy']);
+        allow get: if isPerson(checkinId) || isPerson(resource.data.checkedInBy);
         allow list: if isServiceAccount();
         allow list, delete: if isAdmin();
       }
@@ -90,8 +104,7 @@ service cloud.firestore {
         allow list: if isServiceAccount() || isLoggedIn();
       }
       match /responses/{responseId=**} {
-        allow read: if isServiceAccount();
-        allow read: if isLoggedIn();
+        allow read: if isServiceAccount() || isPerson(resource.data.personId);
       }
       match /screens/{screenId=**} {
         allow read, write: if isServiceAccount();
