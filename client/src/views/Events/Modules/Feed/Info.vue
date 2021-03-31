@@ -59,7 +59,7 @@ export default {
     computed: {
         ...mapState('contributions', ['desk']),
         AllowedTypes(){
-            return [ContributionTypes.DEFAULT, ContributionTypes.INFORMATION, ContributionTypes.QUOTE]; //, ContributionTypes.BIBLEVERSE];
+            return [ContributionTypes.DEFAULT, ContributionTypes.INFORMATION, ContributionTypes.QUOTE, ContributionTypes.BIBLEVERSE];
         },
         ContributionTypes(){
             return ContributionTypes
