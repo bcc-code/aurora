@@ -35,7 +35,7 @@ export default {
             return background.image ?
                 { backgroundImage: `url(${background.image})` }
                 : background.gradient && background.gradient.from && background.gradient.to ?
-                { background: `linear-gradient(270deg, ${background.gradient.from} 0%, ${background.gradient.to} 100%)` }
+                { background: `linear-gradient(90deg, ${background.gradient.from} 0%, ${background.gradient.to} 100%)` }
                 : { background: '#1D2838'}
         },
         hasDescription() {
