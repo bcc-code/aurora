@@ -3,6 +3,9 @@ import { n, CompetitionModel } from "../model/index";
 
 import handler from "./handler";
 import { jwtCheck, syncUserAndClaims } from "../middleware";
+import { logger } from '../log';
+
+const log = logger('competition');
 
 var db = null;
 
@@ -23,7 +26,7 @@ competitionHandler.post("/entry", jwtCheck, syncUserAndClaims, async (req, res) 
     return res.json(result);
   } catch (err) {
     const msg = `error - POST /competition/entry for user ID: ${personId}`;
-    console.error(msg, `message: ${err.message}`);
+    log.error(msg, err);
     return res.status(500).send({ message: msg, error: err });
   }
 });

@@ -1,7 +1,9 @@
 import { n, BukGameModel } from "../model/index";
 import handler from "./handler";
 import { jwtCheck } from "../middleware";
+import { logger } from '../log';
 
+const log = logger('bukGamesHandler');
 var db = null;
 
 const bukGamesHandler = handler();
@@ -92,7 +94,7 @@ bukGamesHandler.post("/entry", jwtCheck, async (req, res) => {
     return res.json(result);
   } catch (err) {
     const msg = `error - POST /buk-games/entry for user ID: ${personId}`;
-    console.error(msg, `message: ${err.message}`);
+    log.error(msg, err);
     return res.status(500).send({ message: msg, error: err });
   }
 });

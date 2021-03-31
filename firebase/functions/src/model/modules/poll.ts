@@ -6,6 +6,9 @@ import { isNumber } from 'lodash';
 import { PollRefs, PollActions } from "../../types/poll";
 import { Module } from "./module";
 import { EventRefs } from "../../types/event";
+import { logger } from '../../log';
+
+const log = logger('model/modules/poll');
 
 export class PollModule extends Module {
   refs: PollRefs;
@@ -223,17 +226,17 @@ export class PollModule extends Module {
         shardData = shards[i].data();
         const [questionId, answerId, shardId] = shards[i].id.split('_');
         if (questionId == null || answerId == null) {
-          console.error(`Shard '${shards[i].id}' has an error, skipping.`);
+          log.error(`Shard '${shards[i].id}' has an error, skipping.`);
           continue;
         }
         const answersForQuestion = answers[questionId];
         if (answersForQuestion == null) {
-          console.error(`Shard '${shards[i].id}' has an error, skipping.`);
+          log.error(`Shard '${shards[i].id}' has an error, skipping.`);
           continue;
         }
         const answer = answersForQuestion.find(a => a.id == answerId);
         if (answer == null) {
-          console.error(`Shard '${shards[i].id}' has an error, skipping.`);
+          log.error(`Shard '${shards[i].id}' has an error, skipping.`);
           continue;
         }
 
@@ -275,7 +278,7 @@ export class PollModule extends Module {
         var question = await this.refs.question(currentQuestionId).get();
 
         if (!question.exists) {
-          console.error(`questionId '${currentQuestionId} does not exist`);
+          log.error(`questionId '${currentQuestionId} does not exist`);
         } else {
 
           var answerList = await this.refs.answers(currentQuestionId).get();
