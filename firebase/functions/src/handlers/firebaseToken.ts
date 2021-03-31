@@ -7,7 +7,7 @@ import Auth0Strategy from "passport-auth0";
 import { jwtCheck, syncUserAndClaims } from "../middleware";
 import { n, UserModel} from "../model/index";
 import { Request } from "../types";
-import { logger } from './log';
+import { logger } from '../log';
 
 const log = logger('handler/firebaseToken');
 const gaxios = require('gaxios');

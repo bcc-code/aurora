@@ -4,7 +4,7 @@ import { adminCheck, jwtCheck } from "../middleware";
 import { UserModel } from "../model/user";
 import { Request } from "../types";
 import { NextFunction, Response } from "express";
-import { logger } from './log';
+import { logger } from '../log';
 
 const log = logger('pollHandler');
 var db = null;
