@@ -10,13 +10,6 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-async function moveCollection(oldCollectionRef, newCollectionRef) {
-    const snapshot  = await oldCollectionRef.get();
-    await Promise.all(snapshot.docs.map(async (doc) => {
-        await newCollectionRef.doc(doc.id).set(doc.data())
-    }));
-}
-
 async function deleteLocationData() {
     (await db.collection('events').listDocuments()).map(async (doc) => {
         (await doc.collection('checkins').listDocuments()).map(async (doc) => {
