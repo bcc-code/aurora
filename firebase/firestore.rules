@@ -16,10 +16,9 @@ service cloud.firestore {
     function isLoggedIn() {
       return request.auth != null;
     }
-    
-    function fieldsExist(required, optional) {
+
+    function fieldsExist(required) {
       let allAllowedFields = required;
-      if (optional) allAllowedFields = required.concat(optional);
       return request.resource.data.keys().hasAll(required) &&
         request.resource.data.keys().hasOnly(allAllowedFields);
     }
