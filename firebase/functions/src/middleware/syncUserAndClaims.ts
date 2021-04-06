@@ -26,7 +26,8 @@ export const syncUserAndClaims = async (req, res, next) => {
     log.error(msg, error.message);
     return res.status(500).send({ message: msg, error: error }).end();
   }
+
   if (typeof next === "function") {
-    next();
+    return next();
   }
 };

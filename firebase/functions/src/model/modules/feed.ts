@@ -8,7 +8,7 @@ export class FeedModule extends Module {
 
   constructor (event: EventRefs) {
     super(event)
-    
+
     this.refs = {};
     this.actions = {};
 
@@ -17,11 +17,9 @@ export class FeedModule extends Module {
 
     this.actions.submitFeedEntry = async (personId, feedEntry) => {
       feedEntry.date = Date.now()
-      let feed: FirebaseFirestore.DocumentData;
-      const eventDoc = await event.event().get()
-      feed = this.refs.feedIncoming().doc();
-      var entry = await feed.set(feedEntry);
-      var privateDoc = entry.collection("private").doc("person");
+      const newFeedDoc = this.refs.feedIncoming().doc()
+      await newFeedDoc.set(feedEntry);
+      var privateDoc = newFeedDoc.collection("private").doc("person");
       await privateDoc.set({personId});
     };
   }
