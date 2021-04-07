@@ -43,7 +43,7 @@ service cloud.firestore {
     }
 
     match /churches/{churchId} {
-      allow read: if isLoggedIn();
+      allow read: if isServiceAccounisLoggedInt();
     }
 
     match /competitions/{competitionId=**} {
