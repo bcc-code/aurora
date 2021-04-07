@@ -6,7 +6,7 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return exists(/databases/$(database)/documents/user-groups/bcc/permissions/$(request.auth.token.personId));
+      return exists(/databases/$(database)/documents/permissions/$(request.auth.token.personId));
     }
 
     function isPerson(personId) {
@@ -62,10 +62,6 @@ service cloud.firestore {
       allow read: if isServiceAccount();
     }
 
-    match /event-groups/{egId=**} {
-      allow read: if isServiceAccount();
-    }
-
     match /events/{eventId} {
 
       allow get: if isLoggedIn();
@@ -98,7 +94,14 @@ service cloud.firestore {
       match /feed-approved/{feedItemId=**} {
         allow read: if isServiceAccount();
       }
-      match /feed-outgoing/{feedItemId=**} {
+      match /feed-outgoing/{feedItemId} {
+
+        match /private/{doc} {
+            // There is techincally no reason for the person to read back their own id either
+            // we just need to keep it as a reference
+            allow read: if false;
+        }
+
         allow read: if isServiceAccount() || isLoggedIn();
         allow list: if isServiceAccount() || isLoggedIn();
       }
