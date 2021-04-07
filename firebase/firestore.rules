@@ -67,10 +67,6 @@ service cloud.firestore {
       allow get: if isLoggedIn();
 
       match /checkins/{checkinId} {
-        allow create: if fieldsExist(['checkedInBy', 'coords', 'personId', 'timestamp'])
-        && isPerson(request.resource.data.checkedInBy)
-        && request.resource.data.personId == checkinId;
-        allow update: if (isPerson(checkinId) || isPerson(resource.data.checkedInBy)) && !isUpdatingFields(['personId', 'checkedInBy']);
         allow get: if isPerson(checkinId) || isPerson(resource.data.checkedInBy);
         allow list: if isServiceAccount();
         allow list, delete: if isAdmin();
