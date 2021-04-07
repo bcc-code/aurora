@@ -51,7 +51,7 @@ service cloud.firestore {
     }
 
     match /buk-games/{bukGameId=**} {
-      allow read: if isLoggedIn();
+      allow read: if isServiceAccount();
     }
 
     match /configs/{configId=**} {
@@ -84,14 +84,15 @@ service cloud.firestore {
       match /questions/{questionId=**} {
         allow read: if isLoggedIn();
       }
+
       match /inquiries-queue/{feedItemId=**} {
         allow read: if isServiceAccount();
       }
       match /feed-approved/{feedItemId=**} {
         allow read: if isServiceAccount();
       }
-      match /feed-outgoing/{feedItemId} {
 
+      match /feed-outgoing/{feedItemId} {
         match /private/{doc} {
             // There is techincally no reason for the person to read back their own id either
             // we just need to keep it as a reference
