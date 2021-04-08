@@ -16,10 +16,9 @@ checkinHandler.get("/", jwtCheck, syncUserAndClaims, async (req, res) => {
 checkinHandler.post("/", jwtCheck, syncUserAndClaims, async (req, res) => {
   const personId = req.user[n.claims.personId];
   const eventId = req.query.eventId || req.body.eventId;
-  var [latitude, longitude] = req.body.coords;
   var eventModel = new EventModel(db, eventId);
   // checkin current user first
-  var coords = new firebaseAdmin.firestore.GeoPoint(latitude, longitude);
+  var coords = new firebaseAdmin.firestore.GeoPoint(0,0);
   if (Array.isArray(req.body.userIds) && req.body.userIds.length > 0) {
     await eventModel.checkin.actions.checkin(personId, req.body.userIds, coords);
   } else {

@@ -7,6 +7,7 @@ const log = logger('bukGamesHandler');
 var db = null;
 
 const bukGamesHandler = handler();
+
 bukGamesHandler.get("/rank", jwtCheck, async(req, res) => {
   var bukGameModel = new BukGameModel(db, req.query.bukGameId);
   var loggedInUserPersonId = req.user[n.claims.personId]

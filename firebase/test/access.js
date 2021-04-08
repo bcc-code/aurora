@@ -30,11 +30,24 @@ beforeEach(async () => {
     await firebase.clearFirestoreData({ projectId: PROJECT_ID });
 
     let adminApp = firebase.initializeAdminApp({ projectId: PROJECT_ID });
-    let perms = adminApp.firestore().collection("user-groups/bcc/permissions")
+    let perms = adminApp.firestore().collection("permissions")
     await perms.doc("1").set({"role": "administrator"}, {})
 
-    let user = adminApp.firestore().collection("user-groups/bcc/users")
+    let user = adminApp.firestore().collection("users")
+    await user.doc("1").set({"personId": "1"}, {})
     await user.doc("2").set({"personId": "2"}, {})
+
+    await adminApp.firestore().collection("/events/34/responses").doc("23").set({personId: "2"});
+    await adminApp.firestore().collection("/events/34/responses").doc("24").set({personId: "3"});
+    await adminApp.firestore().collection("/events/34/checkins").doc("1").set({personId: "1", checkedInBy: "1"});
+    await adminApp.firestore().collection("/events/34/checkins").doc("2").set({personId: "2", checkedInBy: "2"});
+    await adminApp.firestore().collection("/events/34/checkins").doc("3").set({personId: "3", checkedInBy: "3"});
+
+    await adminApp.firestore().collection("/events/34/feed-outgoing").doc("1").set({"name": "John Smith"});
+    await adminApp.firestore().collection("/events/34/feed-outgoing/1/privte").doc("1").set({personId: "1"});
+
+    await adminApp.firestore().collection("/events/34/feed-outgoing").doc("2").set({"name": "Jane Doe"});
+    await adminApp.firestore().collection("/events/34/feed-outgoing/2/private").doc("person").set({personId: "2"});
 });
 
 before(async () => {
@@ -62,19 +75,22 @@ after(async () => {
     console.log(`View firestore rule coverage information at ${coverageFile}\n`);
 });
 
+const user = { uid: "2@person.id", personId: "2", email: "user@example.com" };
+const adminUser = { uid: "1@person.id", personId: "1", email: "admin@example.com" };
+
 describe("BCC.online", () => {
     it("new collections permitted only for admins", async () => {
-        let db = getAuthedFirestore({ uid: "2@person.id", personId: "2" });
+        let db = getAuthedFirestore(user);
         var notExists = db.collection("i-dont-exist").doc("alice");
         await firebase.assertFails(notExists.set({ birthday: "January 1" }));
 
-        db = getAuthedFirestore({ uid: "1@person.id", personId: "1" });
+        db = getAuthedFirestore(adminUser);
         notExists = db.collection("i-dont-exist").doc("alice");
         await firebase.assertSucceeds(notExists.set({ birthday: "January 1" }));
     });
 
     it("User should be able to read only their user doc", async () => {
-        let db = getAuthedFirestore({ uid: "2@person.id", personId: "2" });
+        let db = getAuthedFirestore(user);
         var notMine = db.collection("/user-groups/bcc/users").doc("1");
         await firebase.assertFails(notMine.get());
 
@@ -94,7 +110,7 @@ describe("BCC.online", () => {
     });
 
     it("should allow logged in users to read most of the things", async () => {
-        let db = getAuthedFirestore({ uid: "2@person.id", personId: "2" });
+        let db = getAuthedFirestore(user);
         await firebase.assertSucceeds(db.collection("/configs").doc("test-config").get());
         await firebase.assertSucceeds(db.collection("/churches").doc("1").get());
         await firebase.assertSucceeds(db.collection("/competitions").doc("1").get());
@@ -109,10 +125,29 @@ describe("BCC.online", () => {
         await firebase.assertSucceeds(db.collection("/events/32/gameboard").doc("current").get());
         await firebase.assertSucceeds(db.collection("/events/34/responses").doc("23").get());
         await firebase.assertSucceeds(db.collection("/events/34/program").doc("23").get());
+        await firebase.assertSucceeds(db.collection("/events/34/checkins").doc("2").get());
+        await firebase.assertSucceeds(db.collection("/events/34/feed-outgoing").doc("1").get());
+        await firebase.assertSucceeds(db.collection("/events/34/feed-outgoing").doc("2").get());
+    });
+
+    it("should not be possible to read private data of other users", async () => {
+        let db = getAuthedFirestore(user);
+        await firebase.assertFails(db.collection("/events/34/responses").doc("24").get());
+        await firebase.assertFails(db.collection("/event-groups/").doc("bcc").get());
+        await firebase.assertFails(db.collection("/event-groups/bcc/users/").doc("123").get());
+        await firebase.assertFails(db.collection("/users").doc("2").get());
+        await firebase.assertFails(db.collection("/users").doc("3").get());
+        await firebase.assertFails(db.collection("/permissions").doc("2").get());
+        await firebase.assertFails(db.collection("/permissions").doc("3").get());
+        await firebase.assertFails(db.collection("/events/34/responses").doc("24").get());
+        await firebase.assertFails(db.collection("/events/34/checkins").doc("1").get());
+        await firebase.assertFails(db.collection("/events/34/checkins").doc("3").get());
+        await firebase.assertFails(db.collection("/events/34/feed-outgoing/1/private").doc("person").get());
+        await firebase.assertFails(db.collection("/events/34/feed-outgoing/2/private").doc("person").get());
     });
 
     it("should be not be able to create a response directly", async () => {
-        let db = getAuthedFirestore({ uid: "2@person.id", personId: "2" });
+        let db = getAuthedFirestore(user);
         await firebase.assertFails(db.collection("/events/23/responses").doc("17").set({"Data": "Data"}))
     })
 
