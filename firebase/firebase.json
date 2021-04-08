@@ -28,20 +28,8 @@
         "function": "bukGames"
       },
       {
-        "source": "!/config/**",
-        "destination": "/index.html"
-      },
-      {
-        "source": "!/@(js|css)/**",
-        "destination": "/index.html"
-      },
-      {
-        "source": "/",
+        "source": "/app",
         "function": "app"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
       }
     ],
     "ignore": [

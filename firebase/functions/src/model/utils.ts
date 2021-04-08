@@ -1,4 +1,7 @@
+import {Request} from 'express';
+import { n } from "../model/constants";
 import _ from 'lodash';
+import {Dictionary} from "lodash";
 
 export const asyncForEach = async (array, callback) => {
   for (let index = 0; index < array.length; index++) {
@@ -81,4 +84,16 @@ export const sumDeep = (a, b) => {
       console.error(error.message);
     }
   })
+}
+
+export const getPersonId = (req : Request) : number | null => {
+  let personId = null;
+  if (req.user && n.claims.personId in req.user) {
+    let user = req.user as Dictionary<string>
+    personId = +user[n.claims.personId];
+    if (personId <= 0) {
+      personId = null;
+    }
+  }
+  return personId;
 }

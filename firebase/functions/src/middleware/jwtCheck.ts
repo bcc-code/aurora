@@ -1,11 +1,13 @@
 import jwt from "express-jwt";
 import jwks from "jwks-rsa";
-import { config } from "../utils";
+import { NextFunction, Request, Response } from "express"
+import  config from "../configs/config.json";
 import { logger } from '../log';
+import {express} from "@google-cloud/logging-bunyan";
 
 const log = logger('jwtCheck');
 
-export const jwtCheck = (req, res, next) => {
+export const jwtCheck = (req : Request, res : Response, next : NextFunction) => {
   // get audience header
   var audience = req.headers.audience;
   if (!audience) {
@@ -14,6 +16,8 @@ export const jwtCheck = (req, res, next) => {
     );
     audience = config.auth0.clientId;
   }
+  console.log(config.auth0);
+  console.log(`https://${config.auth0.domain}/.well-known/jwks.json`);
 
   jwt({
     secret: jwks.expressJwtSecret({
@@ -28,14 +32,14 @@ export const jwtCheck = (req, res, next) => {
   })(req, res, (err) => {
     if (err) {
       log.error(`Error in jwtCheck: ${err}`);
-      res
-        .status(401)
+      res.status(401)
         .json({
           error: err,
         })
         .end();
       return;
     }
+
     if (next) {
       next();
     }

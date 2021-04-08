@@ -1,11 +1,8 @@
 import firebaseTools from 'firebase-tools';
-import handler from './handler'
-import { Request } from "../types"
-import { jwtCheck, adminCheck } from "../middleware";
+import { Request, Response } from "express";
 import { logger } from '../log';
 
 const log = logger('handler/delete');
-const deleteHandler = handler();
 
 const recursiveDelete = async (path: string) => {
     return await firebaseTools.firestore
@@ -15,7 +12,8 @@ const recursiveDelete = async (path: string) => {
         yes: true
     });
 }
-deleteHandler.post("/event/:event/question/:questionId", jwtCheck, adminCheck, async function (req: Request, res, next) {
+
+export async function deleteQuestion(req : Request, res : Response) {
     try {
         const { event, questionId } = req.params;
         await recursiveDelete(`events/${event}/questions/${questionId}`)
@@ -27,9 +25,9 @@ deleteHandler.post("/event/:event/question/:questionId", jwtCheck, adminCheck, a
             error: err,
         });
     }
-});
+};
 
-deleteHandler.post("/event/:event", jwtCheck, adminCheck, async function (req: Request, res, next) {
+export async function deleteEvent(req : Request, res : Response) {
     try {
         const { event } = req.params;
         await recursiveDelete(`events/${event}`)
@@ -41,6 +39,5 @@ deleteHandler.post("/event/:event", jwtCheck, adminCheck, async function (req: R
             error: err,
         });
     }
-});
+};
 
-export { deleteHandler };

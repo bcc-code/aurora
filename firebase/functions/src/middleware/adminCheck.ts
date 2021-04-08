@@ -1,14 +1,20 @@
 import * as firebaseAdmin from "firebase-admin";
 import { Request } from "../types";
 import { Response, NextFunction} from "express";
-import { n, UserModel } from "../model";
+import { UserModel } from "../model";
 import { logger } from '../log';
+import {getPersonId} from "../model/utils";
 
 const log = logger('adminCheck');
 
 export const adminCheck = (req: Request, res: Response, next: NextFunction) => {
     const userModel = new UserModel(firebaseAdmin.firestore());
-    const personId = req.user[n.claims.personId] || null;
+    let personId = getPersonId(req);
+
+    if (!personId) {
+      return next("PersonId not present");
+    }
+
     try {
         if (!userModel.getters.isAdmin(personId)) return res.status(403);
     } catch (error) {
@@ -16,7 +22,6 @@ export const adminCheck = (req: Request, res: Response, next: NextFunction) => {
         log.error(msg, error.message);
         return res.status(500).send({ message: msg, error: error }).end();
     }
-    if (typeof next === "function") {
-        next();
-    }
+
+    next();
 };

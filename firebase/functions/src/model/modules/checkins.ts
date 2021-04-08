@@ -19,8 +19,8 @@ export class CheckinStatus {
   canCheckin: boolean;
   checkedIn: boolean;
   personId: number;
-  firstName: string;
-  lastName: string;
+  firstName: string | null;
+  lastName: string | null;
   profilePicture: string;
   age: number;
   linkedUsers?: Array<any>;
