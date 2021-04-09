@@ -1,29 +1,25 @@
-import { n, UserModel } from "../model/index";
+import { UserModel } from "../model/index";
+import {firestore} from "firebase-admin";
+import { Request, Response } from "express";
+import {getPersonId} from "../model/utils";
 
-import handler, { ErrorHandler } from "./handler";
-import { jwtCheck, syncUserAndClaims } from "../middleware";
-import { IUser } from "../types/user";
-import { config } from '../utils';
 
-var db = null;
+export async function updateProfileImage(db : firestore.Firestore, req : Request, res : Response) : Promise<void>{
+  let userModel = new UserModel(db);
+  let personId = getPersonId(req);
+  if (!personId) {
+    return res.sendStatus(404).end();
+  }
+  await userModel.actions.updateProfileImageUrl(personId, req.body.url, req.body.thumbnailUrl);
+  return res.sendStatus(200).end();
+};
 
-const userProfileHandler = handler();
-
-userProfileHandler.post("/profileImage", jwtCheck, syncUserAndClaims, async (req, res) => {
-  var userModel = new UserModel(db);
-  await userModel.actions.updateProfileImageUrl(req.user[n.claims.personId], req.body.url, req.body.thumbnailUrl);
-  return res.sendStatus(200);
-});
-
-userProfileHandler.get("/profileImage", jwtCheck, syncUserAndClaims, async (req, res) => {
-  var userModel = new UserModel(db);
-  const profileImageUrl = (await userModel.refs.user(req.user[n.claims.personId]).get()).data().profilePicture
-  return res.status(200).send({ profilePictureUrl: profileImageUrl});
-});
-
-userProfileHandler.use(ErrorHandler)
-
-export default (firebaseDb: any) => {
-  db = firebaseDb;
-  return userProfileHandler;
+export async function getProfileImage(db : firestore.Firestore, req : Request, res : Response) : Promise<void>{
+  let userModel = new UserModel(db);
+  let personId = getPersonId(req);
+  if (!personId) {
+    return res.sendStatus(404).end();
+  }
+  const profileImageUrl = (await userModel.refs.user(personId).get()).data().profilePicture
+  return res.status(200).send({ profilePictureUrl: profileImageUrl}).end();
 };

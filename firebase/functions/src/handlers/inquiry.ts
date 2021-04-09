@@ -3,17 +3,16 @@ import { jwtCheck, syncUserAndClaims } from "../middleware";
 import { n, EventModel, UserModel } from "../model/index";
 import { Inquiry } from "../model/modules/inquiries";
 import { IUser } from "../types/user";
+import {firestore} from "firebase-admin";
+import { Request, Response } from "express";
 
-var db = null;
-
-const feedHandler = handler();
-
-feedHandler.post("/submit", jwtCheck, syncUserAndClaims, async (req, res) => {
-  var eventModel = new EventModel(db, req.query.eventId);
-  var userModel = new UserModel(db);
+export async function newInquiry(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
+  const eventModel = new EventModel(db, req.query.eventId);
+  const userModel = new UserModel(db);
   const currentUserObj = await userModel.refs.user(req.user[n.claims.personId]).get();
-  if (!currentUserObj.exists)
-    return res.status(400).send({ message: "User does not exist" })
+  if (!currentUserObj.exists) {
+    return res.status(400).send({ message: "User does not exist" }).end()
+  }
   const currentUser = currentUserObj.data() as IUser;
   let newInquiry: Inquiry = {
     personId: currentUser.personId,
@@ -26,12 +25,5 @@ feedHandler.post("/submit", jwtCheck, syncUserAndClaims, async (req, res) => {
     date: Date.now()
   }
   await eventModel.inquiries.actions.submitInquiry(newInquiry);
-  return res.sendStatus(200);
-});
-
-feedHandler.use(ErrorHandler)
-
-export default (firebaseDb: any) => {
-  db = firebaseDb;
-  return feedHandler;
+  return res.sendStatus(200).end();
 };
