@@ -38,11 +38,13 @@
             <Field name="style.primaryColor.useTemplate" label="Use template" type="boolean" inline />
             <Field name="style.primaryColorDark.value" type="text" />
             <Field name="style.primaryColorDark.useTemplate" label="Use template" type="boolean" inline />
+            <Field name="extraCheckins" type="number" />
+            <Field name="checkinFactor" type="number" />
         </Form>
         <div class="mt-4 md:flex md:items-center md:justify-between">
             <template v-if="!selectedEvent.archived">
                 <button class="btn btn-green" type="button"
-                    @click="() => updateEvent(selectedEvent).then(showSuccess('messages.event-saved')).catch(showError)">
+                    @click="saveEvent">
                     {{$t('actions.save')}}
                 </button>
                 <button class="btn btn-green" type="button"
@@ -152,6 +154,13 @@ export default {
                     this.showSuccess('messages.event-deleted')
                 })
                 .catch(this.showError)
+        },
+        async saveEvent() {
+            let selectedEvent = this.selectedEvent;
+            this.updateEvent(selectedEvent).then(async () => {
+                await Api.updateUserCount(selectedEvent.id);
+                this.showSuccess('messages.event-saved');
+            }).catch(this.showError)
         }
     },
 }
