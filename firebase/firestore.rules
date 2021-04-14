@@ -17,16 +17,6 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    function fieldsExist(required) {
-      let allAllowedFields = required;
-      return request.resource.data.keys().hasAll(required) &&
-        request.resource.data.keys().hasOnly(allAllowedFields);
-    }
-
-    function isUpdatingFields(fields) {
-      return request.resource.data.diff(resource.data).affectedKeys().hasAny(fields);
-    }
-
     match /user-groups/bcc {
       allow read: if true;
       allow write: if false;
@@ -43,7 +33,7 @@ service cloud.firestore {
     }
 
     match /churches/{churchId} {
-      allow read: if isServiceAccounisLoggedInt();
+      allow read: if isServiceAccount();
     }
 
     match /competitions/{competitionId=**} {
