@@ -57,17 +57,24 @@ export default {
     methods: {
         ...mapActions('contributions', ['bindFeedRef']),
         loadLastVerse() {
-            if (!this.loaded && !this.displayPrevious) {
+            if ((!this.loaded && !this.displayPrevious) || this.latestFeed.length == 0) {
                 this.verseToDisplay = null;
                 return
             }
 
-            let verses = this.latestFeed.filter((el, i) => (el.type == ContributionTypes.BIBLEVERSE))
-            if (verses.length > 0) {
-                this.verseToDisplay = verses[0];
-            } else {
-                this.verseToDisplay = null;
+            if (this.displayPrevious) {
+                let verses = this.latestFeed.filter((el, i) => (el.type == ContributionTypes.BIBLEVERSE))
+                this.verseToDisplay = verses[0] || null;
+                return
             }
+
+            const lastElement = this.latestFeed[0]
+            if (!lastElement || lastElement.type != ContributionTypes.BIBLEVERSE) {
+                this.verseToDisplay = null;
+                return
+            }
+
+            this.verseToDisplay = lastElement;
         }
     },
     watch: {
