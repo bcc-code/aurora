@@ -33,6 +33,14 @@
                 </option>
             </select>
     </div>
+    <div v-if="fetching_verse">
+        Loading verse text.
+    </div>
+    <div v-else-if="location" class="flex justify-between w-full pb-4">
+            <div>{{ location }}: <div>{{ preview }}</div>
+            <sub>Provided by <a href="https://bible-api.com">bible-api.com</a></sub>
+            </div>
+    </div>
 </div>
 </template>
 <script>
@@ -47,6 +55,8 @@ export default {
         verse_from: -1,
         verse_to: -1,
         incoming_value: {},
+        preview: "Please select a specific verse",
+        fetching_verse: false,
     }),
     props: [ "value" ],
     created: function() {
@@ -107,6 +117,8 @@ export default {
                 this.incoming_value.content = out;
                 this.incoming_value.verse = verse;
                 this.$emit('input', this.incoming_value);
+
+
                 return out
             },
             set: function(val) {
@@ -133,10 +145,56 @@ export default {
     },
 
     watch: {
-        book: function() { this.verse = ""; this.location; },
-        chapter: function() { this.verse = ""; this.location; },
-        verse_from: function() { this.location; },
-        verse_to: function() { this.location; },
+        book: function() {
+            this.verse = "";
+            this.location;
+            this.updatePreview();
+        },
+        chapter: function() {
+            this.verse = "";
+            this.location;
+            this.updatePreview();
+        },
+        verse_from: async function() {
+            this.location;
+            this.updatePreview();
+        },
+        verse_to: async function() {
+            this.location;
+            this.updatePreview();
+        },
+    },
+
+    methods: {
+        updatePreview: async function(version = "kjv") {
+            if (!this.incoming_value || !this.incoming_value.verse) {
+                this.preview = "";
+                return;
+            }
+
+            const verse = this.incoming_value.verse;
+            console.log(!verse.verse_from);
+            if (!verse.verse_from) {
+                this.preview = "";
+                return;
+            }
+
+            let verseParam = `${verse.book} ${verse.chapter}:${verse.verse_from}`
+
+            if (verse.verse_to) {
+                verseParam += `-${verse.verse_to}`
+            }
+
+            try {
+                this.fetching_verse = true;
+                const reply = await fetch(`https://bible-api.com/${verseParam}?translation=${version}`);
+                this.preview = (await reply.json()).text
+            } catch(e) {
+                this.preview = `Unable to fetch verse: ${err}`
+            } finally {
+                this.fetching_verse = false;
+            }
+        }
     }
 }
 </script>
