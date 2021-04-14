@@ -1,220 +1,222 @@
 {
-    "bcc-online": "BCC Online",
-    "studio-online": "Studio Online",
-    "search": "Search",
-    "menu": {
-        "templates": "Templates",
-        "template": "Template",
-        "events": "Events",
-        "event": "Event",
-        "dashboard": "Dashboard",
-        "questions": "Questions",
-        "gameboard": "Gameboard",
-        "edit-question": "Edit question",
-        "inquiries": "Inquiries",
-        "inquiries-queue": "Inquiries queue",
-        "translations": "Translations",
-        "feed": "Feed",
-        "contributions": "Contributions",
-        "queue": "Queue",
-        "desk": "Desk",
-        "program": "Program",
-        "screens": "Screens",
-        "screen": "Screen",
-        "profile-pictures": "Profile pictures",
-        "competition": "Competition",
-        "not-found": "Not found",
-        "liveboard": "Liveboard"
-    },
-    "event": {
-        "syncRate": "Sync rate (s)",
-        "switchRate": "Switch rate (s)",
-        "checkins": "Checkins",
-        "totalCheckins": "Total checkins",
-        "details": "Details",
-        "name": "Name",
-        "additionalFeed": "Additional feed",
-        "testimonyMaxDurationSeconds": "Max duration of video (in seconds)",
-        "atmosphere": "Atmosphere",
-        "nextEvent": "Next event",
-        "competition": "Competition",
-        "competitionActive": "Competition is active",
-        "canSendInquiries": "Can send inquiries",
-        "inquiries": "Inquiries",
-        "logo": { "value": "Logo" },
-        "background": { "value": "Background" },
-        "style": {
-            "title": "Custom style",
-            "background": { "value": "Background" },
-            "logo": { "value": "Logo" },
-            "primaryColor": { "value": "Primary color" },
-            "primaryColorDark": { "value": "Primary color dark" }
-        },
-        "template": "Template",
-        "banner": "Banner"
-    },
-    "template": {
-        "name": "Name",
-        "overwrite": "Overwrite existing template",
-        "id": "id",
-        "background": "Background",
-        "logo": "Logo",
-        "style": {
-            "logo": "Logo style",
-            "primaryColor": "Primary color",
-            "primaryColorDark": "Primary color dark"
-        }
-    },
-    "not-found": {
-        "title": "Page not found",
-        "details": "The link you clicked may be broken or the page may have been removed.",
-        "go-to-homepage": "Go to the <a href='/' class='text-blue-400'>homepage</a>"
-    },
-    "question": {
-        "id": "Question id",
-        "finished": "Finished",
-        "text": "Question",
-        "show": "Send live",
-        "hide": "Hide",
-        "terminate": "Terminate",
-        "view": "View",
-        "viewType": "View type",
-        "type": "Question type",
-        "canChangeAnswer": "Can change answer",
-        "defaultAnswer": "Default answer",
-        "survey": "Survey",
-        "showCorrectAnswer": "Show correct answer",
-        "slider": {
-            "minValue": "Min Value",
-            "maxValue": "Max Value",
-            "step": "Step",
-            "correct": "Correct answer"
-        },
-        "url": "Target URL",
-        "icon": "Icon",
-        "add-to-quizz": "Add to Quizz",
-        "remove-from-quizz": "Remove from Quizz"
-    },
-    "answers": {
-        "text": "Answers",
-        "add": "Add answer",
-        "correct": "Correct"
-    },
-    "element": {
-        "add": "Add"
-    },
-    "contributions": {
-        "approve": "Approve",
-        "reject": "Reject"
-    },
-    "information": "Information",
-    "screen": {
-        "apply": "Apply",
-        "apply-all": "Apply all",
-        "background": "Background",
-        "showBackground": "Show background",
-        "component": "Component",
-        "refresh": "Refresh",
-        "showCheckins": "Show checkins",
-        "view": "View",
-        "columns": "Number of columns",
-        "warning": "Warning",
-        "karaokeMode": "Karaoke-mode",
-        "refresh-needed": "The token has expired. A refresh is needed.",
-        "size": "Size",
-        "showRunningStatus": "Show running competition status",
-        "showDonationBottom": "Donations (bottom)",
-        "showDonationSide": "Donations (side)",
-        "showResults": "Show results",
-        "no-screen": "No screen has been selected"
-    },
-    "responses": {
-        "no-question": "No question is selected."
-    },
-    "world": {
-        "worldPart": "World Part",
-        "mapUrl": "Map URL",
-        "markersColor": "Markers color",
-        "autoSpin": "Spin"
-    },
-    "queue": {
-        "stop-auto-push": "Stop auto push",
-        "start-auto-push": "Start auto push",
-        "element-added": "Element added",
-        "number-selected": "{number} selected",
-        "number-elements": "{number} element(s)",
-        "frequency": "Publish frequency (in seconds)",
-        "push": "Push",
-        "notice": "Notice",
-        "pusher-notice": "Closing this window will stop the autopush.",
-        "auto-push-notice": "Automatic push is activated."
-    },
-    "messages": {
-        "success": "Success!",
-        "error": "An error occured.",
-        "event-created": "Event created!",
-        "event-saved": "Event saved!",
-        "eventgroup-saved": "Event group saved!",
-        "pictures-removed": "Pictures removed.",
-        "text-copied": "Text copied!",
-        "question-deleted": "Question deleted!",
-        "event-deleted": "Event deleted!",
-        "event-archived": "Event archived!",
-        "event-restored": "Event restored!"
-    },
-    "actions": {
-        "start": "Start",
-        "end": "End",
-        "archive": "Archive",
-        "save": "Save",
-        "save-as-template": "Save as template",
-        "show": "Show",
-        "hide": "Hide",
-        "cancel": "Cancel",
-        "confirm": "Confirm",
-        "show-more": "Show more",
-        "approve": "Approve",
-        "restore": "Restore",
-        "delete": "Delete"
-    },
-    "dialogs": {
-        "are-you-sure": "Are you sure?",
-        "confirm-action": "Please confirm this action",
-        "confirm-delete-event": "All data related to this event will be deleted. This action is irreversible."
-    },
-    "profile-pictures": {
-        "thisWeek": "This week",
-        "thisMonth": "This month",
-        "older": "Older"
-    },
-    "competition": {
-        "extraToApprove": "Extra distance",
-        "totalDistance": "Total distance",
-        "highlightedContinent": "Highlighted continent",
-        "markerInFocus": "Marker in focus",
-        "selectedChurch": "Church in focus"
-    },
-    "liveboard": {
-        "icon": {
-            "name": "Name",
-            "color": "Color"
-        },
-        "title": "Title",
-        "description": "Description",
-        "isLocked": "Is Locked",
-        "background": {
-            "image": "Image",
-            "gradient": {
-                "from": "Gradient from",
-                "to": "Gradient to"
-            }
-        },
-        "button": {
-            "action": "Action",
-            "url": "Url",
-            "label": "Label",
-            "color": "Color",
-            "icon": "Icon"
-        }
-    }
+	"bcc-online": "BCC Online",
+	"studio-online": "Studio Online",
+	"search": "Search",
+	"menu": {
+		"templates": "Templates",
+		"template": "Template",
+		"events": "Events",
+		"event": "Event",
+		"dashboard": "Dashboard",
+		"questions": "Questions",
+		"gameboard": "Gameboard",
+		"edit-question": "Edit question",
+		"inquiries": "Inquiries",
+		"inquiries-queue": "Inquiries queue",
+		"translations": "Translations",
+		"feed": "Feed",
+		"contributions": "Contributions",
+		"queue": "Queue",
+		"desk": "Desk",
+		"program": "Program",
+		"screens": "Screens",
+		"screen": "Screen",
+		"profile-pictures": "Profile pictures",
+		"competition": "Competition",
+		"not-found": "Not found",
+		"liveboard": "Liveboard"
+	},
+	"event": {
+		"syncRate": "Sync rate (s)",
+		"switchRate": "Switch rate (s)",
+		"checkins": "Checkins",
+		"totalCheckins": "Total checkins",
+		"details": "Details",
+		"name": "Name",
+		"additionalFeed": "Additional feed",
+		"testimonyMaxDurationSeconds": "Max duration of video (in seconds)",
+		"atmosphere": "Atmosphere",
+		"nextEvent": "Next event",
+		"competition": "Competition",
+		"competitionActive": "Competition is active",
+		"canSendInquiries": "Can send inquiries",
+		"inquiries": "Inquiries",
+		"logo": { "value": "Logo" },
+		"background": { "value": "Background" },
+		"style": {
+			"title": "Custom style",
+			"background": { "value": "Background" },
+			"logo": { "value": "Logo" },
+			"primaryColor": { "value": "Primary color" },
+			"primaryColorDark": { "value": "Primary color dark" }
+		},
+		"template": "Template",
+		"banner": "Banner",
+		"extraCheckins": "Extra Checkins",
+		"checkinFactor": "Checkin factor: (multiply normal checkins by this number)"
+	},
+	"template": {
+		"name": "Name",
+		"overwrite": "Overwrite existing template",
+		"id": "id",
+		"background": "Background",
+		"logo": "Logo",
+		"style": {
+			"logo": "Logo style",
+			"primaryColor": "Primary color",
+			"primaryColorDark": "Primary color dark"
+		}
+	},
+	"not-found": {
+		"title": "Page not found",
+		"details": "The link you clicked may be broken or the page may have been removed.",
+		"go-to-homepage": "Go to the <a href='/' class='text-blue-400'>homepage</a>"
+	},
+	"question": {
+		"id": "Question id",
+		"finished": "Finished",
+		"text": "Question",
+		"show": "Send live",
+		"hide": "Hide",
+		"terminate": "Terminate",
+		"view": "View",
+		"viewType": "View type",
+		"type": "Question type",
+		"canChangeAnswer": "Can change answer",
+		"defaultAnswer": "Default answer",
+		"survey": "Survey",
+		"showCorrectAnswer": "Show correct answer",
+		"slider": {
+			"minValue": "Min Value",
+			"maxValue": "Max Value",
+			"step": "Step",
+			"correct": "Correct answer"
+		},
+		"url": "Target URL",
+		"icon": "Icon",
+		"add-to-quizz": "Add to Quizz",
+		"remove-from-quizz": "Remove from Quizz"
+	},
+	"answers": {
+		"text": "Answers",
+		"add": "Add answer",
+		"correct": "Correct"
+	},
+	"element": {
+		"add": "Add"
+	},
+	"contributions": {
+		"approve": "Approve",
+		"reject": "Reject"
+	},
+	"information": "Information",
+	"screen": {
+		"apply": "Apply",
+		"apply-all": "Apply all",
+		"background": "Background",
+		"showBackground": "Show background",
+		"component": "Component",
+		"refresh": "Refresh",
+		"showCheckins": "Show checkins",
+		"view": "View",
+		"columns": "Number of columns",
+		"warning": "Warning",
+		"karaokeMode": "Karaoke-mode",
+		"refresh-needed": "The token has expired. A refresh is needed.",
+		"size": "Size",
+		"showRunningStatus": "Show running competition status",
+		"showDonationBottom": "Donations (bottom)",
+		"showDonationSide": "Donations (side)",
+		"showResults": "Show results",
+		"no-screen": "No screen has been selected"
+	},
+	"responses": {
+		"no-question": "No question is selected."
+	},
+	"world": {
+		"worldPart": "World Part",
+		"mapUrl": "Map URL",
+		"markersColor": "Markers color",
+		"autoSpin": "Spin"
+	},
+	"queue": {
+		"stop-auto-push": "Stop auto push",
+		"start-auto-push": "Start auto push",
+		"element-added": "Element added",
+		"number-selected": "{number} selected",
+		"number-elements": "{number} element(s)",
+		"frequency": "Publish frequency (in seconds)",
+		"push": "Push",
+		"notice": "Notice",
+		"pusher-notice": "Closing this window will stop the autopush.",
+		"auto-push-notice": "Automatic push is activated."
+	},
+	"messages": {
+		"success": "Success!",
+		"error": "An error occured.",
+		"event-created": "Event created!",
+		"event-saved": "Event saved!",
+		"eventgroup-saved": "Event group saved!",
+		"pictures-removed": "Pictures removed.",
+		"text-copied": "Text copied!",
+		"question-deleted": "Question deleted!",
+		"event-deleted": "Event deleted!",
+		"event-archived": "Event archived!",
+		"event-restored": "Event restored!"
+	},
+	"actions": {
+		"start": "Start",
+		"end": "End",
+		"archive": "Archive",
+		"save": "Save",
+		"save-as-template": "Save as template",
+		"show": "Show",
+		"hide": "Hide",
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"show-more": "Show more",
+		"approve": "Approve",
+		"restore": "Restore",
+		"delete": "Delete"
+	},
+	"dialogs": {
+		"are-you-sure": "Are you sure?",
+		"confirm-action": "Please confirm this action",
+		"confirm-delete-event": "All data related to this event will be deleted. This action is irreversible."
+	},
+	"profile-pictures": {
+		"thisWeek": "This week",
+		"thisMonth": "This month",
+		"older": "Older"
+	},
+	"competition": {
+		"extraToApprove": "Extra distance",
+		"totalDistance": "Total distance",
+		"highlightedContinent": "Highlighted continent",
+		"markerInFocus": "Marker in focus",
+		"selectedChurch": "Church in focus"
+	},
+	"liveboard": {
+		"icon": {
+			"name": "Name",
+			"color": "Color"
+		},
+		"title": "Title",
+		"description": "Description",
+		"isLocked": "Is Locked",
+		"background": {
+			"image": "Image",
+			"gradient": {
+				"from": "Gradient from",
+				"to": "Gradient to"
+			}
+		},
+		"button": {
+			"action": "Action",
+			"url": "Url",
+			"label": "Label",
+			"color": "Color",
+			"icon": "Icon"
+		}
+	}
 }
