@@ -136,6 +136,8 @@ export class CheckinModule extends Module {
       var count = allCheckins.size;
       var evt = await event.event().get();
       const extraCheckins = evt.data().extraCheckins || 0;
+      const checkinFactor = evt.data().checkinFactor || 1;
+      count = Math.round(count * checkinFactor);
       count += extraCheckins;
       const docUpdate = { checkedInUsers: count };
       await event.event().update(docUpdate);
