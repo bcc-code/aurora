@@ -91,7 +91,7 @@ export const getPersonId = (req : Request) : number | null => {
   if (req.user && n.claims.personId in req.user) {
     let user = req.user as Dictionary<string>
     personId = +user[n.claims.personId];
-    if (personId <= 0) {
+    if (!personId || personId <= 0) {
       personId = null;
     }
   }

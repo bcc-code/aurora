@@ -16,7 +16,6 @@ export const jwtCheck = (req : Request, res : Response, next : NextFunction) => 
     );
     audience = config.auth0.clientId;
   }
-  console.log(config.auth0);
   console.log(`https://${config.auth0.domain}/.well-known/jwks.json`);
 
   jwt({
