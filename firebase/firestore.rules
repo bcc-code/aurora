@@ -57,7 +57,7 @@ service cloud.firestore {
       allow get: if isLoggedIn();
 
       match /checkins/{checkinId} {
-        allow get: if isPerson(checkinId) || isPerson(resource.data.checkedInBy);
+        allow get: if isPerson(checkinId) || isPerson(resource.data.checkedInBy) || resource == null;
         allow list: if isServiceAccount();
         allow list, delete: if isAdmin();
       }
@@ -93,7 +93,7 @@ service cloud.firestore {
         allow list: if isServiceAccount() || isLoggedIn();
       }
       match /responses/{responseId=**} {
-        allow read: if isServiceAccount() || isPerson(resource.data.personId);
+        allow read: if isServiceAccount() || isPerson(resource.data.personId) || resource == null;
       }
       match /screens/{screenId=**} {
         allow read, write: if isServiceAccount();
