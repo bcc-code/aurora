@@ -2,8 +2,9 @@ import firebase from 'firebase/app'
 import 'firebase/firestore'
 import 'firebase/storage'
 import keys from '@/utils/keys.js'
+import config from '../configs/config.json'
 
-var firebaseApp = firebase    
+var firebaseApp = firebase
     .initializeApp( {
         apiKey: keys.FIREBASE.API_KEY,
         authDomain: keys.FIREBASE.AUTH_DOMAIN,
@@ -15,6 +16,9 @@ var firebaseApp = firebase
         measurementId: keys.FIREBASE.MEASUREMENT_ID
       });
 
+if (config.firebase.logLevel) {
+    firebase.firestore.setLogLevel(config.firebase.logLevel);
+}
 
 export const db = firebaseApp.firestore();
 export const storage = firebaseApp.storage().ref();
