@@ -11,7 +11,7 @@
                             </option>
                         </select>
                     </div>
-                    <button class="btn btn-green mb-3" :class="{'disabled': isNotCompleted}" @click="addElement">{{$t('element.add')}}</button>
+                    <button class="btn btn-green mb-3" :class="{'disabled': !isCompleted}" @click="addElement">{{$t('element.add')}}</button>
                 </div>
                 <template v-if="newDeskEntry.type == ContributionTypes.QUOTE">
                     <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Quote" />

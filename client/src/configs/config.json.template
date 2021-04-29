@@ -21,6 +21,7 @@
     "messagingSenderId": "<REPLACE>",
     "appId": "<REPLACE>",
     "measurementId": "<REPLACE>",
-    "storageBaseUrl": "https://firebasestorage.googleapis.com/v0/b/brunstadtv-online.appspot.com/o/"
+    "storageBaseUrl": "https://firebasestorage.googleapis.com/v0/b/brunstadtv-online.appspot.com/o/",
+	"logLevel": "error"
   }
 }
