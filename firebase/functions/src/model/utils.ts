@@ -19,6 +19,11 @@ export const asyncForEachParallel = async (array, callback) => {
 };
 
 export const calculateAge = birthdate => {
+  // Detect invalid date objects
+  if (isNaN(birthdate)) {
+    return 1000;
+  }
+
   var diff_ms = Date.now() - birthdate.getTime();
   var age_dt = new Date(diff_ms);
 

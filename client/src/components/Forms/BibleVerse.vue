@@ -33,8 +33,17 @@
                 </option>
             </select>
     </div>
+    <div v-if="fetching_verse">
+        Loading verse text.
+    </div>
+    <div v-else-if="location" class="flex justify-between w-full pb-4">
+            <div>{{ resolvedLocation }}: <div v-html="verseTextHTML"></div>
+            <sub>NB-1930</sub>
+            </div>
+    </div>
 </div>
 </template>
+
 <script>
 import bible from '../../data/bible.json'
 import { ContributionTypes } from '@/models/contribution.js'
@@ -47,6 +56,10 @@ export default {
         verse_from: -1,
         verse_to: -1,
         incoming_value: {},
+        verseData: {},
+        resolvedLocation: "",
+        preview: "Please select a specific verse",
+        fetching_verse: false,
     }),
     props: [ "value" ],
     created: function() {
@@ -56,65 +69,36 @@ export default {
         ContributionTypes(){
             return ContributionTypes
         },
-        location: {
+        verseTextHTML: {
             get: function() {
-                let out = ""
-                let verse = {}
-
-                this.incoming_value.type = ContributionTypes.BIBLEVERSE;
-
-                if (this.book < 0) {
-                    this.incoming_value.content = out;
-                    this.incoming_value.verse = verse;
-                    this.$emit('input', this.incoming_value);
-                    return out;
+                if (!this.verseData || !this.verseData.verses) {
+                    return ""
                 }
-
-                out += this.bible[this.book].translated.no.abbr;
-                verse.book = this.bible[this.book].abbr;
-
-
-                if (this.chapter < 0 || !this.bible[this.book].chapters[this.chapter]) {
-                    this.incoming_value.content = out;
-                    this.incoming_value.verse = verse;
-                    this.$emit('input', this.incoming_value);
-                    return out;
+                return this.verseData.
+                    verses.reduce(
+                        (accumulator, currentValue) => accumulator + "<br />\n" + `${currentValue.number} ${currentValue.text}`,
+                        "");
+            }
+        },
+        verseTextOutgoing: {
+            get: function() {
+                if (!this.verseData || !this.verseData.verses) {
+                    return ""
                 }
-
-                out += " " + (this.chapter + 1);
-                verse.chapter = this.chapter + 1;
-
-                if (this.verse_from < 0) {
-                    this.incoming_value.content = out;
-                    this.incoming_value.verse = verse;
-                    this.$emit('input', this.incoming_value);
-                    return out;
-                }
-
-                out += ":" + this.verse_from;
-                verse.verse_from = this.verse_from;
-
-                if (this.verse_to < 0 || this.verse_to <= this.verse_from) {
-                    this.incoming_value.content = out;
-                    this.incoming_value.verse = verse;
-                    this.$emit('input', this.incoming_value);
-                    return out;
-                }
-
-                out += "-" + this.verse_to;
-                verse.verse_to = this.verse_to;
-
-                this.incoming_value.content = out;
-                this.incoming_value.verse = verse;
-                this.$emit('input', this.incoming_value);
-                return out
+                return this.verseData.
+                    verses.reduce(
+                        (accumulator, currentValue) => accumulator + " " + `${currentValue.number} ${currentValue.text}`,
+                        "");
+            }
+        },
+        location: {
+            get: async function() {
+                return this.resolvedLocation;
             },
             set: function(val) {
                 if (!val || !val.verse) {
                     return
                 }
-
-                this.incoming_value = val
 
                 // Internally we use the index
                 for (let index in this.bible) {
@@ -123,7 +107,6 @@ export default {
                         break;
                     }
                 }
-
                 // Internally we use the index so ch 1 == index 0
                 this.chapter = val.verse.chapter - 1
                 this.verse_from = val.verse.verse_from
@@ -133,10 +116,102 @@ export default {
     },
 
     watch: {
-        book: function() { this.verse = ""; this.location; },
-        chapter: function() { this.verse = ""; this.location; },
-        verse_from: function() { this.location; },
-        verse_to: function() { this.location; },
+        book: async function() {
+            this.verse = "";
+            await this.updateVerseData()
+            this.$emit('input', this.incoming_value);
+        },
+        chapter: async function() {
+            this.verse = "";
+            await this.updateVerseData()
+            this.$emit('input', this.incoming_value);
+        },
+        verse_from: async function() {
+            await this.updateVerseData()
+            this.$emit('input', this.incoming_value);
+        },
+        verse_to: async function() {
+            await this.updateVerseData()
+            this.$emit('input', this.incoming_value);
+        },
+    },
+
+    methods: {
+        updateVerseData: async function() {
+                this.preview = "";
+                this.resolvedLocation = "";
+
+                // This needed so that the emit pushes out a new object,
+                // otherwise the listening component doesn't understand that stuff changed
+                // Also ref: https://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-deep-clone-an-object-in-javascript
+                this.incoming_value = JSON.parse(JSON.stringify(this.incoming_value));
+                this.incoming_value.verse = {};
+
+                this.incoming_value.type = ContributionTypes.BIBLEVERSE;
+
+                if (this.book < 0) {
+                    return this.resolvedLocation;
+                }
+
+                this.resolvedLocation += this.bible[this.book].translated.no.abbr;
+                this.incoming_value.verse.book = this.bible[this.book].translated.no.abbr;
+                this.incoming_value.verse.canonical_book = this.bible[this.book].abbr;
+
+
+                if (this.chapter < 0 || !this.bible[this.book].chapters[this.chapter]) {
+                    return this.resolvedLocation;
+                }
+
+                this.resolvedLocation += " " + (this.chapter + 1);
+                this.incoming_value.verse.chapter = this.chapter + 1;
+
+                if (this.verse_from < 0) {
+                    return this.resolvedLocation;
+                }
+
+                this.resolvedLocation += ":" + this.verse_from;
+                this.incoming_value.verse.verse_from = this.verse_from;
+
+                if (this.verse_to < 0 || this.verse_to <= this.verse_from) {
+                    await this.getVerseData();
+                    this.incoming_value.content = this.verseTextOutgoing;
+                    return this.resolvedLocation;
+                }
+
+                this.resolvedLocation += "-" + this.verse_to;
+                this.incoming_value.verse.verse_to = this.verse_to;
+                await this.getVerseData();
+                this.incoming_value.content = this.verseTextOutgoing;
+                return this.resolvedLocation;
+        },
+
+        getVerseData: async function(version = "nb-1930") {
+             if (!this.incoming_value || !this.incoming_value.verse) {
+                 return "";
+             }
+
+             const verse = this.incoming_value.verse;
+             if (!verse.verse_from) {
+                 return "";
+             }
+
+             let verseParam = `${verse.canonical_book}/${verse.chapter}/${verse.verse_from}`
+
+                 if (verse.verse_to) {
+                     verseParam += `/${verse.verse_to}`
+                 }
+
+                this.verseData = null;
+                 try {
+                     this.fetching_verse = true;
+                     const reply = await fetch(`https://bibleapi.bcc.media/v1/${version}/${verseParam}`);
+                     this.verseData = (await reply.json())
+                 } catch(e) {
+                     this.preview = `Unable to fetch verse: ${err}`
+                 } finally {
+                     this.fetching_verse = false;
+                 }
+         },
     }
 }
 </script>

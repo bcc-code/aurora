@@ -32,6 +32,8 @@ export default {
             event.testimonyMaxDurationSeconds = parseInt(event.testimonyMaxDurationSeconds);
             event.nextEvent = (event.nextEvent != null) ? context.getters.eventsRef.doc(event.nextEvent.id) : null
             event.template = (event.template != null && event.template.id != null) ? context.rootGetters['templates/templatesRef'].doc(event.template.id) : null
+            event.extraCheckins = +event.extraCheckins;
+            event.checkinFactor = +event.checkinFactor;
             return context.getters.eventsRef.doc(event.id).update({ ...event })
         }),
         archiveEvent: firestoreAction((context, event) => {
