@@ -85,6 +85,7 @@ pollHandler.post("/poll/response", (req : Request, res : Response) => submitPoll
 
 const feedHandler = handlerWithPrefix("feed");
 pollHandler.post("/feed/incoming", (req : Request, res : Response) => newFeedPost(firestore, req, res));
+pollHandler.post("/*", (req: Request, res: Response) => { log.info(req.url); res.sendStatus(400).end() });
 
 const inquiryHandler = handlerWithPrefix("inquiry");
 inquiryHandler.post("/inquiry/submit", (req : Request, res : Response) => newInquiry(firestore, req, res));
