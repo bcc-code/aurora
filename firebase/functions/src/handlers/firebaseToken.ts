@@ -88,11 +88,11 @@ export async function getIdToken(req : Request, res : Response, _: NextFunction)
 
     res.status(500).send({
       message: "Something went wrong acquiring an ID Token.",
-    });
+    }).end();
   } catch (e) {
     log.error("idtoken throws: ", e);
     res.status(500).send({
       message: "Something went wrong acquiring an ID Token.",
-    });
+    }).end();
   }
 };
