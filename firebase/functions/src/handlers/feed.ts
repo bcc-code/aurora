@@ -4,19 +4,20 @@ import { n, EventModel, UserModel } from "../model/index";
 import { logger } from '../log';
 import { IUser } from "../types/user";
 import { FeedEntry } from "../types/feed";
-var db = null;
+import {firestore} from "firebase-admin";
+import { Request, Response } from "express";
 
 const log = logger('handler/feed');
-const feedHandler = handler();
 
-feedHandler.post("/incoming", jwtCheck, syncUserAndClaims, async (req, res) => {
+export async function newFeedPost(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
   try {
     const eventModel = new EventModel(db, req.query.eventId);
     const userModel = new UserModel(db);
     const personId = req.user[n.claims.personId];
     const currentUserObj = await userModel.refs.user(personId).get();
-    if (!currentUserObj.exists)
-      return res.status(400).send({ message: "User does not exist" })
+    if (!currentUserObj.exists) {
+      return res.status(400).send({ message: "User does not exist" }).end()
+    }
     const currentUser = currentUserObj.data() as IUser
     const churchDoc = await userModel.refs.church(currentUser.churchId).get();
     currentUser.churchName = churchDoc.data().name
@@ -31,16 +32,9 @@ feedHandler.post("/incoming", jwtCheck, syncUserAndClaims, async (req, res) => {
       imageUrl: req.body.imageUrl || ""
     }
     await eventModel.feed.actions.submitFeedEntry(personId, feedEntry)
-    return res.sendStatus(200);
+    return res.sendStatus(200).end();
   } catch (e) {
     log.error(e);
-    return res.sendStatus(500);
+    return res.sendStatus(500).end();
   }
-});
-
-feedHandler.use(ErrorHandler);
-
-export default (firebaseDb: any) => {
-  db = firebaseDb;
-  return feedHandler;
-};
+}

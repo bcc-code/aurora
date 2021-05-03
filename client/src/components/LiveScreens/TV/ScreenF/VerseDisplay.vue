@@ -20,7 +20,7 @@
                 "
                 :key="verseToDisplay.id"
                 >
-                {{ verseToDisplay.content }}
+                {{ verseToDisplay.verse.book }} {{ verseToDisplay.verse.chapter }}:{{verseToDisplay.verse.verse_from}}<span v-if="verseToDisplay.verse.verse_to">-{{ verseToDisplay.verse.verse_to }}</span>
             </div>
         </transition>
     </section>

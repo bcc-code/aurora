@@ -1,60 +1,60 @@
 {
-  "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
-  },
-  "hosting": {
-    "site": "brunstadtv-online-dev",
-    "public": "public",
-    "rewrites": [
-      {
-        "source": "/firebase",
-        "function": "firebase"
-      },
-      {
-        "source": "/poll",
-        "function": "poll"
-      },
-      {
-        "source": "/checkin",
-        "function": "checkin"
-      },
-      {
-        "source": "/competition",
-        "function": "competition"
-      },
-      {
-        "source": "/bukGames",
-        "function": "bukGames"
-      },
-      {
-        "source": "!/config/**",
-        "destination": "/index.html"
-      },
-      {
-        "source": "!/@(js|css)/**",
-        "destination": "/index.html"
-      },
-      {
-        "source": "/",
-        "function": "app"
-      },
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ],
-    "ignore": [
-      "firebase-key.json",
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ]
-  },
-  "functions": {},
-  "emulators": {
-	  "functions": {
-		  "host": "0.0.0.0"
-	  }
-  }
+	"firestore": {
+		"rules": "firestore.rules",
+		"indexes": "firestore.indexes.json"
+	},
+	"hosting": {
+		"site": "brunstadtv-online-dev",
+		"public": "public",
+		"rewrites": [
+			{
+				"source": "/firebase",
+				"function": "firebase"
+			},
+			{
+				"source": "/poll",
+				"function": "poll"
+			},
+			{
+				"source": "/checkin",
+				"function": "checkin"
+			},
+			{
+				"source": "/competition",
+				"function": "competition"
+			},
+			{
+				"source": "/bukGames",
+				"function": "bukGames"
+			},
+			{
+				"source": "!/config/**",
+				"destination": "/index.html"
+			},
+			{
+				"source": "!/@(js|css)/**",
+				"destination": "/index.html"
+			},
+			{
+				"source": "/",
+				"function": "app"
+			},
+			{
+				"source": "**",
+				"destination": "/index.html"
+			}
+		],
+		"ignore": [
+			"firebase-key.json",
+			"firebase.json",
+			"**/.*",
+			"**/node_modules/**"
+		]
+	},
+	"functions": {},
+	"emulators": {
+		"functions": {
+			"host": "0.0.0.0"
+		}
+	}
 }

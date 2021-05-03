@@ -1,6 +1,6 @@
 <template>
 	<OneColumn v-if="loaded">
-        <List :elements="filteredQueue" :multiLang="false" :searchable="false" :unifiedSearchQuery="$parent.searchQuery" revert> 
+        <List :elements="filteredQueue" :multiLang="false" :searchable="false" :unifiedSearchQuery="$parent.searchQuery" revert>
             <template v-slot:header>
                 <div class="rounded-lg bg-mirage p-6 mb-3">
                     <div v-if="selectedEvent.feed.autoPush" class=" border-l-4 text-white p-4 mb-3" role="alert"
@@ -18,7 +18,7 @@
                         </div>
                     </div>
                 </div>
-        
+
                 <div class="w-full flex justify-between mb-3 align-items-baseline">
                     <span class="tracking-wide text-md px-4 mb-3">{{$t('queue.number-selected', { number : selectedElements.length })}}</span>
                     <span class="tracking-wide text-md px-4 mb-3">{{$t('queue.number-elements', { number : filteredQueue.length })}}</span>
@@ -29,11 +29,11 @@
 
             </template>
             <template v-slot:list="{ elements, searchQuery }">
-                <Contribution v-for="element in elements" 
-                    :key="element.id" 
-                    :entry="element" 
-                    :searchQuery="searchQuery" 
-                    :selected="selectedElements.some((el) => el.id == element.id)" 
+                <Contribution v-for="element in elements"
+                    :key="element.id"
+                    :entry="element"
+                    :searchQuery="searchQuery"
+                    :selected="selectedElements.some((el) => el.id == element.id)"
                     @select="selectElement"
                     @deselect="deselectElement">
                     <template v-slot:default>
@@ -77,10 +77,10 @@ export default {
         filteredQueue() {
             switch (this.selectedTab) {
                 case 'pictures':
-                    return this.queue.filter((el) => 
+                    return this.queue.filter((el) =>
                         el.imageUrl && el.imageUrl.length > 0
                         && (!el.text || el.text == ''))
-                case 'testimonies': 
+                case 'testimonies':
                     return this.queue.filter((el) =>
                         el.text && el.text.length > 0)
                 default:
@@ -99,7 +99,7 @@ export default {
         method: 'autoPushHeartbeat'
     },
     methods: {
-        ...mapActions('contributions', ['bindQueueRef', 'sendToFeedRef', 'removeQueueElementRef']),
+        ...mapActions('contributions', ['bindQueueRef', 'sendToFeedRef', 'removeQueueElementRef', 'updateContribsCount']),
         ...mapActions('events', ['updateEvent']),
         selectElement(element) {
             if (!this.selectedEvent.feed.autoPush)
@@ -111,8 +111,10 @@ export default {
         },
         async sendToFeed(){
             if (this.selectedElements.length > 0) {
-                await Promise.all(this.selectedElements.map(this.sendContributionToFeed));
+                let pushPromise = Promise.all(this.selectedElements.map(this.sendContributionToFeed));
+                let updateContribCountPromise = this.updateContribsCount(this.selectedElements.length);
                 this.selectedElements = []
+                await Promise.all([pushPromise, updateContribCountPromise]);
             }
         },
         async sendContributionToFeed(entry, index = 0) {
@@ -137,6 +139,7 @@ export default {
                 var textLength = (elementToPush.text && elementToPush.text.length) || 0;
                 this.autoPushCounter = 0;
                 this.autoPushGoal = Math.max((textLength / 1000) * 60, this.selectedEvent.feed.frequency)
+                this.updateContribsCount(1);
                 await this.sendContributionToFeed(elementToPush);
             }
         },

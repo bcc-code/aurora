@@ -22,3 +22,10 @@ export const ErrorHandler = (err: Error, _req: Request, res: Response, _next: Ne
     log.error(err);
     return res.status(500).send({ message: err.message, error: err });
 }
+
+export const addPrefix = (prefix: string) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    req.url = `/${prefix}${req.url}`;
+    next();
+  }
+}
