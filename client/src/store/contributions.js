@@ -35,6 +35,11 @@ export default {
             await context.getters.feedRef.doc(entry.id).set({ ...entry })
             return context.getters.deskRef.doc(entry.id).delete()
         }),
+        updateContribsCount: firestoreAction(async (context, count) => {
+            let event = (await context.rootGetters['events/selectedEventRef'].get()).data()
+            event.contributionsCount = (event.contributionsCount || 0) + count
+            context.rootGetters['events/selectedEventRef'].update(event)
+        }),
         sendToFeedRef: firestoreAction(async (context, entry) => {
             await context.getters.feedRef.doc(entry.id).set({ ...entry })
             return context.getters.queueRef.doc(entry.id).delete()
