@@ -1,0 +1,262 @@
+{
+	"custom": {
+		"title": {
+			"no": "Custom module"
+		},
+		"button": {
+			"icon": "",
+			"color": "#fff",
+			"label": {
+				"no": "Åpne",
+				"en": "Open"
+			},
+			"action": "url"
+		}
+	},
+	"custom-blue": {
+		"title": {
+			"no": "Custom Blue module"
+		},
+		"button": {
+			"icon": "",
+			"color": "#fff",
+			"label": {
+				"no": "Åpne",
+				"en": "Open"
+			},
+			"action": "url"
+		},
+		"background": {
+			"gradient": {
+				"from": "#6EB0E6",
+				"to": "#71D2A4"
+			}
+		}
+	},
+	"custom-red": {
+		"title": {
+			"no": "Custom Red module"
+		},
+		"button": {
+			"icon": "",
+			"color": "#fff",
+			"label": {
+				"no": "Åpne",
+				"en": "Open"
+			},
+			"action": "url"
+		},
+		"background": {
+			"gradient": {
+				"from": "#E63C62",
+				"to": "#A071A5"
+			}
+		}
+	},
+	"event-page-portal": {
+		"title": {
+			"en": "Go to event page",
+			"no": "Gå til event.bcc.no"
+		},
+		"icon": {
+			"name": "url",
+			"color": "#fff"
+		},
+		"button": {
+			"action": "url",
+			"icon": "",
+			"label": {
+				"no": "Åpne",
+				"en": "Open"
+			},
+			"url": "https://event.bcc.no",
+			"color": "#fff"
+		}
+	},
+	"donation": {
+		"title": {
+			"en": "Donations to BCC",
+			"no": "Kollekt til BCC"
+		},
+		"icon": {
+			"name": "heart",
+			"color": "#fff"
+		},
+		"description": {
+			"no": "Delta i kollekten under ... ved å klikke «bidra»."
+		},
+		"button": {
+			"action": "url",
+			"icon": "",
+			"label": {
+				"no": "Bidra",
+				"en": "Donate"
+			},
+			"url": "https://donation.bcc.no/",
+			"color": "#fff"
+		},
+		"background": {
+			"gradient": {
+				"from": "#6EB0E6",
+				"to": "#71D2A4"
+			}
+		}
+	},
+	"support": {
+		"title": {
+			"en": "Are you experiencing problems with the app?",
+			"no": "Opplever du problemer med appen?"
+		},
+		"icon": {
+			"name": "support",
+			"color": "#fff"
+		},
+		"description": {
+			"no": "Send inn melding til teknisk support, så gir vi deg tilbakemelding!",
+			"en": "Send a message to out support and we will answer you!"
+		},
+		"button": {
+			"action": "deeplink",
+			"icon": "",
+			"label": {
+				"no": "Kontakt støtte",
+				"en": "Contact support"
+			},
+			"url": "https://brunstad.tv/support",
+			"color": "#fff"
+		}
+	},
+	"feed": {
+		"title": {
+			"no": "Feed",
+			"en": "Feed"
+		},
+		"button": {
+			"label": {
+				"en": "View posts",
+				"no": "Se innlegg"
+			},
+			"color": "#fff",
+			"icon": "",
+			"action": "feed"
+		},
+		"icon": {
+			"color": "#6eb0e6",
+			"name": "feed"
+		}
+	},
+	"inquiry": {
+		"title": {
+			"en": "Ask a question",
+			"no": "Still et spørsmål"
+		},
+		"background": {
+			"gradient": {
+				"from": "#E63C62",
+				"to": "#A071A5"
+			}
+		},
+		"icon": {
+			"color": "#fff",
+			"name": "post"
+		},
+		"button": {
+			"icon": "",
+			"label": {
+				"no": "Åpne",
+				"en": "Open"
+			},
+			"action": "inquiry",
+			"color": "#fff"
+		}
+	},
+	"post": {
+		"icon": {
+			"name": "post",
+			"color": "#6eb0e6"
+		},
+		"title": {
+			"en": "Feed",
+			"no": "Feed"
+		},
+		"button": {
+			"label": {
+				"en": "Create post",
+				"no": "Lag innlegg"
+			},
+			"color": "#6eb0e6",
+			"icon": "plus",
+			"action": "post"
+		}
+	},
+	"quiz": {
+		"background": {
+			"gradient": {
+				"from": "#E63C62",
+				"to": "#A071A5"
+			}
+		},
+		"button": {
+			"action": "quizz",
+			"icon": "",
+			"color": "#fff",
+			"label": {
+				"en": "Open",
+				"no": "Åpne"
+			}
+		},
+		"icon": {
+			"name": "game",
+			"color": "#fff"
+		},
+		"title": {
+			"en": "Quiz",
+			"no": "Quiz"
+		}
+	},
+	"url": {
+		"title": {
+			"en": "URL",
+			"no": "URL"
+		},
+		"background": {
+			"gradient": {
+				"to": "#71D2A4",
+				"from": "#6EB0E6"
+			}
+		},
+		"icon": {
+			"name": "explore",
+			"color": "#fff"
+		},
+		"button": {
+			"icon": "",
+			"url": "",
+			"action": "url",
+			"label": {
+				"no": "Open",
+				"en": "Open"
+			},
+			"color": "#fff"
+		}
+	},
+	"video": {
+		"icon": {
+			"name": "video",
+			"color": "#e63c62"
+		},
+		"title": {
+			"no": "Video",
+			"en": "Video"
+		},
+		"button": {
+			"color": "#e63c62",
+			"icon": "plus",
+			"label": {
+				"no": "Ta opp video",
+				"en": "Record video"
+			},
+			"action": "testimony"
+		}
+	}
+}
