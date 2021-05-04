@@ -3,7 +3,7 @@
         <div class="h-full relative transition-all" :class="{ 'w-8/12': isNormal, 'w-5/12': isDobbel }">
             <div class="faded-bg absolute inset-0 h-full pl-24 pr-6 flex flex-col justify-start" :class="{ 'py-12' : isNormal, 'py-16' : isDobbel }">
                 <div class="flex justify-center items-center mb-8" v-if="isDobbel">
-                    <Logo class="w-auto h-48" :style="logoStyle.split(';').filter((el) => el.includes('transform')).join(';')"/>
+                    <Logo class="w-auto" :style="logoStyle.split(';').filter((el) => el.includes('transform')).join(';')"/>
                 </div>
                 <div class="flex flex-col items-center" :class="{ 'pt-2': isNormal }">
                     <div style="z-index:1;" class="overflow-hidden rounded-r-lg relative w-full pb-16/9 shadow-xl">
@@ -18,7 +18,7 @@
                         <DistanceTracker class="mt-3" v-if="screen.options.component === ScreenAComponents.WWR" />
                         <template v-else>
                             <div class="h-48" style="width: 300px; min-width: 300px" v-if="isNormal">
-                                <Logo class="w-auto h-48" :style="logoStyle"/>
+                                <Logo class="w-auto" :style="logoStyle"/>
                             </div>
                             <div class="w-full flex pb-3">
                                 <Information class="self-end flex pb-3" v-if="screen.options.component === ScreenAComponents.INFORMATION && hasInformation" size="big" showTitle :information="screen.options.information.information" />
@@ -32,7 +32,7 @@
                                 <DonationBar v-if="screen.options.component === ScreenAComponents.DONATION" :size="isNormal ? 'normal': 'small'" :showResults="screen.options.donation.showResults" />
                             </div>
                         </template>
-                    </section>                  
+                    </section>
                 </transition>
             </div>
         </div>
@@ -79,7 +79,7 @@ export default {
             return this.screen.options.squeezeBackSize == 'dobbel'
         },
         hasInformation() {
-            return this.screen.options.information != null 
+            return this.screen.options.information != null
                 && this.screen.options.information.information != null
                 && this.screen.options.information.information != ''
         },
