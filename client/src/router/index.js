@@ -16,14 +16,14 @@ export const router = new Router({
 
 router.beforeEach(async (to, from, next) => {
     if (to.meta.unprotected) next()
-	else if (store.state.session.userInfo == null 
-		|| store.state.session.firebaseInfo == null 
-		|| Date.now() > store.state.session.userInfo.exp * 1000 
+	else if (store.state.session.userInfo == null
+		|| store.state.session.firebaseInfo == null
+		|| Date.now() > store.state.session.userInfo.exp * 1000
 		|| Date.now() > store.state.session.firebaseInfo.exp * 1000){
 		if (localStorage.getItem(keys.AUTH0.CLIENT_ID) && localStorage.getItem('firebase-' + keys.AUTH0.CLIENT_ID)) {
 			await firebase.auth()
 				.signInWithCustomToken(localStorage.getItem('firebase-' + keys.AUTH0.CLIENT_ID))
-				.catch(() => { 
+				.catch(() => {
 					localStorage.removeItem(keys.AUTH0.CLIENT_ID);
 					localStorage.removeItem('firebase-' + keys.AUTH0.CLIENT_ID);
 					localStorage.removeItem('role');
