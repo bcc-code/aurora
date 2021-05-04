@@ -97,8 +97,8 @@ bukGamesHandler.get("/bukGames/leaderboard", (req : Request, res : Response) => 
 bukGamesHandler.post("/bukGames/entry", (req : Request, res : Response) => addEntry(firestore, req, res));
 
 const userHandler  = handlerWithPrefix("user");
-userHandler.get("/user/profileImage", (req : Request, res : Response) => updateProfileImage(firestore, req, res));
-userHandler.post("/user/profileImage", (req : Request, res : Response) => getProfileImage(firestore, req, res));
+userHandler.post("/user/profileImage", (req : Request, res : Response) => updateProfileImage(firestore, req, res));
+userHandler.get("/user/profileImage", (req : Request, res : Response) => getProfileImage(firestore, req, res));
 
 log.info("Ready.");
 
