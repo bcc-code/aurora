@@ -94,7 +94,8 @@ export class CheckinModule extends Module {
     };
 
     this.actions.checkin = async (currentPersonId, userIds) => {
-      const coords =   new firestore.GeoPoint(0,0); // We keep this in case anything expects it
+
+      const coords =   new FirebaseFirestore.GeoPoint(0,0); // We keep this in case anything expects it
       const currentUser = await userModel.refs.user(currentPersonId).get();
 
       var batch = db.batch();
