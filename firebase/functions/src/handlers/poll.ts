@@ -12,7 +12,7 @@ export async function generatePoll(db : firestore.Firestore, req : Request, res 
   let startAfter = parseInt(req.query.startAfter) || 0;
   let limit = parseInt(req.query.limit) || 100;
   let { questions, answers } = await eventModel.poll.actions.loadPollData(true);
-  let userDocs = await userModel.actions.getUserDocs(limit, startAfter);
+  let userDocs = await userModel.getUserDocs(limit, startAfter);
 
   await Promise.all(userDocs.map(async (userDoc) => {
 
@@ -46,7 +46,7 @@ export async function generatePoll(db : firestore.Firestore, req : Request, res 
 export async function submitPollResponse(db : firestore.Firestore, req : Request, res : Response) : Promise<void>{
   const eventModel = new EventModel(db, req.query.eventId);
   const userModel = new UserModel(db);
-  const userDoc = await userModel.refs.user(req.user[n.claims.personId]).get();
+  const userDoc = await userModel.userRef(req.user[n.claims.personId]).get();
   await eventModel.poll.actions.setPollResponse(userDoc, req.body.questionId, req.body.selectedAnswers);
   return res.sendStatus(200).end();
 };

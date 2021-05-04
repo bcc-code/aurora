@@ -53,11 +53,11 @@ export class CheckinModule extends Module {
     this.refs.checkins = () => this.event.event().collection(n.checkins);
     this.refs.checkin = (personId) => this.refs.checkins().doc(`${personId}`);
 
-    this.actions.getCheckinStatus = async (personId) => {
+    this.actions.getCheckinStatus = async (personId : string) => {
       const checkinEnabled = true;
 
       // lookup user document for logged on user
-      var userCheckingInDoc = await userModel.refs.user(personId).get();
+      var userCheckingInDoc = await userModel.userRef(personId).get();
 
       if (userCheckingInDoc.exists) {
         const existingCheckin = await this.refs.checkin(personId).get();
@@ -72,7 +72,7 @@ export class CheckinModule extends Module {
           checkinStatus.linkedUsers = await asyncForEachParallel(
             userCheckingIn.linkedUserIds,
             async (linkedUserId: number): Promise<CheckinStatus> => {
-              var linkedUserDoc = await userModel.refs.user(linkedUserId).get();
+              var linkedUserDoc = await userModel.userRef(`${linkedUserId}`).get();
               if (linkedUserDoc.exists) {
                 const linkedUser = linkedUserDoc.data() as IUser;
                 if (!linkedUser.hasMembership)  return null;
@@ -93,10 +93,10 @@ export class CheckinModule extends Module {
       }
     };
 
-    this.actions.checkin = async (currentPersonId, userIds, coords) => {
+    this.actions.checkin = async (currentPersonId : string, userIds, coords) => {
       // TODO: reject if event not open for checkin
 
-      const currentUser = await userModel.refs.user(currentPersonId).get();
+      const currentUser = await userModel.userRef(currentPersonId).get();
 
       var batch = db.batch();
 

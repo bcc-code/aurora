@@ -13,8 +13,8 @@ export async function newFeedPost(db : firestore.Firestore,req : Request, res : 
   try {
     const eventModel = new EventModel(db, req.query.eventId);
     const userModel = new UserModel(db);
-    const personId = req.user[n.claims.personId];
-    const currentUserObj = await userModel.refs.user(personId).get();
+    const personId : string  = req.user[n.claims.personId];
+    const currentUserObj = await userModel.userRef(personId).get();
     if (!currentUserObj.exists) {
       return res.status(400).send({ message: "User does not exist" }).end()
     }

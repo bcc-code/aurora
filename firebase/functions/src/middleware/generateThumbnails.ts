@@ -123,7 +123,7 @@ export const generateResizedImage = async (object, db): Promise<void> => {
         let personId = filePath.match( /([0-9]{5})_/)[1];
         let originalUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(remoteFile.name) + "?alt=media&token=" + remoteFile.metadata.metadata.firebaseStorageDownloadTokens
         let userModel = new UserModel(db);
-        await userModel.actions.updateProfileImageUrl(personId, originalUrl, results[0].downloadUrl);
+        await userModel.updateProfileImageUrl(personId, originalUrl, results[0].downloadUrl);
       } catch (error) {
         return;
       }
@@ -177,7 +177,7 @@ const resizeImage = async ({
       : path.join(fileDir, resizedFileName)
   );
   let resizedFile;
-  let downloadUrl;
+  let downloadUrl = "";
   try {
     resizedFile = path.join(os.tmpdir(), resizedFileName);
 

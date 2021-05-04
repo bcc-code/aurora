@@ -201,8 +201,8 @@ export class PollModule extends Module {
         return {};
       var i = Math.floor(Math.random() * candidates.length);
       var winnerPersonId = candidates[i];
-      var winner = await userModel.refs.user(winnerPersonId);
-      await this.refs.question(questionId).update({winner: winner});
+      var winner = userModel.userRef(winnerPersonId);
+      await this.refs.question(questionId).update({winner}); // TODO: What's going on here?
       return true;
     }
 
@@ -310,7 +310,7 @@ export class PollModule extends Module {
       await Promise.all(responses.map(async (response) => {
         // TODO: skip responses if question not in questionIdArray
         if (questionIdArray.includes(response.question)) {
-          const responseUser = await userModel.refs.user(response.personId).get();
+          const responseUser = await userModel.userRef(response.personId).get();
           if (responseUser.exists) {
             bucketPaths.forEach((bucketPath, index) => {
               const userBucketValue = _get(responseUser.data(), bucketPath);

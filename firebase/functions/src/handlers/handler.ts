@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
-import { Request } from "../types";
-import { NextFunction, Response } from "express";
+import { Request, Response, NextFunction } from 'express';
 import { logger } from '../log';
 
 const log = logger('handlers/handler');
@@ -24,7 +23,7 @@ export const ErrorHandler = (err: Error, _req: Request, res: Response, _next: Ne
 }
 
 export const addPrefix = (prefix: string) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: Request, _: Response, next: NextFunction) => {
     req.url = `/${prefix}${req.url}`;
     next();
   }

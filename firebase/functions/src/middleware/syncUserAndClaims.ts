@@ -22,7 +22,7 @@ export const syncUserAndClaims = async (req : Request, res : Response, next : Ne
   try {
     // make sure we have a user in user-groups
     var userModel = new UserModel(firebaseAdmin.firestore());
-    var userClaims = await userModel.actions.syncUserAndClaims(req.user);
+    var userClaims = await userModel.syncUserAndClaims(req.user); // TODO: Where is the User type from
     req.params.userClaims = userClaims;
   } catch (error) {
     const msg = `Error occurred while syncronizing user ID: ${personId}.`;

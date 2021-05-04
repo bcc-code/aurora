@@ -2,7 +2,7 @@ import { CheckinStatus } from "../model/modules/checkins";
 
 export interface CheckinRefs {
     checkins? (): FirebaseFirestore.CollectionReference,
-    checkin? (personId: number): FirebaseFirestore.DocumentReference,
+    checkin? (personId: string): FirebaseFirestore.DocumentReference,
 }
 
 export interface CheckinActions {

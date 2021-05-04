@@ -24,9 +24,9 @@ export async function getToken(req : Request, res : Response, _ : NextFunction) 
   try {
     const firebaseToken = await firebaseAdmin
     .auth()
-    .createCustomToken(personId.toString(), req.params.userClaims);
+    .createCustomToken(personId, req.params.userClaims);
     const userModel = new UserModel(firebaseAdmin.firestore())
-    const userRole = await userModel.getters.role(personId);
+    const userRole = await userModel.role(personId);
     return res.send({ firebaseToken, userRole }).end();
   } catch (err) {
     log.error(err);
@@ -56,7 +56,7 @@ export async function processLoginCallback(req : Request, res : Response, next :
         if (err) return next(err);
         req.user = user._json;
         const userModel = new UserModel(firebaseAdmin.firestore())
-        const userRole = await userModel.getters.role(req.user[n.claims.personId]);
+        const userRole = await userModel.role(req.user[n.claims.personId]);
         await syncUserAndClaims(req, res, () => {});
         const firebaseToken = await firebaseAdmin.auth().createCustomToken(user.id);
         return res.redirect(`${config.app.baseUrl}/callback?accessToken=${user.accessToken}&firebaseToken=${firebaseToken}&role=${Buffer.from(userRole).toString('base64')}`);

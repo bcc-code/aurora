@@ -3,7 +3,6 @@ import jwks from "jwks-rsa";
 import { NextFunction, Request, Response } from "express"
 import  config from "../configs/config.json";
 import { logger } from '../log';
-import {express} from "@google-cloud/logging-bunyan";
 
 const log = logger('jwtCheck');
 
