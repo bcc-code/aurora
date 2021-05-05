@@ -1,6 +1,6 @@
-import handler, { ErrorHandler } from "./handler";
-import { jwtCheck, syncUserAndClaims } from "../middleware";
-import { n, EventModel, UserModel } from "../model/index";
+import { n } from "../model/constants"
+import { EventModel } from "../model/event"
+import { UserModel } from "../model/user"
 import { logger } from '../log';
 import { IUser } from "../types/user";
 import { FeedEntry } from "../types/feed";
@@ -19,9 +19,13 @@ export async function newFeedPost(db : firestore.Firestore,req : Request, res : 
       return res.status(400).send({ message: "User does not exist" }).end()
     }
     const currentUser = currentUserObj.data() as IUser
-    const churchDoc = await userModel.refs.church(currentUser.churchId).get();
-    currentUser.churchName = churchDoc.data().name
-    currentUser.countryName = churchDoc.data().country
+    const churchDoc = await userModel.churchRef((currentUser.churchId ?? "").toString()).get();
+    if (churchDoc.exists) {
+      let data = churchDoc.data()!
+      currentUser.churchName = data.name
+      currentUser.countryName = data.country
+    }
+
     let feedEntry: FeedEntry = {
       firstName: currentUser.firstName || "",
       lastName: currentUser.lastName || "",
@@ -31,7 +35,8 @@ export async function newFeedPost(db : firestore.Firestore,req : Request, res : 
       text: req.body.text || "",
       imageUrl: req.body.imageUrl || ""
     }
-    await eventModel.feed.actions.submitFeedEntry(personId, feedEntry)
+
+    await eventModel.feed.submitFeedEntry(personId, feedEntry)
     return res.sendStatus(200).end();
   } catch (e) {
     log.error(e);

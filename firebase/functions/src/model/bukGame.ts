@@ -1,5 +1,5 @@
 import { BukGameEntry } from "../types/bukGame";
-import { n } from "./index"
+import { n } from "./constants"
 import { logger } from '../log';
 import {firestore} from "firebase-admin";
 

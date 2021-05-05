@@ -1,6 +1,6 @@
 import * as firebaseAdmin from "firebase-admin";
 import { Request, Response, NextFunction} from "express";
-import { UserModel } from "../model";
+import { UserModel } from "../model/user";
 import { logger } from '../log';
 import {getPersonId} from "../model/utils";
 

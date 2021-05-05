@@ -1,6 +1,7 @@
 import * as firebaseadmin from "firebase-admin"
 import { asyncForEachParallel, calculateAge } from "../utils";
-import { n, UserModel } from "../index";
+import { n } from "../constants";
+import { UserModel } from "../user";
 import { Module } from "./module";
 import { IUser } from "../../types/user";
 import { logger } from '../../log';

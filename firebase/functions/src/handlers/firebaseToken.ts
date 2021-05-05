@@ -2,16 +2,15 @@ import * as firebaseAdmin from "firebase-admin";
 import { config } from '../utils';
 import passport from "passport";
 import {AuthenticateOptions} from "passport-auth0";
-import { syncUserAndClaims } from "../middleware";
-import { n, UserModel} from "../model/index";
+import { syncUserAndClaims } from "../middleware/syncUserAndClaims";
+import { n } from "../model/constants";
+import { UserModel } from "../model/user";
 import { logger } from '../log';
 import {NextFunction, Request, Response} from "express";
 import {getPersonId} from "../model/utils";
+import * as gaxios from "gaxios";
 
 const log = logger('handler/firebaseToken');
-const gaxios = require('gaxios');
-
-
 
 export async function getToken(req : Request, res : Response, _ : NextFunction) {
   const personId = getPersonId(req)
@@ -78,11 +77,17 @@ export async function getIdToken(req : Request, res : Response, _: NextFunction)
       }
     });
 
-    if (result.status == 200 && result.data.idToken) {
+    const data = result.data as {
+      idToken?: string,
+      refreshToken?: string,
+      expiresIn: string,
+    };
+
+    if (result.status == 200 && data.idToken) {
       return res.send({
-        idToken: result.data.idToken,
-        refreshToken: result.data.refreshToken,
-        expirationDate: Date.now() + parseInt(result.data.expiresIn) * 1000
+        idToken: data.idToken,
+        refreshToken: data.refreshToken,
+        expirationDate: Date.now() + parseInt(data.expiresIn) * 1000
       }).end();
     }
 

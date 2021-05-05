@@ -4,9 +4,13 @@
     "ecmaVersion": 2017
   },
   "plugins": [
-    "promise"
+	  "@typescript-eslint"
   ],
-  "extends": "eslint:recommended",
+  "extends": [
+	  "eslint:recommended",
+	  "plugin:@typescript-eslint/recommended",
+	  "plugin:@typescript-eslint/recommended-requiring-type-checking"
+  ],
   "rules": {
 	"no-unused-vars": "off",
 	"@typescript-eslint/no-unused-vars": ["error"],

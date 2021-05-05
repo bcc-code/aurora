@@ -1,5 +1,6 @@
 import { deleteCollection, sumDeep } from "../utils";
-import { n, UserModel } from "../index";
+import { n } from "../constants";
+import { UserModel } from "../user";
 import _get from 'lodash/get';
 import _set from 'lodash/set';
 import { isNumber } from 'lodash';

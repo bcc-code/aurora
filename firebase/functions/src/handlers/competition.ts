@@ -1,6 +1,7 @@
 import * as firebaseAdmin from "firebase-admin";
-import { n, CompetitionModel } from "../model/index";
-import { logger } from '../log';
+import { n } from "../model/constants"
+import { CompetitionModel } from "../model/competition"
+import { logger } from '../log'
 import {firestore} from "firebase-admin";
 import { Request, Response } from "express";
 
@@ -20,7 +21,7 @@ export async function submitCompetitionEntry(db : firestore.Firestore, req : Req
 
   try {
     var competitionModel = new CompetitionModel(db, firebaseAdmin.firestore.FieldValue.increment, req.query.competitionId);
-    var result = await competitionModel.actions.updateEntry(personId, req.body.distance, req.body.overrideMaxDistance || 0);
+    var result = await competitionModel.updateEntry(personId, req.body.distance, req.body.overrideMaxDistance || 0);
     return res.json(result);
   } catch (err) {
     const msg = `error - POST /competition/entry for user ID: ${personId}`;

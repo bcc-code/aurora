@@ -1,4 +1,4 @@
-import { n } from "./index"
+import { n } from "./constants"
 import { logger } from '../log';
 import {firestore} from "firebase-admin";
 import { CompetitionUpdate } from "../types/competition"

@@ -1,6 +1,9 @@
 import * as firebaseAdmin from "firebase-admin";
-import { n } from "./index";
-import { FeedModule, PollModule, InquiriesModule, CheckinModule } from "./modules"
+import { n } from "./constants";
+import { FeedModule } from "./modules/feed"
+import { InquiriesModule } from "./modules/inquiries"
+import { PollModule } from "./modules/poll"
+import { CheckinModule} from "./modules/checkins"
 import {firestore} from "firebase-admin";
 
 export class EventModel {

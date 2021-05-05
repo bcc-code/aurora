@@ -1,6 +1,6 @@
 import * as firebaseAdmin from "firebase-admin";
 import equal from "fast-deep-equal";
-import { n } from "./index";
+import { n } from "./constants";
 import { IUser, UserActions, UserRefs, UserGetters } from "../types/user";
 import { logger } from '../log';
 import {firestore} from "firebase-admin";

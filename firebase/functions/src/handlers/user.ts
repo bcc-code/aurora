@@ -1,4 +1,4 @@
-import { UserModel } from "../model/index";
+import { UserModel } from "../model/user";
 import {firestore} from "firebase-admin";
 import { Request, Response } from "express";
 import {getPersonId} from "../model/utils";

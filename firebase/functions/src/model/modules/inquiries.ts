@@ -1,4 +1,4 @@
-import { n } from "../index";
+import { n } from "../constants";
 import { Module } from './module';
 import {firestore} from 'firebase-admin';
 

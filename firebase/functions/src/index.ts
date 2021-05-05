@@ -1,10 +1,13 @@
 import * as functions from "firebase-functions";
 import cookieSession from "cookie-session";
 import cors from "cors";
-import express, {Response, Request, Application, response} from "express";
+import express, {Response, Request, Application } from "express";
 import firebaseAdmin from "firebase-admin";
 import { ErrorHandler, addPrefix } from "./handlers/handler";
-import { adminCheck, generateResizedImage, jwtCheck, syncUserAndClaims } from './middleware';
+import { adminCheck } from "./middleware/adminCheck";
+import { generateResizedImage } from "./middleware/generateThumbnails";
+import { jwtCheck } from "./middleware/jwtCheck";
+import { syncUserAndClaims } from "./middleware/syncUserAndClaims";
 import { checkin, checkinStatus, userCount } from "./handlers/checkin";
 import { config } from "./utils";
 import { generatePoll, submitPollResponse, pickWinner, updatePollStats, startPoll, pollClearAll } from "./handlers/poll";
