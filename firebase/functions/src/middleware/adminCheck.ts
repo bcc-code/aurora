@@ -7,7 +7,7 @@ import {getPersonId} from "../model/utils";
 
 const log = logger('adminCheck');
 
-export const adminCheck = (req: Request, res: Response, next: NextFunction) => {
+export const adminCheck = async (req: Request, res: Response, next: NextFunction) => {
     const userModel = new UserModel(firebaseAdmin.firestore());
     let personId = getPersonId(req);
 
@@ -16,7 +16,7 @@ export const adminCheck = (req: Request, res: Response, next: NextFunction) => {
     }
 
     try {
-        if (!userModel.getters.isAdmin(personId)) return res.status(403);
+        if ((await userModel.getters.isAdmin(personId)) !== true) return res.status(403);
     } catch (error) {
         const msg = `Error occurred while checkin admin role for: ${personId}.`;
         log.error(msg, error.message);
