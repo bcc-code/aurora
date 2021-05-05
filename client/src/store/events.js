@@ -16,7 +16,9 @@ export default {
         }),
         addEvent: firestoreAction(async (context, event) => {
             const eventId = `${context.getters.nextId()}`;
-            await context.getters.eventsRef.doc(eventId).set({ ...event })
+            const doc = await context.getters.eventsRef.doc(eventId)
+            await doc.set({ ...event })
+            await doc.collection('counters').doc('contributions').set({ counter: 0 });
             return eventId
         }),
         updateEvent: firestoreAction((context, event) => {

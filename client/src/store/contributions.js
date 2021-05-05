@@ -36,9 +36,9 @@ export default {
             return context.getters.deskRef.doc(entry.id).delete()
         }),
         updateContribsCount: firestoreAction(async (context, count) => {
-            let event = (await context.rootGetters['events/selectedEventRef'].get()).data()
-            event.contributionsCount = (event.contributionsCount || 0) + count
-            context.rootGetters['events/selectedEventRef'].update(event)
+            const contribCounter = await context.rootGetters['events/selectedEventRef'].collection('counters').doc('contributions')
+            let newCount = ((await contribCounter.get()).data().count || 0) + count
+            await contribCounter.set({ count: newCount })
         }),
         sendToFeedRef: firestoreAction(async (context, entry) => {
             await context.getters.feedRef.doc(entry.id).set({ ...entry })
