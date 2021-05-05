@@ -4,7 +4,7 @@ import _ from 'lodash';
 import {Dictionary} from "lodash";
 import {firestore} from 'firebase-admin';
 
-export const asyncForEach = async<T> (array : T[], callback : (e : T, index : number, array : T[]) => Promise<void>) => {
+export const asyncForEach = async<T> (array : T[], callback : (e: T, index: number, array: T[]) => Promise<void>) => {
   for (let index = 0; index < array.length; index++) {
     await callback(array[index], index, array);
   }
