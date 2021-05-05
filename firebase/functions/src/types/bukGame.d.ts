@@ -14,6 +14,7 @@ export interface BukGameActions {
 }
 
 export interface BukGameEntry {
+  [i: string]: string | number | undefined,
     displayName?: string,
     churchName?: string,
     countryName?: string,

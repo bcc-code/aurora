@@ -1,9 +1,9 @@
-import { EventRefs } from "../../types/event";
+import {firestore} from "firebase-admin";
 
 export class Module {
-    event: EventRefs;
+    event: firestore.DocumentReference;
 
-    constructor (event: EventRefs) {
+    constructor (event: firestore.DocumentReference) {
         this.event = event;
     }
 }

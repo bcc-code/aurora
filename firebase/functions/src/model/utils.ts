@@ -10,7 +10,7 @@ export const asyncForEach = async<T> (array : T[], callback : (e: T, index: numb
   }
 };
 
-export const asyncForEachParallel = async<T> (array : T[], callback : (e : T, index : number, array : T[]) => Promise<void>) => {
+export const asyncForEachParallel = async<T> (array : T[], callback : (e : T, index : number, array : T[]) => Promise<any>) => {
   var requests = [];
 
   for (let index = 0; index < array.length; index++) {

@@ -14,7 +14,7 @@ export interface CompetitionActions {
 
 export interface CompetitionUpdate {
     user?: FirebaseFirestore.DocumentReference,
-    distance?: number,
-    distanceToBeApproved?: number,
+    distance: number,
+    distanceToBeApproved: number,
     churchId?: number
 }

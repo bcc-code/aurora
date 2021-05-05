@@ -9,15 +9,12 @@
   "extends": "eslint:recommended",
   "rules": {
 	"no-unused-vars": "off",
-	"@typescript-eslint/no-unused-vars": ["error"]
+	"@typescript-eslint/no-unused-vars": ["error"],
 
-    // Removed rule "disallow multiple spaces in regular expressions" from recommended eslint rules
     "no-regex-spaces": "off",
 
-    // Removed rule "disallow the use of debugger" from recommended eslint rules
     "no-debugger": "off",
 
-    // Warn against template literal placeholder syntax in regular strings
     "no-template-curly-in-string": 1,
 
     "consistent-return": 0,

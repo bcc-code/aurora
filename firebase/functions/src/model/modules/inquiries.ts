@@ -1,27 +1,21 @@
-import * as firebaseAdmin from 'firebase-admin'
 import { n } from "../index";
-import { InquiriesActions, InquiriesRefs } from "../../types/inquiries";
 import { Module } from './module';
-import { EventRefs } from '../../types/event';
-import { IUser } from '../../types/user';
+import {firestore} from 'firebase-admin';
 
 export class InquiriesModule extends Module {
-  refs: InquiriesRefs;
-  actions: InquiriesActions;
 
-  constructor(event: EventRefs) {
-    super(event);
+  inquiriesIncoming : firestore.CollectionReference
+  inquiriesQueue : firestore.CollectionReference
 
-    this.refs = {};
-    this.actions = {};
-    
-    this.refs.inquiriesIncoming = () => this.event.event().collection(n.inquiriesIncoming);
-    this.refs.inquiriesQueue = () => this.event.event().collection(n.inquiriesQueue);
-  
-    this.actions.submitInquiry = async (inquiry) => {
-      await this.refs.inquiriesIncoming().add(inquiry);
+   submitInquiry = async (inquiry : firestore.DocumentData) => {
+      await this.inquiriesIncoming.add(inquiry);
     };
-  
+
+
+  constructor(event: firestore.DocumentReference) {
+    super(event);
+    this.inquiriesIncoming = this.event.collection(n.inquiriesIncoming);
+    this.inquiriesQueue =  this.event.collection(n.inquiriesQueue);
   }
 }
 
