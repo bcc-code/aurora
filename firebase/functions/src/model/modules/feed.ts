@@ -1,26 +1,21 @@
-import { n } from "../index";
-import { FeedActions, FeedRefs } from "../../types/feed";
-import { EventRefs } from "../../types/event";
+import { n } from "../constants";
 import { Module } from "./module";
+import { firestore } from "firebase-admin";
 export class FeedModule extends Module {
-  refs: FeedRefs;
-  actions: FeedActions;
+  feedIncoming: firestore.CollectionReference;
+  feedApproved: firestore.CollectionReference;
 
-  constructor (event: EventRefs) {
-    super(event)
-
-    this.refs = {};
-    this.actions = {};
-
-    this.refs.feedIncoming = () => event.event().collection(n.feedIncoming);
-    this.refs.feedApproved = () => event.event().collection(n.feedApproved);
-
-    this.actions.submitFeedEntry = async (personId, feedEntry) => {
-      feedEntry.date = Date.now()
-      const newFeedDoc = this.refs.feedIncoming().doc()
-      await newFeedDoc.set(feedEntry);
-      var privateDoc = newFeedDoc.collection("private").doc("person");
-      await privateDoc.set({personId});
-    };
+  async submitFeedEntry(personId: string, feedEntry: firestore.DocumentData) {
+    feedEntry.date = Date.now();
+    const newFeedDoc = this.feedIncoming.doc();
+    await newFeedDoc.set(feedEntry);
+    const privateDoc = newFeedDoc.collection("private").doc("person");
+    await privateDoc.set({ personId });
   }
-};
+
+  constructor(event: firestore.DocumentReference) {
+    super(event);
+    this.feedIncoming = this.event.collection(n.feedIncoming);
+    this.feedApproved = this.event.collection(n.feedApproved);
+  }
+}

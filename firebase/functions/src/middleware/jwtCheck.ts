@@ -1,15 +1,14 @@
 import jwt from "express-jwt";
 import jwks from "jwks-rsa";
-import { NextFunction, Request, Response } from "express"
-import  config from "../configs/config.json";
-import { logger } from '../log';
-import {express} from "@google-cloud/logging-bunyan";
+import { NextFunction, Request, Response } from "express";
+import config from "../configs/config.json";
+import { logger } from "../log";
 
-const log = logger('jwtCheck');
+const log = logger("jwtCheck");
 
-export const jwtCheck = (req : Request, res : Response, next : NextFunction) => {
+export const jwtCheck = (req: Request, res: Response, next: NextFunction) => {
   // get audience header
-  var audience = req.headers.audience;
+  let audience = req.headers.audience;
   if (!audience) {
     log.info(
       `audience header missing, falling back to '${config.auth0.clientId}`
@@ -31,7 +30,8 @@ export const jwtCheck = (req : Request, res : Response, next : NextFunction) => 
   })(req, res, (err) => {
     if (err) {
       log.error(`Error in jwtCheck: ${err}`);
-      res.status(401)
+      res
+        .status(401)
         .json({
           error: err,
         })

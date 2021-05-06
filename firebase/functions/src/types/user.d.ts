@@ -17,21 +17,29 @@ export interface IUser {
 }
 
 export interface UserRefs {
-  churches? (): FirebaseFirestore.CollectionReference,
-  church? (churchId: number): FirebaseFirestore.DocumentReference,
-  users? (): FirebaseFirestore.CollectionReference,
-  user? (personId: number): FirebaseFirestore.DocumentReference
-  permissions? (): FirebaseFirestore.CollectionReference
+  churches?(): FirebaseFirestore.CollectionReference;
+  church?(churchId: number): FirebaseFirestore.DocumentReference;
+  users?(): FirebaseFirestore.CollectionReference;
+  user?(personId: number): FirebaseFirestore.DocumentReference;
+  permissions?(): FirebaseFirestore.CollectionReference;
 }
 
 export interface UserGetters {
-  isAdmin? (personId: number): Promise<boolean>,
-  role? (personId: number): Promise<string>
+  isAdmin?(personId: number): Promise<boolean>;
+  role?(personId: number): Promise<string>;
 }
 
 export interface UserActions {
-  createOrUpdate? (update: IUser): Promise<FirebaseFirestore.DocumentData>,
-  syncUserAndClaims? (loggedInUser: any): any,
-  getUserDocs? (limit: number, startAfter: number, includeInactive?: boolean): Promise<Array<FirebaseFirestore.QueryDocumentSnapshot>>,
-  updateProfileImageUrl? (personId: number, imageUrl: string, thumbnailUrl: string): Promise<void>
+  createOrUpdate?(update: IUser): Promise<FirebaseFirestore.DocumentData>;
+  syncUserAndClaims?(loggedInUser: any): any;
+  getUserDocs?(
+    limit: number,
+    startAfter: number,
+    includeInactive?: boolean
+  ): Promise<Array<FirebaseFirestore.QueryDocumentSnapshot>>;
+  updateProfileImageUrl?(
+    personId: number,
+    imageUrl: string,
+    thumbnailUrl: string
+  ): Promise<void>;
 }

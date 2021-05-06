@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 // TODO: This is not a middleware
-import { UserModel } from "../model/index";
+import { UserModel } from "../model/user";
 
 import { Bucket } from "@google-cloud/storage";
 import * as admin from "firebase-admin";
@@ -22,12 +22,13 @@ import * as fs from "fs";
 import { spawn } from "child-process-promise";
 import * as os from "os";
 import * as path from "path";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 import { ObjectMetadata } from "firebase-functions/lib/providers/storage";
-import { logger } from '../log';
+import { logger } from "../log";
+import { firestore } from "firebase-admin";
 
-const log = logger('generateThumbnails');
+const log = logger("generateThumbnails");
 
 interface ResizedImageResult {
   size: string;
@@ -36,119 +37,131 @@ interface ResizedImageResult {
 }
 
 const config = {
-    cacheControlHeader: "max-age=86400",
-    imageSizes: ["64x64"],
-    resizedImagesPath: "thumbnails",
-    deleteOriginalFile: false,
-}
+  cacheControlHeader: "max-age=86400",
+  imageSizes: ["64x64"],
+  resizedImagesPath: "thumbnails",
+  deleteOriginalFile: false,
+};
 
-const extractFileNameWithoutExtension = (
-    filePath: string,
-    ext: string
-  ) => {
-    return path.basename(filePath, ext);
+const extractFileNameWithoutExtension = (filePath: string, ext: string) => {
+  return path.basename(filePath, ext);
 };
 
 /**
  * When an image is uploaded in the Storage bucket We generate a resized image automatically using
  * ImageMagick which is installed by default on all Cloud Functions instances.
  */
-export const generateResizedImage = async (object, db): Promise<void> => {
-    const { contentType } = object; // This is the image MIME type
+export const generateResizedImage = async (
+  object: ObjectMetadata,
+  db: firestore.Firestore
+): Promise<void> => {
+  const { contentType } = object; // This is the image MIME type
 
-    if (!contentType) {
-      return;
-    }
+  if (!contentType) {
+    return;
+  }
 
-    const isImage = contentType.startsWith("image/");
-    if (!isImage) {
-      return;
-    }
+  const isImage = contentType.startsWith("image/");
+  if (!isImage) {
+    return;
+  }
 
-    if (object.metadata && object.metadata.resizedImage === "true") {
-      return;
-    }
+  if (object.metadata && object.metadata.resizedImage === "true") {
+    return;
+  }
 
-    if (!object.name.includes('profile-pictures')) {
-      return;
-    }
+  if (!(object.name ?? "").includes("profile-pictures")) {
+    return;
+  }
 
-    const bucket = admin.storage().bucket(object.bucket);
-    const filePath = object.name; // File path in the bucket.
-    const fileDir = path.dirname(filePath);
-    const fileExtension = path.extname(filePath);
-    const fileNameWithoutExtension = extractFileNameWithoutExtension(
-      filePath,
-      fileExtension
-    );
-    const objectMetadata = object;
+  const bucket = admin.storage().bucket(object.bucket);
+  const filePath = object.name!; // File path in the bucket.
+  const fileDir = path.dirname(filePath);
+  const fileExtension = path.extname(filePath);
+  const fileNameWithoutExtension = extractFileNameWithoutExtension(
+    filePath,
+    fileExtension
+  );
 
-    let originalFile;
-    let remoteFile;
+  const objectMetadata = object;
+
+  const originalFile = path.join(os.tmpdir(), filePath);
+  let remoteFile;
+  try {
+    const tempLocalDir = path.dirname(originalFile);
+
+    // Create the temp directory where the storage file will be downloaded.
     try {
-      originalFile = path.join(os.tmpdir(), filePath);
-      const tempLocalDir = path.dirname(originalFile);
-
-      // Create the temp directory where the storage file will be downloaded.
-      try {
-        fs.mkdirSync(tempLocalDir)
-      } catch (err) {
-        if (err.code !== 'EEXIST') throw err
-      }
-
-      // Download file from bucket.
-      remoteFile = bucket.file(filePath);
-      await remoteFile.download({ destination: originalFile });
-
-      // Convert to a set to remove any duplicate sizes
-      const imageSizes = new Set(config.imageSizes);
-      const tasks: Promise<ResizedImageResult>[] = [];
-      imageSizes.forEach((size) => {
-        tasks.push(
-          resizeImage({
-            bucket,
-            originalFile,
-            fileDir,
-            fileNameWithoutExtension,
-            fileExtension,
-            contentType,
-            size,
-            objectMetadata: objectMetadata,
-          })
-        );
-      });
-
-      const results = await Promise.all(tasks);
-      try {
-        let personId = filePath.match( /([0-9]{5})_/)[1];
-        let originalUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(remoteFile.name) + "?alt=media&token=" + remoteFile.metadata.metadata.firebaseStorageDownloadTokens
-        let userModel = new UserModel(db);
-        await userModel.actions.updateProfileImageUrl(personId, originalUrl, results[0].downloadUrl);
-      } catch (error) {
-        return;
-      }
-      const failed = results.some((result) => result.success === false);
-      if (failed) {
-        return;
-      }
+      fs.mkdirSync(tempLocalDir);
     } catch (err) {
-      log.error(err)
-    } finally {
+      if (err.code !== "EEXIST") throw err;
+    }
 
-      if (originalFile) {
-        fs.unlinkSync(originalFile);
+    // Download file from bucket.
+    remoteFile = bucket.file(filePath);
+    await remoteFile.download({ destination: originalFile });
+
+    // Convert to a set to remove any duplicate sizes
+    const imageSizes = new Set(config.imageSizes);
+    const tasks: Promise<ResizedImageResult>[] = [];
+    imageSizes.forEach((size) => {
+      tasks.push(
+        resizeImage({
+          bucket,
+          originalFile,
+          fileDir,
+          fileNameWithoutExtension,
+          fileExtension,
+          contentType,
+          size,
+          objectMetadata: objectMetadata,
+        })
+      );
+    });
+
+    const results = await Promise.all(tasks);
+    try {
+      const personId = /([0-9]{5})_/.exec(filePath);
+      if (!personId) {
+        throw Error("No person id in path");
       }
-      if (config.deleteOriginalFile) {
-        // Delete the original file
-        if (remoteFile) {
-          try {
-            await remoteFile.delete();
-          } catch (err) {
-          }
-        }
+      const originalUrl =
+        "https://firebasestorage.googleapis.com/v0/b/" +
+        bucket.name +
+        "/o/" +
+        encodeURIComponent(remoteFile.name) +
+        "?alt=media&token=" +
+        remoteFile.metadata.metadata.firebaseStorageDownloadTokens;
+      const userModel = new UserModel(db);
+      await userModel.updateProfileImageUrl(
+        personId[1],
+        originalUrl,
+        results[0].downloadUrl
+      );
+    } catch (error) {
+      log.warn(error);
+      return;
+    }
+    const failed = results.some((result) => result.success === false);
+    if (failed) {
+      return;
+    }
+  } catch (err) {
+    log.error(err);
+  } finally {
+    if (originalFile) {
+      fs.unlinkSync(originalFile);
+    }
+    if (config.deleteOriginalFile) {
+      // Delete the original file
+      if (remoteFile) {
+        try {
+          await remoteFile.delete();
+        } catch (err) {}
       }
     }
   }
+};
 
 const resizeImage = async ({
   bucket,
@@ -177,11 +190,11 @@ const resizeImage = async ({
       : path.join(fileDir, resizedFileName)
   );
   let resizedFile;
-  let downloadUrl;
+  let downloadUrl = "";
   try {
     resizedFile = path.join(os.tmpdir(), resizedFileName);
 
-    let uuid = uuidv4();
+    const uuid = uuidv4();
     // Cloud Storage files.
     const metadata: any = {
       contentDisposition: objectMetadata.contentDisposition,
@@ -205,13 +218,21 @@ const resizeImage = async ({
     });
 
     // Uploading the resized image.
-    await bucket.upload(resizedFile, {
-      destination: resizedFilePath,
-      metadata,
-    }).then((data) => {
-        let file = data[0];
-        downloadUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid
-    });
+    await bucket
+      .upload(resizedFile, {
+        destination: resizedFilePath,
+        metadata,
+      })
+      .then((data) => {
+        const file = data[0];
+        downloadUrl =
+          "https://firebasestorage.googleapis.com/v0/b/" +
+          bucket.name +
+          "/o/" +
+          encodeURIComponent(file.name) +
+          "?alt=media&token=" +
+          uuid;
+      });
     return { size, downloadUrl, success: true };
   } catch (err) {
     return { size, downloadUrl, success: false };
@@ -221,7 +242,6 @@ const resizeImage = async ({
       if (resizedFile) {
         fs.unlinkSync(resizedFile);
       }
-    } catch (err) {
-    }
+    } catch (err) {}
   }
 };
