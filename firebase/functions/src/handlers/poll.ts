@@ -37,11 +37,14 @@ export async function generatePoll(db : firestore.Firestore, req : Request, res 
             userDoc,
             questionDoc.id,
             [randomAnswerDoc.id]
-          );
+          ).catch((err)=>{
+            log.error(err);
+          });
         }
       }
     }));
   }));
+
   return res.sendStatus(200).end();
 }
 
@@ -49,7 +52,13 @@ export async function submitPollResponse(db : firestore.Firestore, req : Request
   const eventModel = new EventModel(db, req.query.eventId);
   const userModel = new UserModel(db);
   const userDoc = await userModel.userRef(getPersonId(req)).get();
-  await eventModel.poll.setPollResponse(userDoc, req.body.questionId, req.body.selectedAnswers);
+  try {
+    await eventModel.poll.setPollResponse(userDoc, req.body.questionId, req.body.selectedAnswers);
+  } catch(err) {
+    log.error(err);
+    res.sendStatus(400).end()
+    return
+  }
   return res.sendStatus(200).end();
 };
 

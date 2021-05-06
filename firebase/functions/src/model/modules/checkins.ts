@@ -96,6 +96,8 @@ export class CheckinModule extends Module {
 
     let batch = this.db.batch();
 
+    let newCheckinCount = 0;
+
     if (currentUser.exists) {
       let currentStatus = await this.getCheckinStatus(currentPersonId);
       if (userIds.includes(currentPersonId) && currentStatus.canCheckin) {
@@ -106,6 +108,7 @@ export class CheckinModule extends Module {
           timestamp: Date.now()
         }
         batch.set(this.checkinRef(currentPersonId), newCheckin);
+        newCheckinCount++;
       }
       if (Array.isArray(currentStatus.linkedUsers)) {
         await asyncForEachParallel(
@@ -119,20 +122,23 @@ export class CheckinModule extends Module {
                 timestamp: Date.now()
               }
               batch.set(this.checkinRef(linkedUser.personId.toString()), newCheckin);
+              newCheckinCount++;
             }
           }
         );
       }
     }
     await batch.commit();
+    const checkinFactor = (await this.event.get()).data()?.checkinFactor || 1;
+    await this.event.update({ checkedInUsers: firestore.FieldValue.increment(Math.round(newCheckinCount * checkinFactor))})
   };
 
   async updateCheckinCount() {
     let allCheckins = await this.checkins.get();
     let count = allCheckins.size;
     let evt = await this.event.get();
-    const extraCheckins = evt.data().extraCheckins || 0;
-    const checkinFactor = evt.data().checkinFactor || 1;
+    const extraCheckins = evt.data()?.extraCheckins || 0;
+    const checkinFactor = evt.data()?.checkinFactor || 1;
     count = Math.round(count * checkinFactor);
     count += extraCheckins;
     const docUpdate = { checkedInUsers: count };

@@ -90,7 +90,7 @@ export const sumDeep = (a : any, b : any) => { // TODO: This shoud not be "ANY"
 export const getPersonId = (req : Request) : string => {
   let personId = req.user?.['https://login.bcc.no/claims/personId'].toFixed() ?? null
   if (personId) {
-    return `${personId}`
+    return personId.toString()
   }
 
   throw new Error(`Unable to find personId: ${personId}`)
