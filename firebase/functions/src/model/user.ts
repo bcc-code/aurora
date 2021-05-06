@@ -53,38 +53,38 @@ export class UserModel {
 
   async updateGuardianLinkedUsersList(userData: IUser, update: IUser, batch: firestore.WriteBatch) : Promise<boolean> {
     let modified = false;
-    let users = new Map();
-    let userRefs = new Map();
+    const users = new Map();
+    const userRefs = new Map();
 
-    let idsToAddTo : (number | null)[] = [
+    const idsToAddTo : (number | null)[] = [
       (update.guardian1Id || userData.guardian1Id) ?? null,
       (update.guardian2Id || userData.guardian2Id) ?? null,
-    ].filter((id) => !!id && id != userData.personId);
+    ].filter((id) => Boolean(id) && id != userData.personId);
 
-    let idsToRemoveFrom = [
+    const idsToRemoveFrom = [
       userData.guardian1Id && update.guardian1Id != userData.guardian1Id
       ? userData.guardian1Id
       : null,
       userData.guardian2Id && update.guardian2Id != userData.guardian2Id
       ? userData.guardian2Id
       : null,
-    ].filter((id) => !!id && !idsToAddTo.includes(id));
+    ].filter((id) => Boolean(id) && !idsToAddTo.includes(id));
 
-    for (let id of idsToRemoveFrom.concat(idsToAddTo)) {
+    for (const id of idsToRemoveFrom.concat(idsToAddTo)) {
       if (id && !userRefs.has(id)) {
         const ref = this.userRef(`${id}`);
         userRefs.set(id, ref);
       }
     }
-    for (let [id, ref] of userRefs) {
+    for (const [id, ref] of userRefs) {
       const user = await ref.get();
       if (user.exists) {
         users.set(id, user.data());
       }
     }
 
-    for (let id2 of idsToRemoveFrom) {
-      let d = users.get(id2);
+    for (const id2 of idsToRemoveFrom) {
+      const d = users.get(id2);
       if (
         d &&
         Array.isArray(d.linkedUserIds) &&
@@ -99,8 +99,8 @@ export class UserModel {
         modified = true;
       }
     }
-    for (let id3 of idsToAddTo) {
-      let d = users.get(id3);
+    for (const id3 of idsToAddTo) {
+      const d = users.get(id3);
       if (d) {
         if (d.linkedUserIds == null) {
           d.linkedUserIds = [];
@@ -120,11 +120,11 @@ export class UserModel {
 
   async updateInternal(userRef: FirebaseFirestore.DocumentReference, userObj: FirebaseFirestore.DocumentData, update: IUser) {
     // try get existing user
-    let userData = userObj.data();
+    const userData = userObj.data();
     const localBatch = this.db.batch();
     let userChanged = false;
 
-    let guardiansChanged = await this.updateGuardianLinkedUsersList(userData, update, localBatch);
+    const guardiansChanged = await this.updateGuardianLinkedUsersList(userData, update, localBatch);
     if (
       update.firstName != userData.firstName ||
       update.lastName != userData.lastName ||
@@ -147,11 +147,11 @@ export class UserModel {
       log.info(`Saving changes to user ID: ${update.personId}`);
       await localBatch.commit();
 
-      let result = await userRef.get();
+      const result = await userRef.get();
       return result;
     }
     return userObj;
-  };
+  }
 
   async createOrUpdate(update: IUser) {
     const userRef = this.userRef(`${update.personId}`);
@@ -159,25 +159,25 @@ export class UserModel {
     return userObj.exists
       ? await this.updateInternal(userRef, userObj, update)
       : await this.createInternal(update)
-  };
+  }
 
   async createInternal(created: IUser) {
     log.info(
       `Creating new user, ID: ${created.personId}, displayName: ${created.displayName}`
     );
     const localBatch = this.db.batch();
-    let linkedUserIds : number[] = [];
+    const linkedUserIds : number[] = [];
 
     // when creating, we should check if this user is a Guardian for any existing users
-    let g1List = this.users.where("guardian1Id", "==", created.personId);
-    let g1deps = await g1List.get();
+    const g1List = this.users.where("guardian1Id", "==", created.personId);
+    const g1deps = await g1List.get();
     g1deps.forEach((results) => {
       if (!linkedUserIds.includes(results.data().personId)) {
         linkedUserIds.push(results.data().personId);
       }
     });
-    let g2List = this.users.where("guardian2Id", "==", created.personId);
-    let g2deps = await g2List.get();
+    const g2List = this.users.where("guardian2Id", "==", created.personId);
+    const g2deps = await g2List.get();
     g2deps.forEach((results) => {
       if (!linkedUserIds.includes(results.data().personId)) {
         linkedUserIds.push(results.data().personId);
@@ -191,7 +191,7 @@ export class UserModel {
     await localBatch.commit();
 
     return await this.userRef(`${created.personId}`).get();
-  };
+  }
 
   async getUser(uid: any)  {
     try {
@@ -201,7 +201,7 @@ export class UserModel {
       log.error(`getUser('${uid})`, error);
       return null;
     }
-  };
+  }
 
   async updateFirebaseUser(user: IUser) {
     if (!user.uid) {
@@ -230,7 +230,7 @@ export class UserModel {
           email: `${user.personId}@person.id`,
         });
     }
-    let customClaims = Object.assign({}, { personId: user.personId });
+    const customClaims = Object.assign({}, { personId: user.personId });
     if ( firebaseUser && (!firebaseUser.customClaims || !equal(firebaseUser.customClaims, customClaims))) {
       // need to update custom claims
       try {
@@ -241,7 +241,7 @@ export class UserModel {
       }
     }
     return customClaims;
-  };
+  }
 
   async syncUserAndClaims(loggedInUser : {[i : string]: string}) {
     if (!loggedInUser) {
@@ -265,8 +265,8 @@ export class UserModel {
       throw new Error(msg);
     }
 
-    let user: IUser = {
-      personId: +loggedInUser[n.claims.personId],
+    const user: IUser = {
+      personId: Number(loggedInUser[n.claims.personId]),
       uid: loggedInUser[n.claims.uid],
       firstName: loggedInUser[n.claims.firstName] || "",
       lastName: loggedInUser[n.claims.lastName] || "",
@@ -275,7 +275,7 @@ export class UserModel {
     };
 
     if (loggedInUser[n.claims.churchId]) {
-      user.churchId = +loggedInUser[n.claims.churchId];
+      user.churchId = Number(loggedInUser[n.claims.churchId]);
       if (user.churchId != null) {
         const userChurch = (await this.churchRef(`${user.churchId}`).get()).data()
         if (userChurch) {
@@ -289,10 +289,10 @@ export class UserModel {
     }
 
     user.hasMembership = loggedInUser[n.claims.hasMembership] != undefined
-    let result = await this.createOrUpdate(user);
-    let userClaims = result && result.exists ? await this.updateFirebaseUser(result.data()) : {};
+    const result = await this.createOrUpdate(user);
+    const userClaims = result && result.exists ? await this.updateFirebaseUser(result.data()) : {};
     return userClaims;
-  };
+  }
 
   async getUserDocs(limit = 0, startAfter = 0, includeInactive = false) {
     let query = this.users.orderBy('personId').limit(limit)
@@ -302,12 +302,12 @@ export class UserModel {
     if (startAfter > 0) {
       query = query.startAfter(startAfter);
     }
-    let results = await query.get();
+    const results = await query.get();
     return results.docs;
-  };
+  }
 
   async updateProfileImageUrl(personId: string, imageUrl: string, thumbnailUrl : string | null = null) {
     await this.userRef(personId).update({ profilePicture: imageUrl, profilePictureThumb: thumbnailUrl, updatedAt: Date.now(), approved: false });
-  };
+  }
 }
 

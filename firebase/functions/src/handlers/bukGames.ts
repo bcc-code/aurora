@@ -8,53 +8,53 @@ const log = logger('bukGamesHandler');
 
 //bukGamesHandler.get("/rank", jwtCheck, async(req, res) => {
 export async function getRank(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
-  let bukGameModel = new BukGameModel(db, req.query.bukGameId);
-  let loggedInUserPersonId = getPersonId(req);
-  let userDoc = await bukGameModel.entry(loggedInUserPersonId).get()
+  const bukGameModel = new BukGameModel(db, req.query.bukGameId);
+  const loggedInUserPersonId = getPersonId(req);
+  const userDoc = await bukGameModel.entry(loggedInUserPersonId).get()
   if (!userDoc.exists) {
     return res.json(null).end();
   }
-  let userData = userDoc.data();
-  let request = bukGameModel.entries
+  const userData = userDoc.data();
+  const request = bukGameModel.entries
     .orderBy(req.query.game, 'desc')
     .endAt(userData![req.query.game])
-  let rank = (await request.get()).docs.length
+  const rank = (await request.get()).docs.length
   return res.json({...userData, rank: rank }).end();
 }
 
 //bukGamesHandler.get("/score", jwtCheck, async (req, res) => {
 export async function getScore(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
-  let bukGameModel = new BukGameModel(db, req.query.bukGameId);
-  let loggedInUserPersonId = getPersonId(req);
+  const bukGameModel = new BukGameModel(db, req.query.bukGameId);
+  const loggedInUserPersonId = getPersonId(req);
   if (!loggedInUserPersonId) {
     return res.json(0).end();
   }
-  let userDoc = await bukGameModel.entry(loggedInUserPersonId).get()
+  const userDoc = await bukGameModel.entry(loggedInUserPersonId).get()
   if (!userDoc.exists) {
     return res.json(0).end();
   }
-  let userData = userDoc.data()!;
+  const userData = userDoc.data()!;
   return res.json(userData[req.query.game]).end()
 }
 
 //bukGamesHandler.get("/highscore", jwtCheck, async(req, res) => {
 export async function getHighScore(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
-  let bukGameModel = new BukGameModel(db, req.query.bukGameId);
-  let highScoreDoc = await bukGameModel.entries
+  const bukGameModel = new BukGameModel(db, req.query.bukGameId);
+  const highScoreDoc = await bukGameModel.entries
     .orderBy(req.query.game, 'desc')
     .limit(1)
     .get()
   if (highScoreDoc.docs.length === 0) {
     return res.json(0).end();
   }
-  let highscore = highScoreDoc.docs[0].data()[req.query.game]
+  const highscore = highScoreDoc.docs[0].data()[req.query.game]
   return res.json(highscore).end();
 }
 
 //bukGamesHandler.get("/leaderboard", jwtCheck, async(req, res) => {
 export async function getLeaderboard(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
-  let bukGameModel = new BukGameModel(db, req.query.bukGameId);
-  let request = bukGameModel.entries
+  const bukGameModel = new BukGameModel(db, req.query.bukGameId);
+  const request = bukGameModel.entries
     .orderBy(req.query.game, 'desc')
     .limit(parseInt(req.query.limit))
   const results = (await request.get()).docs.map((el: any) => el.data());
@@ -63,8 +63,8 @@ export async function getLeaderboard(db : firestore.Firestore,req : Request, res
 
 // bukGamesHandler.post("/entry", jwtCheck, async (req, res) => {
 export async function addEntry(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
-  let loggedInUserPersonId = getPersonId(req);
-  let personId = loggedInUserPersonId; //req.body.personId ? req.body.personId : loggedInUserPersonId;
+  const loggedInUserPersonId = getPersonId(req);
+  const personId = loggedInUserPersonId; //req.body.personId ? req.body.personId : loggedInUserPersonId;
   if (req.query.bukGameId !== "fktb2101") {
     return res.status(400).send({ message: 'The bukGameId is invalid' }).end()
   }
@@ -72,14 +72,14 @@ export async function addEntry(db : firestore.Firestore,req : Request, res : Res
     return res.status(400).send({ message: `Parameter 'personId' must be set` }).end();
   }
 
-  let bukGameModel = new BukGameModel(db, req.query.bukGameId);
-  let userBan = await bukGameModel.userBan(personId).get()
+  const bukGameModel = new BukGameModel(db, req.query.bukGameId);
+  const userBan = await bukGameModel.userBan(personId).get()
   if (userBan.exists && userBan.data()!.timestamp !== null) {
-    let timestamp = userBan.data()!.timestamp;
+    const timestamp = userBan.data()!.timestamp;
     if (timestamp > Date.now() ) {
-      let secRemaining = Math.floor((timestamp - Date.now())/1000)
-      let minRemaining = Math.floor((timestamp - Date.now())/60000)
-      let timeRemaining = minRemaining === 0 ? `${secRemaining} seconds` : `${minRemaining} minute(s)`
+      const secRemaining = Math.floor((timestamp - Date.now())/1000)
+      const minRemaining = Math.floor((timestamp - Date.now())/60000)
+      const timeRemaining = minRemaining === 0 ? `${secRemaining} seconds` : `${minRemaining} minute(s)`
       return res.status(400).send({ message: `You have been banned. Please retry in ${timeRemaining}`}).end();
     }
     else {
@@ -106,7 +106,7 @@ export async function addEntry(db : firestore.Firestore,req : Request, res : Res
       return res.status(400).send({ message: `Banned`}).end();
     }
 
-    let result = await bukGameModel.updateEntry(personId, req.body.game, req.body.score);
+    const result = await bukGameModel.updateEntry(personId, req.body.game, req.body.score);
     return res.json(result).end();
 
   } catch (err) {

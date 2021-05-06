@@ -41,14 +41,14 @@ const insecureHandlerWithPrefix = (prefix: string) : Application => {
 }
 
 const handlerWithPrefix = (prefix: string) : Application => {
-  let handler = insecureHandlerWithPrefix(prefix);
+  const handler = insecureHandlerWithPrefix(prefix);
   handler.use(jwtCheck);
   handler.use(syncUserAndClaims);
   return handler;
 }
 
 const adminHandlerWithPrefix = (prefix : string) : Application => {
-  let handler = handlerWithPrefix(prefix);
+  const handler = handlerWithPrefix(prefix);
   handler.use(adminCheck);
   return handler;
 }

@@ -25,7 +25,7 @@ export async function deleteQuestion(req : Request, res : Response) {
             error: err,
         });
     }
-};
+}
 
 export async function deleteEvent(req : Request, res : Response) {
     try {
@@ -39,5 +39,5 @@ export async function deleteEvent(req : Request, res : Response) {
             error: err,
         });
     }
-};
+}
 

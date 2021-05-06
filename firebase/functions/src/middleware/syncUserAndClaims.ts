@@ -12,7 +12,7 @@ export const syncUserAndClaims = async (req : Request, res : Response, next : Ne
     return res.status(500).send({ message: "Invalid user." }).end();
   }
 
-  let personId = getPersonId(req);
+  const personId = getPersonId(req);
 
   if (personId === null) {
     log.error("syncUserAndClaims - user missing personId claim");
@@ -21,8 +21,8 @@ export const syncUserAndClaims = async (req : Request, res : Response, next : Ne
 
   try {
     // make sure we have a user in user-groups
-    var userModel = new UserModel(firebaseAdmin.firestore());
-    var userClaims = await userModel.syncUserAndClaims(req.user); // TODO: Where is the User type from
+    const userModel = new UserModel(firebaseAdmin.firestore());
+    const userClaims = await userModel.syncUserAndClaims(req.user); // TODO: Where is the User type from
     req.params.userClaims = userClaims;
   } catch (error) {
     const msg = `Error occurred while syncronizing user ID: ${personId}.`;

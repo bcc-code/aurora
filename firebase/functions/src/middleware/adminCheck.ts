@@ -8,7 +8,7 @@ const log = logger('adminCheck');
 
 export const adminCheck = async (req: Request, res: Response, next: NextFunction) => {
     const userModel = new UserModel(firebaseAdmin.firestore());
-    let personId = getPersonId(req);
+    const personId = getPersonId(req);
 
     if (!personId) {
       return next("PersonId not present");

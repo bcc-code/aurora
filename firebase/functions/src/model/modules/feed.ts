@@ -12,11 +12,11 @@ export class FeedModule extends Module {
     await newFeedDoc.set(feedEntry);
     const privateDoc = newFeedDoc.collection("private").doc("person");
     await privateDoc.set({personId});
-  };
+  }
 
   constructor (event: firestore.DocumentReference) {
     super(event)
     this.feedIncoming =  this.event.collection(n.feedIncoming);
     this.feedApproved = this.event.collection(n.feedApproved);
   }
-};
+}

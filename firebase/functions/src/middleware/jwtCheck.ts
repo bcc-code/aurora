@@ -8,7 +8,7 @@ const log = logger('jwtCheck');
 
 export const jwtCheck = (req : Request, res : Response, next : NextFunction) => {
   // get audience header
-  var audience = req.headers.audience;
+  let audience = req.headers.audience;
   if (!audience) {
     log.info(
       `audience header missing, falling back to '${config.auth0.clientId}`

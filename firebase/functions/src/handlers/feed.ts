@@ -22,12 +22,12 @@ export async function newFeedPost(db : firestore.Firestore,req : Request, res : 
     const currentUser = currentUserObj.data() as IUser
     const churchDoc = await userModel.churchRef((currentUser.churchId ?? "").toString()).get();
     if (churchDoc.exists) {
-      let data = churchDoc.data()!
+      const data = churchDoc.data()!
       currentUser.churchName = data.name
       currentUser.countryName = data.country
     }
 
-    let feedEntry: FeedEntry = {
+    const feedEntry: FeedEntry = {
       firstName: currentUser.firstName || "",
       lastName: currentUser.lastName || "",
       displayName: currentUser.displayName || "",

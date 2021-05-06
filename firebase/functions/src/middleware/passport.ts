@@ -16,10 +16,10 @@ const strategy = new Auth0Strategy(
     clientSecret: config.auth0.clientSecret,
     callbackURL: config.api.baseUrl + "firebase/callback"
   },
-  function(_accessToken: string, _refreshToken: string, extraParams: ExtraVerificationParams, profile: Profile, done: VerifyFunctionWithRequest) {
+  ((_accessToken: string, _refreshToken: string, extraParams: ExtraVerificationParams, profile: Profile, done: VerifyFunctionWithRequest) => {
     profile.accessToken = extraParams.id_token;
     return done(null, profile);
-  }
+  })
 );
 
 passport.use(strategy);

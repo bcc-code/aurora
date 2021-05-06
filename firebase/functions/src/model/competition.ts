@@ -30,17 +30,17 @@ export class CompetitionModel {
     return this.db.collection(n.users).doc(personId);
   }
 
-  async updateEntry(personId : string, distance : number, overrideMax : number = 0) {
+  async updateEntry(personId : string, distance : number, overrideMax  = 0) {
 
     log.debug(`POST /competition/entry?competitionId=${this.competitionId}, personId: ${personId}, distance: ${distance}, overrideMax: ${overrideMax}`)
 
-    var entryDoc = await this.entry(personId).get();
+    const entryDoc = await this.entry(personId).get();
 
     log.info(`entryDoc for personId: ${personId} exists: ${entryDoc.exists}`)
 
     // TODO: add check on user if overrideMax > 0
     const calculatedMaxDistance = (overrideMax > MAX_DISTANCE) ? overrideMax : MAX_DISTANCE;
-    var update: CompetitionUpdate = {
+    const update: CompetitionUpdate = {
       distance: 0,
       distanceToBeApproved: 0,
     };
@@ -55,20 +55,20 @@ export class CompetitionModel {
       update.distanceToBeApproved = 0;
 
       // ensure distancePerChurch doc exists
-      var userRef = this.user(personId);
+      const userRef = this.user(personId);
       log.debug(`userRef: ${userRef.toString()}`);
 
-      var userDoc = await userRef.get();
+      const userDoc = await userRef.get();
       if (!userDoc.exists) {
         throw new Error(`PersonId '${personId}' does not exist.`);
       }
-      var userData = userDoc.data()!;
+      const userData = userDoc.data()!;
       update.user = userRef;
 
       if (userData.churchId) {
         update.churchId = userData.churchId;
 
-        var distancePerChurchDoc = await this.distancePerChurch(userData.churchId).get();
+        const distancePerChurchDoc = await this.distancePerChurch(userData.churchId).get();
 
         if (!distancePerChurchDoc.exists) {
           log.info(`Initializing distancePerChurch doc for churchId ${userData.churchId}`);
@@ -80,10 +80,10 @@ export class CompetitionModel {
     }
 
     const newMaxDistance = update.distance + update.distanceToBeApproved + distance;
-    var distanceDelta = (newMaxDistance <= calculatedMaxDistance)
+    const distanceDelta = (newMaxDistance <= calculatedMaxDistance)
       ? update.distanceToBeApproved + distance
       : 0;
-    var distanceToBeApprovedDelta = (overrideMax > MAX_DISTANCE)
+    const distanceToBeApprovedDelta = (overrideMax > MAX_DISTANCE)
       ? update.distanceToBeApproved * -1
       : distance - distanceDelta;
 
@@ -97,13 +97,13 @@ export class CompetitionModel {
       `distanceToBeApprovedDelta: ${distanceToBeApprovedDelta}`
     )
 
-    var batch = this.db.batch();
+    const batch = this.db.batch();
     if (entryDoc.exists) {
       batch.update(this.entry(personId), update);
     } else {
       batch.set(this.entry(personId), update);
     }
-    const shardId = Math.floor(+personId % 10);
+    const shardId = Math.floor(Number(personId) % 10);
 
     batch.update(this.distanceShard(shardId), {
       distance: this.increment(distanceDelta),

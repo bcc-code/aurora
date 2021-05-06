@@ -42,12 +42,12 @@ export class PollModule extends Module {
     return this.pollStats.doc(`${questionId}_${answerId}_${index}`);
   }
 
-  async loadPollData(initShards : boolean = false) {
-    let questions = await this.questions.get();
-    let answers : {[i: string]: QueryDocumentSnapshot[]} = {};
+  async loadPollData(initShards  = false) {
+    const questions = await this.questions.get();
+    const answers : {[i: string]: QueryDocumentSnapshot[]} = {};
 
     await Promise.all(questions.docs.map(async (questionDoc) => {
-      let answerList = await this.answers(questionDoc.id).get();
+      const answerList = await this.answers(questionDoc.id).get();
       answers[questionDoc.id] = answerList.docs;
 
       if (initShards) {
@@ -71,22 +71,22 @@ export class PollModule extends Module {
       await this.gameboard.set({});
     }
 
-    let batch = this.db.batch();
-    let pollQuestions : { [i: string]: firestore.DocumentData } = {};
-    let pollAnswers : { [i: string]: firestore.DocumentData } = {};
+    const batch = this.db.batch();
+    const pollQuestions : { [i: string]: firestore.DocumentData } = {};
+    const pollAnswers : { [i: string]: firestore.DocumentData } = {};
     await Promise.all(questionIds.map(async (questionId : string) => {
-      let questionRef = this.question(questionId);
-      let question = await questionRef.get();
+      const questionRef = this.question(questionId);
+      const question = await questionRef.get();
       if (!question.exists) {
         throw new Error(`questionId ${questionId} does not exist`)
       }
 
-      let answers = await this.answers(questionId).get();
+      const answers = await this.answers(questionId).get();
 
       if(!question.data()?.initialized) {
         answers.docs.forEach((answer) => {
           for (let i = 0; i < n.pollStatsShardCount; i++) {
-            let shard = this.qaShard(questionId, answer.id, i);
+            const shard = this.qaShard(questionId, answer.id, i);
             batch.set(shard, { total: 0 });
           }
         });
@@ -106,7 +106,7 @@ export class PollModule extends Module {
       },
     });
     await batch.commit();
-  };
+  }
 
   async pollClearAll() {
     await deleteCollection(this.db, this.responses.path, 300);
@@ -121,8 +121,8 @@ export class PollModule extends Module {
     }
     const personId = userDoc.data().personId;
     // make sure we don't already have a response for this personId + qustionId
-    let responseDoc = await this.response(personId, questionId).get();
-    let questionDoc = await this.question(questionId).get()
+    const responseDoc = await this.response(personId, questionId).get();
+    const questionDoc = await this.question(questionId).get()
 
     if (responseDoc.exists && !questionDoc.data()?.canChangeAnswer) {
       throw new Error("Multiple poll responses are not permitted.");
@@ -133,7 +133,7 @@ export class PollModule extends Module {
     const bucketNames = configDoc.exists ? configDoc.data()?.bucketNames : [];
 
     // no existing response
-    let batch = this.db.batch();
+    const batch = this.db.batch();
 
     const response = {
       personId: personId,
@@ -141,7 +141,7 @@ export class PollModule extends Module {
       selected: selectedAnswers,
     };
 
-    let responseDocRef = this.response(personId, questionId);
+    const responseDocRef = this.response(personId, questionId);
 
     // Select a shard of the counter based on personid
     const shardId = Math.floor(personId % 10);
@@ -161,7 +161,7 @@ export class PollModule extends Module {
         if (bucketValue == null || bucketValue == '') {
           bucketValue = 'Unknown';
         }
-        let updatedDoc : {[i: string]: firestore.FieldValue} = {};
+        const updatedDoc : {[i: string]: firestore.FieldValue} = {};
         updatedDoc[`${bucketName}.${bucketValue}`] = this.increment(-1);
         batch.set(
           this.qaShard(questionId, answerId, shardId),
@@ -184,7 +184,7 @@ export class PollModule extends Module {
           bucketValue = 'Unknown';
         }
 
-        let updatedDoc : {[i: string]: firestore.FieldValue} = {};
+        const updatedDoc : {[i: string]: firestore.FieldValue} = {};
         updatedDoc[`${bucketName}.${bucketValue}`] = this.increment(1);
         batch.set(
           this.qaShard(questionId, answerId, shardId),
@@ -196,7 +196,7 @@ export class PollModule extends Module {
 
     await batch.commit();
     return responseDocRef;
-  };
+  }
 
   async pickRandomWinner(questionId: string) {
     const question = (await this.question(questionId).get()).data();
@@ -230,27 +230,27 @@ export class PollModule extends Module {
     }
     if (candidates.length == 0)
       return {};
-    let i = Math.floor(Math.random() * candidates.length);
-    let winnerPersonId = candidates[i];
-    let winner = this.userModel.userRef(winnerPersonId);
+    const i = Math.floor(Math.random() * candidates.length);
+    const winnerPersonId = candidates[i];
+    const winner = this.userModel.userRef(winnerPersonId);
     await this.question(questionId).update({winner}); // TODO: What's going on here?
     return true;
   }
 
   async updatePollStats(currentQuestionId : string) {
-    let { answers } = await this.loadPollData();
+    const { answers } = await this.loadPollData();
 
-    let allQaShards = await this.pollStats.get();
-    let shards = allQaShards.docs;
+    const allQaShards = await this.pollStats.get();
+    const shards = allQaShards.docs;
     if (shards.length == 0) {
       await this.pollSummary.set({});
       return {};
     }
 
-    let total = {};
-    let totalCorrect = {};
-    let current = {};
-    let currentTotal = {};
+    const total = {};
+    const totalCorrect = {};
+    const current = {};
+    const currentTotal = {};
     let shardData = {};
 
     for (let i = 0; i < shards.length; i++) {
@@ -284,7 +284,7 @@ export class PollModule extends Module {
         sumDeep(current, answerWrapper);
       }
     }
-    let result = {
+    const result = {
       total: {
         total: total,
         correct: totalCorrect
@@ -297,8 +297,8 @@ export class PollModule extends Module {
   }
 
   async updateResponseStats(bucketPathsCommaSep: string, questionIdArray: string[]): Promise<void> {
-    let bucketPaths = typeof (bucketPathsCommaSep) === 'string' ? bucketPathsCommaSep.split(",") : [];
-    let result : {
+    const bucketPaths = typeof (bucketPathsCommaSep) === 'string' ? bucketPathsCommaSep.split(",") : [];
+    const result : {
       updatingQuestion: boolean,
       bucketPaths: string[],
       questions: {
@@ -318,13 +318,13 @@ export class PollModule extends Module {
 
     await Promise.all(questionIdArray.map(async (currentQuestionId) => {
 
-      let question = await this.question(currentQuestionId).get();
+      const question = await this.question(currentQuestionId).get();
 
       if (!question.exists) {
         log.error(`questionId '${currentQuestionId} does not exist`);
       } else {
-        let answerList = await this.answers(currentQuestionId).get();
-        let answers = answerList.docs.map((doc) => doc.data());
+        const answerList = await this.answers(currentQuestionId).get();
+        const answers = answerList.docs.map((doc) => doc.data());
 
         result.questions[currentQuestionId] = {
           "status": "calculating",
@@ -333,7 +333,7 @@ export class PollModule extends Module {
         };
 
         answers.forEach(answerRef => {
-          let answerValues = {
+          const answerValues = {
             dimensions: bucketPaths.map(bucketPath => {
               return {
                 path: bucketPath,
@@ -346,8 +346,8 @@ export class PollModule extends Module {
       }
     }));
 
-    let responseList = await this.responses.get();
-    let responses = responseList.docs.map((doc) => doc.data());
+    const responseList = await this.responses.get();
+    const responses = responseList.docs.map((doc) => doc.data());
 
     await Promise.all(responses.map(async (response) => {
       // TODO: skip responses if question not in questionIdArray

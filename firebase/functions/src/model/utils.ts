@@ -11,7 +11,7 @@ export const asyncForEach = async<T> (array : T[], callback : (e: T, index: numb
 };
 
 export const asyncForEachParallel = async<T> (array : T[], callback : (e : T, index : number, array : T[]) => Promise<any>) => {
-  var requests = [];
+  const requests = [];
 
   for (let index = 0; index < array.length; index++) {
     requests[index] = callback(array[index], index, array);
@@ -20,8 +20,8 @@ export const asyncForEachParallel = async<T> (array : T[], callback : (e : T, in
 };
 
 export const calculateAge = (birthdate : Date) => {
-  var diff_ms = Date.now() - birthdate.getTime();
-  var age_dt = new Date(diff_ms);
+  const diff_ms = Date.now() - birthdate.getTime();
+  const age_dt = new Date(diff_ms);
 
   return Math.abs(age_dt.getUTCFullYear() - 1970);
 };
@@ -88,7 +88,7 @@ export const sumDeep = (a : any, b : any) => { // TODO: This shoud not be "ANY"
 }
 
 export const getPersonId = (req : Request) : string => {
-  let personId = req.user?.['https://login.bcc.no/claims/personId'].toFixed() ?? null
+  const personId = req.user?.['https://login.bcc.no/claims/personId'].toFixed() ?? null
   if (personId) {
     return personId.toString()
   }

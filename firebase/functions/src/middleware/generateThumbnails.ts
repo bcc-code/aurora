@@ -85,7 +85,7 @@ export const generateResizedImage = async (object : ObjectMetadata, db : firesto
 
   const objectMetadata = object;
 
-  let originalFile = path.join(os.tmpdir(), filePath);
+  const originalFile = path.join(os.tmpdir(), filePath);
   let remoteFile;
   try {
     const tempLocalDir = path.dirname(originalFile);
@@ -121,12 +121,12 @@ export const generateResizedImage = async (object : ObjectMetadata, db : firesto
 
     const results = await Promise.all(tasks);
     try {
-      let personId = filePath.match( /([0-9]{5})_/)
+      const personId = /([0-9]{5})_/.exec(filePath)
       if (!personId) {
         throw Error("No person id in path");
       }
-      let originalUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(remoteFile.name) + "?alt=media&token=" + remoteFile.metadata.metadata.firebaseStorageDownloadTokens
-      let userModel = new UserModel(db);
+      const originalUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(remoteFile.name) + "?alt=media&token=" + remoteFile.metadata.metadata.firebaseStorageDownloadTokens
+      const userModel = new UserModel(db);
       await userModel.updateProfileImageUrl(personId[1], originalUrl, results[0].downloadUrl);
     } catch (error) {
       log.warn(error);
@@ -186,7 +186,7 @@ const resizeImage = async ({
   try {
     resizedFile = path.join(os.tmpdir(), resizedFileName);
 
-    let uuid = uuidv4();
+    const uuid = uuidv4();
     // Cloud Storage files.
     const metadata: any = {
       contentDisposition: objectMetadata.contentDisposition,
@@ -214,7 +214,7 @@ const resizeImage = async ({
       destination: resizedFilePath,
       metadata,
     }).then((data) => {
-      let file = data[0];
+      const file = data[0];
       downloadUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid
     });
     return { size, downloadUrl, success: true };

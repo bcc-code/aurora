@@ -61,7 +61,7 @@
 		"@types/passport-auth0": "^1.0.4",
 		"@typescript-eslint/eslint-plugin": "^4.22.1",
 		"@typescript-eslint/parser": "^4.22.1",
-		"eslint": "^5.16.0",
+		"eslint": "7",
 		"eslint-plugin-promise": "^4.0.1",
 		"firebase-functions-test": "^0.1.6",
 		"typescript": "^3.9.9"

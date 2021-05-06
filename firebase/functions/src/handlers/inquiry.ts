@@ -14,7 +14,7 @@ export async function newInquiry(db : firestore.Firestore,req : Request, res : R
     return res.status(400).send({ message: "User does not exist" }).end()
   }
   const currentUser = currentUserObj.data() as IUser;
-  let newInquiry: Inquiry = {
+  const newInquiry: Inquiry = {
     personId: currentUser.personId,
     firstName: currentUser.firstName ?? "",
     lastName: currentUser.lastName ?? "",
@@ -26,4 +26,4 @@ export async function newInquiry(db : firestore.Firestore,req : Request, res : R
   }
   await eventModel.inquiries.submitInquiry(newInquiry);
   return res.sendStatus(200).end();
-};
+}

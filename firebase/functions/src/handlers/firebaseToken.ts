@@ -34,17 +34,17 @@ export async function getToken(req : Request, res : Response, _ : NextFunction) 
       error: err
     }).end();
   }
-};
+}
 
 export async function login(req : Request, res : Response, next : NextFunction) {
-  let authOptions : AuthenticateOptions = {
+  const authOptions : AuthenticateOptions = {
                                  scope: "openid email profile church country",
 
                                  // @ts-ignore this is valid according to the docs
                                  audience: config.auth0.apiAudience,
                                }
   return passport.authenticate("auth0", authOptions)(req, res, next);
-};
+}
 
 export async function processLoginCallback(req : Request, res : Response, next : NextFunction) {
   try {
@@ -64,7 +64,7 @@ export async function processLoginCallback(req : Request, res : Response, next :
   } catch (e) {
     log.error(e);
   }
-};
+}
 
 export async function getIdToken(req : Request, res : Response, _: NextFunction) {
   try{
@@ -100,4 +100,4 @@ export async function getIdToken(req : Request, res : Response, _: NextFunction)
       message: "Something went wrong acquiring an ID Token.",
     }).end();
   }
-};
+}

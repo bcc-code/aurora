@@ -10,7 +10,7 @@ export interface BukGameRefs {
 export interface BukGameActions {
     banUser? (personId: number): Promise<void>,
     unbanUser? (personId: number): Promise<void>,
-    updateEntry? (personId: number, game: string, score: Number): Promise<BukGameEntry>,
+    updateEntry? (personId: number, game: string, score: number): Promise<BukGameEntry>,
 }
 
 export interface BukGameEntry {
