@@ -4,7 +4,7 @@
 	"scripts": {
 		"lint": "tslint --project tsconfig.json",
 		"setup": "firebase use --add",
-		"build": "parcel build src/index.ts --detailed-report",
+		"build": "parcel build --target default src/index.ts --detailed-report",
 		"debug": "firebase emulators:start --only functions --inspect-functions",
 		"watch": "parcel watch --target default src/index.ts",
 		"serve": "firebase emulators:start --only functions --inspect-functions",
