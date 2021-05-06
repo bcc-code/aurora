@@ -376,15 +376,15 @@ export class PollModule extends Module {
     this.increment = increment;
     this.db = firestore;
 
-    this.gameboardCol = this.event.event().collection(n.gameboard);
-    this.gameboard = this.event.event().collection(n.gameboard).doc("current");
+    this.gameboardCol = this.event.collection(n.gameboard);
+    this.gameboard = this.event.collection(n.gameboard).doc("current");
 
-    this.questions = this.event.event().collection(n.questions);
-    this.responses = this.event.event().collection(n.responses);
+    this.questions = this.event.collection(n.questions);
+    this.responses = this.event.collection(n.responses);
     this.responseStats = this.responses.doc('stats');
 
-    this.pollStats = this.event.event().collection(n.pollStats);
-    this.pollConfig = this.event.event().collection(n.gameboard).doc('pollConfig');
+    this.pollStats = this.event.collection(n.pollStats);
+    this.pollConfig = this.event.collection(n.gameboard).doc('pollConfig');
     this.pollSummary = this.gameboardCol.doc('pollSummary');
   }
 }

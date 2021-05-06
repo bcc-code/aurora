@@ -87,18 +87,11 @@ export const sumDeep = (a : any, b : any) => { // TODO: This shoud not be "ANY"
   })
 }
 
-export const getPersonId = (req : Request) : string | null => {
-  let personId = null;
-  if (req.user && n.claims.personId in req.user) {
-    let user = req.user as Dictionary<string>
-    personId = +user[n.claims.personId];
-    if (!personId || personId <= 0) {
-      personId = null;
-    }
-  }
-
+export const getPersonId = (req : Request) : string => {
+  let personId = req.user?.['https://login.bcc.no/claims/personId'].toFixed() ?? null
   if (personId) {
     return `${personId}`
   }
-  return null;
+
+  throw new Error(`Unable to find personId: ${personId}`)
 }

@@ -6,6 +6,7 @@ import { IUser } from "../types/user";
 import { FeedEntry } from "../types/feed";
 import {firestore} from "firebase-admin";
 import { Request, Response } from "express";
+import {getPersonId} from "../model/utils";
 
 const log = logger('handler/feed');
 
@@ -13,7 +14,7 @@ export async function newFeedPost(db : firestore.Firestore,req : Request, res : 
   try {
     const eventModel = new EventModel(db, req.query.eventId);
     const userModel = new UserModel(db);
-    const personId : string  = req.user[n.claims.personId];
+    const personId : string  = getPersonId(req);
     const currentUserObj = await userModel.userRef(personId).get();
     if (!currentUserObj.exists) {
       return res.status(400).send({ message: "User does not exist" }).end()

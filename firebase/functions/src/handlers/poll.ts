@@ -4,6 +4,7 @@ import { UserModel } from "../model/user";
 import { logger } from '../log';
 import {firestore} from "firebase-admin";
 import { Request, Response } from "express";
+import {getPersonId} from "../model/utils";
 
 const log = logger('pollHandler');
 
@@ -47,7 +48,7 @@ export async function generatePoll(db : firestore.Firestore, req : Request, res 
 export async function submitPollResponse(db : firestore.Firestore, req : Request, res : Response) : Promise<void>{
   const eventModel = new EventModel(db, req.query.eventId);
   const userModel = new UserModel(db);
-  const userDoc = await userModel.userRef(req.user[n.claims.personId]).get();
+  const userDoc = await userModel.userRef(getPersonId(req)).get();
   await eventModel.poll.setPollResponse(userDoc, req.body.questionId, req.body.selectedAnswers);
   return res.sendStatus(200).end();
 };

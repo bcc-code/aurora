@@ -145,6 +145,6 @@ export class CheckinModule extends Module {
     this.db = firestore;
     this.userModel = new UserModel(firestore);
 
-    this.checkins = this.event.event().collection(n.checkins);
+    this.checkins = this.event.collection(n.checkins);
   }
 };

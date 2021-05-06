@@ -1,5 +1,4 @@
 import { BukGameModel } from "../model/bukGame";
-import { n } from "../model/constants";
 import { logger } from '../log';
 import {firestore} from "firebase-admin";
 import { Request, Response } from "express";
@@ -10,7 +9,7 @@ const log = logger('bukGamesHandler');
 //bukGamesHandler.get("/rank", jwtCheck, async(req, res) => {
 export async function getRank(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
   let bukGameModel = new BukGameModel(db, req.query.bukGameId);
-  let loggedInUserPersonId = req.user[n.claims.personId]
+  let loggedInUserPersonId = getPersonId(req);
   let userDoc = await bukGameModel.entry(loggedInUserPersonId).get()
   if (!userDoc.exists) {
     return res.json(null).end();

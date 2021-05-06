@@ -1,5 +1,5 @@
-import Auth0Strategy, {AuthenticateOptions} from "passport-auth0";
-import passport from "passport";
+import Auth0Strategy, {AuthenticateOptions, ExtraVerificationParams, VerifyFunctionWithRequest} from "passport-auth0";
+import passport, {Profile} from "passport";
 import { config } from "../utils";
 
 const sessionSettings = {
@@ -16,7 +16,7 @@ const strategy = new Auth0Strategy(
     clientSecret: config.auth0.clientSecret,
     callbackURL: config.api.baseUrl + "firebase/callback"
   },
-  function(_accessToken, _refreshToken, extraParams, profile, done) {
+  function(_accessToken: string, _refreshToken: string, extraParams: ExtraVerificationParams, profile: Profile, done: VerifyFunctionWithRequest) {
     profile.accessToken = extraParams.id_token;
     return done(null, profile);
   }

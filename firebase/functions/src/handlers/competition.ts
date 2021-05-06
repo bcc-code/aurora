@@ -4,11 +4,12 @@ import { CompetitionModel } from "../model/competition"
 import { logger } from '../log'
 import {firestore} from "firebase-admin";
 import { Request, Response } from "express";
+import { getPersonId } from "../model/utils";
 
 const log = logger('competition');
 
 export async function submitCompetitionEntry(db : firestore.Firestore, req : Request, res : Response) {
-  let loggedInUserPersonId = req.user[n.claims.personId]
+  let loggedInUserPersonId = getPersonId(req)
   let personId = req.body.personId ? req.body.personId : loggedInUserPersonId;
 
   if (!personId) {

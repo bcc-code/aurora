@@ -55,7 +55,7 @@ export async function processLoginCallback(req : Request, res : Response, next :
         if (err) return next(err);
         req.user = user._json;
         const userModel = new UserModel(firebaseAdmin.firestore())
-        const userRole = await userModel.role(req.user[n.claims.personId]);
+        const userRole = await userModel.role(req.user?.["https://login.bcc.no/claims/personId"].toString() ?? "")
         await syncUserAndClaims(req, res, () => {});
         const firebaseToken = await firebaseAdmin.auth().createCustomToken(user.id);
         return res.redirect(`${config.app.baseUrl}/callback?accessToken=${user.accessToken}&firebaseToken=${firebaseToken}&role=${Buffer.from(userRole).toString('base64')}`);

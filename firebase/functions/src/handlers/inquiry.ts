@@ -5,11 +5,12 @@ import { Inquiry } from "../model/modules/inquiries";
 import { IUser } from "../types/user";
 import {firestore} from "firebase-admin";
 import { Request, Response } from "express";
+import {getPersonId} from "../model/utils";
 
 export async function newInquiry(db : firestore.Firestore,req : Request, res : Response) : Promise<void> {
   const eventModel = new EventModel(db, req.query.eventId);
   const userModel = new UserModel(db);
-  const currentUserObj = await userModel.userRef(`${req.user[n.claims.personId]}`).get();
+  const currentUserObj = await userModel.userRef(getPersonId(req)).get();
   if (!currentUserObj.exists) {
     return res.status(400).send({ message: "User does not exist" }).end()
   }
