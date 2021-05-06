@@ -1,4 +1,4 @@
-import handler from './handler'
+import handler from "./handler";
 import express from "express";
 import path from "path";
 

@@ -1,10 +1,10 @@
 import * as firebaseAdmin from "firebase-admin";
 import { n } from "./constants";
-import { FeedModule } from "./modules/feed"
-import { InquiriesModule } from "./modules/inquiries"
-import { PollModule } from "./modules/poll"
-import { CheckinModule} from "./modules/checkins"
-import {firestore} from "firebase-admin";
+import { FeedModule } from "./modules/feed";
+import { InquiriesModule } from "./modules/inquiries";
+import { PollModule } from "./modules/poll";
+import { CheckinModule } from "./modules/checkins";
+import { firestore } from "firebase-admin";
 
 export class EventModel {
   feed: FeedModule;
@@ -13,15 +13,18 @@ export class EventModel {
   checkin: CheckinModule;
 
   db: firestore.Firestore;
-  eventRef : firestore.DocumentReference;
-
+  eventRef: firestore.DocumentReference;
 
   constructor(firestore: firestore.Firestore, eventId: string) {
-    this.db = firestore
-    this.eventRef = this.db.collection(n.events).doc(eventId)
-    this.feed = new FeedModule(this.eventRef)
-    this.inquiries = new InquiriesModule(this.eventRef)
-    this.poll = new PollModule(firestore, firebaseAdmin.firestore.FieldValue.increment, this.eventRef)
-    this.checkin = new CheckinModule(firestore, this.eventRef)
+    this.db = firestore;
+    this.eventRef = this.db.collection(n.events).doc(eventId);
+    this.feed = new FeedModule(this.eventRef);
+    this.inquiries = new InquiriesModule(this.eventRef);
+    this.poll = new PollModule(
+      firestore,
+      firebaseAdmin.firestore.FieldValue.increment,
+      this.eventRef
+    );
+    this.checkin = new CheckinModule(firestore, this.eventRef);
   }
 }

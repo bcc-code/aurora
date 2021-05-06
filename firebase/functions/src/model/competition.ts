@@ -1,9 +1,9 @@
-import { n } from "./constants"
-import { logger } from '../log';
-import {firestore} from "firebase-admin";
-import { CompetitionUpdate } from "../types/competition"
+import { n } from "./constants";
+import { logger } from "../log";
+import { firestore } from "firebase-admin";
+import { CompetitionUpdate } from "../types/competition";
 
-const log = logger('models/competition');
+const log = logger("models/competition");
 const MAX_DISTANCE = 100;
 
 export class CompetitionModel {
@@ -11,18 +11,17 @@ export class CompetitionModel {
   competition: firestore.DocumentReference;
   distanceShards: firestore.CollectionReference;
   distancesPerChurch: firestore.CollectionReference;
-  competitionId : string;
-  increment : (i: number) => firestore.FieldValue;
+  competitionId: string;
 
-  entry(personId : string) {
-    return this.competition.collection(n.entries).doc(personId)
+  entry(personId: string) {
+    return this.competition.collection(n.entries).doc(personId);
   }
 
-  distanceShard(shardId : number){
-    return  this.distanceShards.doc(shardId.toString())
+  distanceShard(shardId: number) {
+    return this.distanceShards.doc(shardId.toString());
   }
 
-  distancePerChurch(churchId: string){
+  distancePerChurch(churchId: string) {
     return this.distancesPerChurch.doc(churchId);
   }
 
@@ -30,16 +29,18 @@ export class CompetitionModel {
     return this.db.collection(n.users).doc(personId);
   }
 
-  async updateEntry(personId : string, distance : number, overrideMax  = 0) {
-
-    log.debug(`POST /competition/entry?competitionId=${this.competitionId}, personId: ${personId}, distance: ${distance}, overrideMax: ${overrideMax}`)
+  async updateEntry(personId: string, distance: number, overrideMax = 0) {
+    log.debug(
+      `POST /competition/entry?competitionId=${this.competitionId}, personId: ${personId}, distance: ${distance}, overrideMax: ${overrideMax}`
+    );
 
     const entryDoc = await this.entry(personId).get();
 
-    log.info(`entryDoc for personId: ${personId} exists: ${entryDoc.exists}`)
+    log.info(`entryDoc for personId: ${personId} exists: ${entryDoc.exists}`);
 
     // TODO: add check on user if overrideMax > 0
-    const calculatedMaxDistance = (overrideMax > MAX_DISTANCE) ? overrideMax : MAX_DISTANCE;
+    const calculatedMaxDistance =
+      overrideMax > MAX_DISTANCE ? overrideMax : MAX_DISTANCE;
     const update: CompetitionUpdate = {
       distance: 0,
       distanceToBeApproved: 0,
@@ -68,34 +69,46 @@ export class CompetitionModel {
       if (userData.churchId) {
         update.churchId = userData.churchId;
 
-        const distancePerChurchDoc = await this.distancePerChurch(userData.churchId).get();
+        const distancePerChurchDoc = await this.distancePerChurch(
+          userData.churchId
+        ).get();
 
         if (!distancePerChurchDoc.exists) {
-          log.info(`Initializing distancePerChurch doc for churchId ${userData.churchId}`);
+          log.info(
+            `Initializing distancePerChurch doc for churchId ${userData.churchId}`
+          );
           await this.distancePerChurch(userData.churchId).set({ distance: 0 });
         }
       } else {
-        log.error(`PersonId ${personId} is missing churchId. User: ${JSON.stringify(userData)}`);
+        log.error(
+          `PersonId ${personId} is missing churchId. User: ${JSON.stringify(
+            userData
+          )}`
+        );
       }
     }
 
-    const newMaxDistance = update.distance + update.distanceToBeApproved + distance;
-    const distanceDelta = (newMaxDistance <= calculatedMaxDistance)
-      ? update.distanceToBeApproved + distance
-      : 0;
-    const distanceToBeApprovedDelta = (overrideMax > MAX_DISTANCE)
-      ? update.distanceToBeApproved * -1
-      : distance - distanceDelta;
+    const newMaxDistance =
+      update.distance + update.distanceToBeApproved + distance;
+    const distanceDelta =
+      newMaxDistance <= calculatedMaxDistance
+        ? update.distanceToBeApproved + distance
+        : 0;
+    const distanceToBeApprovedDelta =
+      overrideMax > MAX_DISTANCE
+        ? update.distanceToBeApproved * -1
+        : distance - distanceDelta;
 
     update.distance += distanceDelta;
     update.distanceToBeApproved += distanceToBeApprovedDelta;
 
-    log.info(`Updating competition entry for personId: ${personId} /` +
-      `update.distance: ${update.distance} /` +
-      `update.distanceToBeApproved: ${update.distanceToBeApproved} /` +
-      `distanceDelta: ${distanceDelta} /` +
-      `distanceToBeApprovedDelta: ${distanceToBeApprovedDelta}`
-    )
+    log.info(
+      `Updating competition entry for personId: ${personId} /` +
+        `update.distance: ${update.distance} /` +
+        `update.distanceToBeApproved: ${update.distanceToBeApproved} /` +
+        `distanceDelta: ${distanceDelta} /` +
+        `distanceToBeApprovedDelta: ${distanceToBeApprovedDelta}`
+    );
 
     const batch = this.db.batch();
     if (entryDoc.exists) {
@@ -106,12 +119,14 @@ export class CompetitionModel {
     const shardId = Math.floor(Number(personId) % 10);
 
     batch.update(this.distanceShard(shardId), {
-      distance: this.increment(distanceDelta),
-      distanceToBeApproved: this.increment(distanceToBeApprovedDelta)
+      distance: firestore.FieldValue.increment(distanceDelta),
+      distanceToBeApproved: firestore.FieldValue.increment(
+        distanceToBeApprovedDelta
+      ),
     });
     if (update.churchId && update.churchId > 0) {
       batch.update(this.distancePerChurch(update.churchId.toString()), {
-        distance: this.increment(distanceDelta)
+        distance: firestore.FieldValue.increment(distanceDelta),
       });
     }
 
@@ -122,14 +137,12 @@ export class CompetitionModel {
 
     return update;
   }
-  constructor (firestore: firestore.Firestore, increment: (i: number) => firestore.FieldValue, competitionId: string) {
+  constructor(firestore: firestore.Firestore, competitionId: string) {
     this.db = firestore;
     this.competitionId = competitionId;
-    this.increment = increment;
 
     this.competition = this.db.collection(n.competitions).doc(competitionId);
     this.distanceShards = this.competition.collection(n.distanceShards);
     this.distancesPerChurch = this.competition.collection(n.distancesPerChurch);
-
   }
 }

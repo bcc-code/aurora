@@ -22,13 +22,13 @@ import * as fs from "fs";
 import { spawn } from "child-process-promise";
 import * as os from "os";
 import * as path from "path";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 import { ObjectMetadata } from "firebase-functions/lib/providers/storage";
-import { logger } from '../log';
-import {firestore} from "firebase-admin";
+import { logger } from "../log";
+import { firestore } from "firebase-admin";
 
-const log = logger('generateThumbnails');
+const log = logger("generateThumbnails");
 
 interface ResizedImageResult {
   size: string;
@@ -41,12 +41,9 @@ const config = {
   imageSizes: ["64x64"],
   resizedImagesPath: "thumbnails",
   deleteOriginalFile: false,
-}
+};
 
-const extractFileNameWithoutExtension = (
-  filePath: string,
-  ext: string
-) => {
+const extractFileNameWithoutExtension = (filePath: string, ext: string) => {
   return path.basename(filePath, ext);
 };
 
@@ -54,7 +51,10 @@ const extractFileNameWithoutExtension = (
  * When an image is uploaded in the Storage bucket We generate a resized image automatically using
  * ImageMagick which is installed by default on all Cloud Functions instances.
  */
-export const generateResizedImage = async (object : ObjectMetadata, db : firestore.Firestore): Promise<void> => {
+export const generateResizedImage = async (
+  object: ObjectMetadata,
+  db: firestore.Firestore
+): Promise<void> => {
   const { contentType } = object; // This is the image MIME type
 
   if (!contentType) {
@@ -70,7 +70,7 @@ export const generateResizedImage = async (object : ObjectMetadata, db : firesto
     return;
   }
 
-  if (!((object.name ?? "").includes('profile-pictures'))) {
+  if (!(object.name ?? "").includes("profile-pictures")) {
     return;
   }
 
@@ -92,9 +92,9 @@ export const generateResizedImage = async (object : ObjectMetadata, db : firesto
 
     // Create the temp directory where the storage file will be downloaded.
     try {
-      fs.mkdirSync(tempLocalDir)
+      fs.mkdirSync(tempLocalDir);
     } catch (err) {
-      if (err.code !== 'EEXIST') throw err
+      if (err.code !== "EEXIST") throw err;
     }
 
     // Download file from bucket.
@@ -121,13 +121,23 @@ export const generateResizedImage = async (object : ObjectMetadata, db : firesto
 
     const results = await Promise.all(tasks);
     try {
-      const personId = /([0-9]{5})_/.exec(filePath)
+      const personId = /([0-9]{5})_/.exec(filePath);
       if (!personId) {
         throw Error("No person id in path");
       }
-      const originalUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(remoteFile.name) + "?alt=media&token=" + remoteFile.metadata.metadata.firebaseStorageDownloadTokens
+      const originalUrl =
+        "https://firebasestorage.googleapis.com/v0/b/" +
+        bucket.name +
+        "/o/" +
+        encodeURIComponent(remoteFile.name) +
+        "?alt=media&token=" +
+        remoteFile.metadata.metadata.firebaseStorageDownloadTokens;
       const userModel = new UserModel(db);
-      await userModel.updateProfileImageUrl(personId[1], originalUrl, results[0].downloadUrl);
+      await userModel.updateProfileImageUrl(
+        personId[1],
+        originalUrl,
+        results[0].downloadUrl
+      );
     } catch (error) {
       log.warn(error);
       return;
@@ -137,9 +147,8 @@ export const generateResizedImage = async (object : ObjectMetadata, db : firesto
       return;
     }
   } catch (err) {
-    log.error(err)
+    log.error(err);
   } finally {
-
     if (originalFile) {
       fs.unlinkSync(originalFile);
     }
@@ -148,12 +157,11 @@ export const generateResizedImage = async (object : ObjectMetadata, db : firesto
       if (remoteFile) {
         try {
           await remoteFile.delete();
-        } catch (err) {
-        }
+        } catch (err) {}
       }
     }
   }
-}
+};
 
 const resizeImage = async ({
   bucket,
@@ -178,8 +186,8 @@ const resizeImage = async ({
   // Path where resized image will be uploaded to in Storage.
   const resizedFilePath = path.normalize(
     config.resizedImagesPath
-    ? path.join(fileDir, config.resizedImagesPath, resizedFileName)
-    : path.join(fileDir, resizedFileName)
+      ? path.join(fileDir, config.resizedImagesPath, resizedFileName)
+      : path.join(fileDir, resizedFileName)
   );
   let resizedFile;
   let downloadUrl = "";
@@ -210,13 +218,21 @@ const resizeImage = async ({
     });
 
     // Uploading the resized image.
-    await bucket.upload(resizedFile, {
-      destination: resizedFilePath,
-      metadata,
-    }).then((data) => {
-      const file = data[0];
-      downloadUrl = "https://firebasestorage.googleapis.com/v0/b/" + bucket.name + "/o/" + encodeURIComponent(file.name) + "?alt=media&token=" + uuid
-    });
+    await bucket
+      .upload(resizedFile, {
+        destination: resizedFilePath,
+        metadata,
+      })
+      .then((data) => {
+        const file = data[0];
+        downloadUrl =
+          "https://firebasestorage.googleapis.com/v0/b/" +
+          bucket.name +
+          "/o/" +
+          encodeURIComponent(file.name) +
+          "?alt=media&token=" +
+          uuid;
+      });
     return { size, downloadUrl, success: true };
   } catch (err) {
     return { size, downloadUrl, success: false };
@@ -226,7 +242,6 @@ const resizeImage = async ({
       if (resizedFile) {
         fs.unlinkSync(resizedFile);
       }
-    } catch (err) {
-    }
+    } catch (err) {}
   }
 };

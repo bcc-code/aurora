@@ -1,12 +1,16 @@
 import * as firebaseAdmin from "firebase-admin";
 import { UserModel } from "../model/user";
-import { logger } from '../log';
-import {NextFunction, Request, Response} from "express";
-import {getPersonId} from "../model/utils";
+import { logger } from "../log";
+import { NextFunction, Request, Response } from "express";
+import { getPersonId } from "../model/utils";
 
-const log = logger('syncUserAndClaims');
+const log = logger("syncUserAndClaims");
 
-export const syncUserAndClaims = async (req : Request, res : Response, next : NextFunction) => {
+export const syncUserAndClaims = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   if (req.user == null) {
     log.error("syncUserAndClaims - req.user is null!");
     return res.status(500).send({ message: "Invalid user." }).end();
@@ -16,7 +20,10 @@ export const syncUserAndClaims = async (req : Request, res : Response, next : Ne
 
   if (personId === null) {
     log.error("syncUserAndClaims - user missing personId claim");
-    return res.status(500).send({ message: "User does not have a valid personId" }).end();
+    return res
+      .status(500)
+      .send({ message: "User does not have a valid personId" })
+      .end();
   }
 
   try {

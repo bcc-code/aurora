@@ -1,12 +1,12 @@
 import jwt from "express-jwt";
 import jwks from "jwks-rsa";
-import { NextFunction, Request, Response } from "express"
-import  config from "../configs/config.json";
-import { logger } from '../log';
+import { NextFunction, Request, Response } from "express";
+import config from "../configs/config.json";
+import { logger } from "../log";
 
-const log = logger('jwtCheck');
+const log = logger("jwtCheck");
 
-export const jwtCheck = (req : Request, res : Response, next : NextFunction) => {
+export const jwtCheck = (req: Request, res: Response, next: NextFunction) => {
   // get audience header
   let audience = req.headers.audience;
   if (!audience) {
@@ -30,7 +30,8 @@ export const jwtCheck = (req : Request, res : Response, next : NextFunction) => 
   })(req, res, (err) => {
     if (err) {
       log.error(`Error in jwtCheck: ${err}`);
-      res.status(401)
+      res
+        .status(401)
         .json({
           error: err,
         })
