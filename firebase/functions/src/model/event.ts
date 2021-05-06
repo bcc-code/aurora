@@ -1,4 +1,3 @@
-import * as firebaseAdmin from "firebase-admin";
 import { n } from "./constants";
 import { FeedModule } from "./modules/feed";
 import { InquiriesModule } from "./modules/inquiries";
@@ -20,11 +19,7 @@ export class EventModel {
     this.eventRef = this.db.collection(n.events).doc(eventId);
     this.feed = new FeedModule(this.eventRef);
     this.inquiries = new InquiriesModule(this.eventRef);
-    this.poll = new PollModule(
-      firestore,
-      firebaseAdmin.firestore.FieldValue.increment,
-      this.eventRef
-    );
+    this.poll = new PollModule(firestore, this.eventRef);
     this.checkin = new CheckinModule(firestore, this.eventRef);
   }
 }
