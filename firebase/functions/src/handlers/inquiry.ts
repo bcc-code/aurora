@@ -1,4 +1,3 @@
-import { n } from "../model/constants"
 import { EventModel } from "../model/event";
 import { UserModel } from "../model/user";
 import { Inquiry } from "../model/modules/inquiries";
