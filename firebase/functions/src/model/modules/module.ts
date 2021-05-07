@@ -1,9 +1,9 @@
-import { firestore } from "firebase-admin";
+import { firestore } from 'firebase-admin'
 
 export class Module {
-  event: firestore.DocumentReference;
+    event: firestore.DocumentReference
 
-  constructor(event: firestore.DocumentReference) {
-    this.event = event;
-  }
+    constructor(event: firestore.DocumentReference) {
+        this.event = event
+    }
 }
