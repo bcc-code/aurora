@@ -28,6 +28,10 @@
 				"function": "bukGames"
 			},
 			{
+				"source": "/utils",
+				"function": "utils"
+			},
+			{
 				"source": "!/config/**",
 				"destination": "/index.html"
 			},

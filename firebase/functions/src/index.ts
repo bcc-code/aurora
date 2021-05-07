@@ -9,6 +9,7 @@ import { generateResizedImage } from './middleware/generateThumbnails'
 import { jwtCheck } from './middleware/jwtCheck'
 import { syncUserAndClaims } from './middleware/syncUserAndClaims'
 import { checkin, checkinStatus, userCount } from './handlers/checkin'
+import { getDonationURL } from './handlers/utils'
 import { config } from './utils'
 import {
     generatePoll,
@@ -161,6 +162,9 @@ userHandler.get('/user/profileImage', (req: Request, res: Response) =>
     getProfileImage(firestore, req, res)
 )
 
+const utilsHandler = handlerWithPrefix('utils')
+utilsHandler.get('/utils/signedDonationURL', getDonationURL);
+
 log.info('Ready.')
 
 module.exports = {
@@ -175,6 +179,7 @@ module.exports = {
     firebase: functions.region('europe-west1').https.onRequest(tokenHandler),
     inquiry: functions.region('europe-west1').https.onRequest(inquiryHandler),
     poll: functions.region('europe-west1').https.onRequest(pollHandler),
+    utils: functions.region('europe-west1').https.onRequest(utilsHandler),
     user: functions.region('europe-west1').https.onRequest(userHandler),
     thumbnail: functions
         .region('europe-west1', 'us-central1')
