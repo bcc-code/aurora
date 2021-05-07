@@ -39,7 +39,6 @@ export class CheckinStatus {
     }
 }
 
-//checkins = (firestore: any, event: EventRefs) :
 export class CheckinModule extends Module {
     checkins: firestore.CollectionReference
     db: firestore.Firestore
@@ -50,7 +49,8 @@ export class CheckinModule extends Module {
     }
 
     async getCheckinStatus(personId: string): Promise<firestore.DocumentData> {
-        const checkinEnabled = true
+        const appConfig =  await this.db.collection("configs").doc("brunstadtv-app").get();
+        const checkinEnabled = appConfig.data()?.canCheckin as boolean ?? false;
 
         // lookup user document for logged on user
         const userCheckingInDoc = await this.userModel.userRef(personId).get()
@@ -60,7 +60,6 @@ export class CheckinModule extends Module {
             const userCheckingIn = userCheckingInDoc.data() as IUser
 
             const checkinStatus = new CheckinStatus(
-                !existingCheckin.exists &&
                     checkinEnabled &&
                     (userCheckingIn.hasMembership ?? false),
                 existingCheckin.exists,
@@ -83,7 +82,7 @@ export class CheckinModule extends Module {
                                 linkedUserId.toString()
                             ).get()
                             return new CheckinStatus(
-                                !existingCheckin.exists && checkinEnabled,
+                                checkinEnabled,
                                 existingCheckin.exists,
                                 linkedUser
                             )
@@ -152,7 +151,6 @@ export class CheckinModule extends Module {
             ? event?.checkinFactor
             : 1 // Because NaN is a number
 
-        console.log(checkinFactor)
         await this.event.update({
             checkedInUsers: firestore.FieldValue.increment(
                 Math.round(newCheckinCount * checkinFactor)
@@ -184,7 +182,6 @@ export class CheckinModule extends Module {
         super(event)
         this.db = firestore
         this.userModel = new UserModel(firestore)
-
         this.checkins = this.event.collection(n.checkins)
     }
 }
