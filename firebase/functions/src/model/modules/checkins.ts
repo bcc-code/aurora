@@ -1,19 +1,20 @@
 import * as firebaseadmin from "firebase-admin";
-import { asyncForEachParallel, calculateAge } from "../utils";
+import { parallelAsync, calculateAge } from "../utils";
 import { n } from "../constants";
 import { UserModel } from "../user";
 import { Module } from "./module";
 import { IUser } from "../../types/user";
 import { logger } from "../../log";
 import { firestore } from "firebase-admin";
+import _ from "lodash";
 
 const log = logger("index");
 
 interface CheckinDoc {
   personId: number;
   checkedInBy: number;
-  coords: any;
   timestamp: number;
+  coords: firestore.GeoPoint;
 }
 
 export class CheckinStatus {
@@ -24,17 +25,17 @@ export class CheckinStatus {
   lastName: string | null;
   profilePicture: string | null;
   age: number;
-  linkedUsers?: Array<any>;
+  linkedUsers?: Array<CheckinStatus|null>;
 
   constructor(canCheckin: boolean, checkedIn: boolean, user: IUser) {
     this.canCheckin = canCheckin;
     this.checkedIn = checkedIn;
-    (this.personId = user.personId),
-      (this.firstName = user.firstName ?? null),
-      (this.lastName = user.lastName ?? null),
-      (this.profilePicture = user.profilePicture ?? null),
-      (this.age = calculateAge(new Date(user.birthdate ?? ""))),
-      (this.linkedUsers = []);
+    this.personId = user.personId;
+    this.firstName = user.firstName ?? null;
+    this.lastName = user.lastName ?? null;
+    this.profilePicture = user.profilePicture ?? null;
+    this.age = calculateAge(new Date(user.birthdate ?? ""));
+    this.linkedUsers = [];
   }
 }
 
@@ -44,7 +45,7 @@ export class CheckinModule extends Module {
   db: firestore.Firestore;
   userModel: UserModel;
 
-  checkinRef(personId: string) {
+  checkinRef(personId: string) : firestore.DocumentReference {
     return this.checkins.doc(personId);
   }
 
@@ -67,9 +68,9 @@ export class CheckinModule extends Module {
       );
 
       if (Array.isArray(userCheckingIn.linkedUserIds)) {
-        checkinStatus.linkedUsers = await asyncForEachParallel(
+        checkinStatus.linkedUsers = await parallelAsync(
           userCheckingIn.linkedUserIds,
-          async (linkedUserId: number): Promise<CheckinStatus | null> => {
+          async (linkedUserId: number): Promise<CheckinStatus|null> => {
             const linkedUserDoc = await this.userModel
               .userRef(`${linkedUserId}`)
               .get();
@@ -88,9 +89,8 @@ export class CheckinModule extends Module {
             return null;
           }
         );
-        checkinStatus.linkedUsers = checkinStatus.linkedUsers.filter(
-          (v) => v != null
-        );
+
+        checkinStatus.linkedUsers = checkinStatus.linkedUsers.filter( (v) => v !== null );
       }
       return checkinStatus;
     } else {
@@ -100,7 +100,7 @@ export class CheckinModule extends Module {
     }
   }
 
-  async checkin(currentPersonId: string, userIds: string[]) {
+  async checkin(currentPersonId: string, userIds: string[]) : Promise<void> {
     const coords = new firebaseadmin.firestore.GeoPoint(0, 0); // We keep this in case anything expects it
     const currentUser = await this.userModel.userRef(currentPersonId).get();
 
@@ -121,9 +121,8 @@ export class CheckinModule extends Module {
         newCheckinCount++;
       }
       if (Array.isArray(currentStatus.linkedUsers)) {
-        await asyncForEachParallel(
-          currentStatus.linkedUsers,
-          async (linkedUser: CheckinStatus) => {
+          currentStatus.linkedUsers.map(
+          (linkedUser: CheckinStatus) => {
             if (
               userIds.includes(linkedUser.personId.toString()) &&
               linkedUser.canCheckin
@@ -145,7 +144,11 @@ export class CheckinModule extends Module {
       }
     }
     await batch.commit();
-    const checkinFactor = (await this.event.get()).data()?.checkinFactor || 1;
+
+    const event = (await this.event.get()).data() as Record<string, number>;
+    const checkinFactor = !_.isFinite(event?.checkinFactor) ? event?.checkinFactor : 1; // Because NaN is a number
+
+    console.log(checkinFactor);
     await this.event.update({
       checkedInUsers: firestore.FieldValue.increment(
         Math.round(newCheckinCount * checkinFactor)
@@ -153,12 +156,12 @@ export class CheckinModule extends Module {
     });
   }
 
-  async updateCheckinCount() {
+  async updateCheckinCount() : Promise<{checkedInUsers: number}> {
     const allCheckins = await this.checkins.get();
     let count = allCheckins.size;
-    const evt = await this.event.get();
-    const extraCheckins = evt.data()?.extraCheckins || 0;
-    const checkinFactor = evt.data()?.checkinFactor || 1;
+    const evt = (await this.event.get()).data() as Record<string, number>;
+    const extraCheckins = _.isFinite(evt?.extraCheckins) ? evt?.extraCheckins: 0;
+    const checkinFactor = _.isFinite(evt?.checkinFactor) ? evt?.checkinFactor : 1;
     count = Math.round(count * checkinFactor);
     count += extraCheckins;
     const docUpdate = { checkedInUsers: count };

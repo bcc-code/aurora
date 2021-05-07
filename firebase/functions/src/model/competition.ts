@@ -2,6 +2,7 @@ import { n } from "./constants";
 import { logger } from "../log";
 import { firestore } from "firebase-admin";
 import { CompetitionUpdate } from "../types/competition";
+import {IUser} from "../types/user";
 
 const log = logger("models/competition");
 const MAX_DISTANCE = 100;
@@ -13,23 +14,23 @@ export class CompetitionModel {
   distancesPerChurch: firestore.CollectionReference;
   competitionId: string;
 
-  entry(personId: string) {
+  entry(personId: string) : firestore.DocumentReference{
     return this.competition.collection(n.entries).doc(personId);
   }
 
-  distanceShard(shardId: number) {
+  distanceShard(shardId: number) : firestore.DocumentReference {
     return this.distanceShards.doc(shardId.toString());
   }
 
-  distancePerChurch(churchId: string) {
+  distancePerChurch(churchId: string) : firestore.DocumentReference {
     return this.distancesPerChurch.doc(churchId);
   }
 
-  user(personId: string) {
+  user(personId: string): FirebaseFirestore.DocumentReference {
     return this.db.collection(n.users).doc(personId);
   }
 
-  async updateEntry(personId: string, distance: number, overrideMax = 0) {
+  async updateEntry(personId: string, distance: number, overrideMax = 0) : Promise<CompetitionUpdate> {
     log.debug(
       `POST /competition/entry?competitionId=${this.competitionId}, personId: ${personId}, distance: ${distance}, overrideMax: ${overrideMax}`
     );
@@ -47,7 +48,7 @@ export class CompetitionModel {
     };
 
     if (entryDoc.exists) {
-      const entryData = entryDoc.data()!;
+      const entryData = entryDoc.data() as CompetitionUpdate;
       update.distance = entryData.distance || 0;
       update.distanceToBeApproved = entryData.distanceToBeApproved || 0;
       update.churchId = entryData.churchId;
@@ -63,21 +64,21 @@ export class CompetitionModel {
       if (!userDoc.exists) {
         throw new Error(`PersonId '${personId}' does not exist.`);
       }
-      const userData = userDoc.data()!;
+      const userData = userDoc.data() as IUser;
       update.user = userRef;
 
       if (userData.churchId) {
         update.churchId = userData.churchId;
 
         const distancePerChurchDoc = await this.distancePerChurch(
-          userData.churchId
+          userData.churchId.toString()
         ).get();
 
         if (!distancePerChurchDoc.exists) {
           log.info(
             `Initializing distancePerChurch doc for churchId ${userData.churchId}`
           );
-          await this.distancePerChurch(userData.churchId).set({ distance: 0 });
+          await this.distancePerChurch(userData.churchId.toString()).set({ distance: 0 });
         }
       } else {
         log.error(

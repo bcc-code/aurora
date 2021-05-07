@@ -1,31 +1,31 @@
 import { Request } from "express";
-import { n } from "../model/constants";
 import _ from "lodash";
-import { Dictionary } from "lodash";
 import { firestore } from "firebase-admin";
+import { logger } from "../log";
+
+const log = logger("models/utils");
 
 export const asyncForEach = async <T>(
   array: T[],
   callback: (e: T, index: number, array: T[]) => Promise<void>
-) => {
+) : Promise<void> => {
   for (let index = 0; index < array.length; index++) {
+    // eslint-disable-next-line no-await-in-loop
     await callback(array[index], index, array);
   }
 };
 
-export const asyncForEachParallel = async <T>(
-  array: T[],
-  callback: (e: T, index: number, array: T[]) => Promise<any>
-) => {
-  const requests = [];
 
-  for (let index = 0; index < array.length; index++) {
-    requests[index] = callback(array[index], index, array);
-  }
-  return await Promise.all(requests);
-};
+export const parallelAsync = async <T_IN, T_OUT>(
+  array: T_IN[],
+  callback: (e: T_IN, index: number, array: T_IN[]) => Promise<T_OUT>
+) : Promise<T_OUT[]> => {
+  let promises : Promise<T_OUT>[] = [];
+  promises = array.map(callback)
+  return await Promise.all(promises)
+}
 
-export const calculateAge = (birthdate: Date) => {
+export const calculateAge = (birthdate: Date) : number => {
   const diff_ms = Date.now() - birthdate.getTime();
   const age_dt = new Date(diff_ms);
 
@@ -36,7 +36,7 @@ export const deleteCollection = async (
   db: firestore.Firestore,
   collectionPath: string,
   batchSize: number
-) => {
+) : Promise<number> => {
   const collectionRef = db.collection(collectionPath);
   const query = collectionRef.orderBy("__name__").limit(batchSize);
 
@@ -69,12 +69,16 @@ async function deleteQueryBatch(
   // Recurse on the next process tick, to avoid
   // exploding the stack.
   process.nextTick(() => {
-    deleteQueryBatch(db, query, resolve);
+    deleteQueryBatch(db, query, resolve).catch((e) => log.error(e));
   });
 }
 
+type DeepSummable = {
+  [i: string]: number|DeepSummable|undefined
+}
+
 // mututates a to merge the sum of a and b
-export const sumDeep = (a: any, b: any) => {
+export const sumDeep = (a: DeepSummable, b: DeepSummable) : void => {
   // TODO: This shoud not be "ANY"
   Object.keys(b).forEach((key) => {
     const bVal = b[key];
@@ -83,20 +87,20 @@ export const sumDeep = (a: any, b: any) => {
       if (_.isNumber(bVal)) {
         if (_.isNumber(aVal)) {
           a[key] = aVal + bVal;
-        } else if (aVal == null) {
+        } else if (aVal === null) {
           a[key] = bVal;
         }
       } else {
         if (_.isObjectLike(bVal)) {
-          if (aVal == null) {
+          if (aVal === null) {
             a[key] = Object.assign({}, bVal);
           } else if (_.isObjectLike(aVal)) {
-            sumDeep(aVal, bVal);
+            sumDeep(aVal as DeepSummable, bVal as DeepSummable);
           }
         }
       }
     } catch (error) {
-      console.error(error.message);
+      log.error(error);
     }
   });
 };
@@ -108,5 +112,5 @@ export const getPersonId = (req: Request): string => {
     return personId.toString();
   }
 
-  throw new Error(`Unable to find personId: ${personId}`);
+  throw new Error(`Unable to find personId: ${personId ?? "<null>"}`);
 };

@@ -12,6 +12,7 @@
   "rules": {
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["error"],
+	"@typescript-eslint/restrict-template-expressions": "off",
 
     "no-regex-spaces": "off",
 
@@ -20,8 +21,6 @@
     "no-template-curly-in-string": 1,
 
     "consistent-return": 0,
-
-    "array-callback-return": 1,
 
     "eqeqeq": 2,
 
@@ -64,8 +63,6 @@
     "no-catch-shadow": 1,
 
     "no-shadow-restricted-names": 2,
-
-    "callback-return": 2,
 
     "handle-callback-err": 2,
 

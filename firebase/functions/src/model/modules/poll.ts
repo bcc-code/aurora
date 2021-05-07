@@ -1,4 +1,4 @@
-import { deleteCollection, sumDeep } from "../utils";
+import { deleteCollection, parallelAsync, sumDeep } from "../utils";
 import { n } from "../constants";
 import { UserModel } from "../user";
 import _get from "lodash/get";
@@ -59,15 +59,16 @@ export class PollModule extends Module {
         answers[questionDoc.id] = answerList.docs;
 
         if (initShards) {
-          await Promise.all(
-            answerList.docs.map(async (answerDoc) => {
+          await parallelAsync(answerList.docs,
+            async (answerDoc) => {
+              const p = []
               for (let i = 0; i < n.pollStatsShardCount; i++) {
-                await this.qaShard(questionDoc.id, answerDoc.id, i).set({
+                p.push(this.qaShard(questionDoc.id, answerDoc.id, i).set({
                   total: 0,
-                });
+                }));
               }
+              return Promise.all(p)
             })
-          );
         }
       })
     );
@@ -84,7 +85,7 @@ export class PollModule extends Module {
     }
 
     const batch = this.db.batch();
-    const pollQuestions: { [i: string]: firestore.DocumentData } = {};
+    const pollQuestions: { [i: string]: firestore.DocumentData | null } = {};
     const pollAnswers: { [i: string]: firestore.DocumentData } = {};
     await Promise.all(
       questionIds.map(async (questionId: string) => {
@@ -106,7 +107,7 @@ export class PollModule extends Module {
           batch.update(questionRef, { initialized: true });
         }
 
-        pollQuestions[questionId] = question.data()!;
+        pollQuestions[questionId] = question.data() ?? null;
         pollAnswers[questionId] = answers.docs.map((a) => a.data());
       })
     );

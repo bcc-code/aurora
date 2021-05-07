@@ -6,7 +6,7 @@ export class InquiriesModule extends Module {
   inquiriesIncoming: firestore.CollectionReference;
   inquiriesQueue: firestore.CollectionReference;
 
-  submitInquiry = async (inquiry: firestore.DocumentData) => {
+  submitInquiry = async (inquiry: firestore.DocumentData) : Promise<void> => {
     await this.inquiriesIncoming.add(inquiry);
   };
 

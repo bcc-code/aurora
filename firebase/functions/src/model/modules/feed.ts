@@ -5,7 +5,7 @@ export class FeedModule extends Module {
   feedIncoming: firestore.CollectionReference;
   feedApproved: firestore.CollectionReference;
 
-  async submitFeedEntry(personId: string, feedEntry: firestore.DocumentData) {
+  async submitFeedEntry(personId: string, feedEntry: firestore.DocumentData) : Promise<void> {
     feedEntry.date = Date.now();
     const newFeedDoc = this.feedIncoming.doc();
     await newFeedDoc.set(feedEntry);

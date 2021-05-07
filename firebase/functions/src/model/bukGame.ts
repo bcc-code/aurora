@@ -1,4 +1,5 @@
 import { BukGameEntry } from "../types/bukGame";
+import { IUser } from "../types/user";
 import { n } from "./constants";
 import { logger } from "../log";
 import { firestore } from "firebase-admin";
@@ -36,20 +37,19 @@ export class BukGameModel {
     });
   }
 
-  async updateEntry(personId: string, game: string, score: number) {
+  async updateEntry(personId: string, game: string, score: number) : Promise<BukGameEntry> {
     log.info(
       `POST /bukGames/entry?bukGameId=${this.gameId}, personId: ${personId}, game: ${game}, score: ${score}`
     );
 
     const entryDoc = await this.entry(personId).get();
     const personDoc = await this.user(personId).get();
-    const person = personDoc.data()!;
-
+    const person = personDoc.data() as IUser;
     let newDoc: BukGameEntry = {
-      displayName: person.displayName || null,
-      churchName: person.churchName || null,
-      countryName: person.countryName || null,
-      profilePictureThumb: person.profilePictureThumb || null,
+      displayName: person.displayName,
+      churchName: person.churchName,
+      countryName: person.countryName,
+      profilePictureThumb: person.profilePicture,
     };
 
     if (!entryDoc.exists) {
