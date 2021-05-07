@@ -15,7 +15,7 @@ Get signed donations URL
 
 {% api-method-description %}
 This endpoint validates the users credentials and if the user has access it will generate a short lived URL for donations that can log the user in without going through the login process.  
-This is used by the App to provide seamless donation experience.  
+This is used by the App to provide seamless donation experience.
 {% endapi-method-description %}
 
 {% api-method-spec %}
@@ -33,7 +33,7 @@ JWT Bearer tokeas
 
 {% endapi-method-response-example-description %}
 
-```
+```text
 {
   "url": "https://donation.bcc.no/donation"
 }
@@ -45,7 +45,7 @@ JWT Bearer tokeas
 
 {% endapi-method-response-example-description %}
 
-```
+```text
 {
   "error": {
     "name": "UnauthorizedError",

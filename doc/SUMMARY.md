@@ -1,6 +1,6 @@
 # Table of contents
 
-* [BCC Online](README.md)
+* [Introduction](README.md)
 
 ## Functions API
 
