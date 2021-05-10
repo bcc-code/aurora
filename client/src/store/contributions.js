@@ -1,6 +1,6 @@
 import { firestoreAction  } from 'vuexfire'
 import { db } from '@/data/db'
-import {firestore} from 'firebase'
+import firebase from 'firebase'
 
 export default {
     namespaced: true,
@@ -38,7 +38,7 @@ export default {
         }),
         updateContribsCount: firestoreAction(async (context, count) => {
             const contribCounter = await context.rootGetters['events/selectedEventRef'].collection('counters').doc('contributions')
-            await contribCounter.set({ count: firestore.FieldValue.increment(count)})
+            await contribCounter.set({ count: firebase.firestore.FieldValue.increment(count)})
         }),
         sendToFeedRef: firestoreAction(async (context, entry) => {
             await context.getters.feedRef.doc(entry.id).set({ ...entry })

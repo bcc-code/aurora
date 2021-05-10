@@ -17,7 +17,7 @@
             <div class="col-span-full lg:col-span-1">
                 <h1 class="font-bold">Predefined components</h1>
                 <ul class="flex flex-col w-full">
-                    <li v-for="component in components" 
+                    <li v-for="component in components"
                         :key="component.id"
                         draggable @dragstart="startDrag($event, component)"
                         class="mb-2">
@@ -80,7 +80,6 @@ export default {
 				this.addLiveboardElement(component)
 			}
 		},
-        
     }
 }
 </script>

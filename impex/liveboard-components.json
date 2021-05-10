@@ -86,7 +86,7 @@
 			"no": "Delta i kollekten under ... ved å klikke «bidra»."
 		},
 		"button": {
-			"action": "url",
+			"action": "donation",
 			"icon": "",
 			"label": {
 				"no": "Bidra",
