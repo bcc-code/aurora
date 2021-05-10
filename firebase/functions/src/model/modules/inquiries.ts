@@ -1,37 +1,29 @@
-import * as firebaseAdmin from 'firebase-admin'
-import { n } from "../index";
-import { InquiriesActions, InquiriesRefs } from "../../types/inquiries";
-import { Module } from './module';
-import { EventRefs } from '../../types/event';
-import { IUser } from '../../types/user';
+import { n } from '../constants'
+import { Module } from './module'
+import { firestore } from 'firebase-admin'
 
 export class InquiriesModule extends Module {
-  refs: InquiriesRefs;
-  actions: InquiriesActions;
+    inquiriesIncoming: firestore.CollectionReference
+    inquiriesQueue: firestore.CollectionReference
 
-  constructor(event: EventRefs) {
-    super(event);
+    submitInquiry = async (inquiry: firestore.DocumentData): Promise<void> => {
+        await this.inquiriesIncoming.add(inquiry)
+    }
 
-    this.refs = {};
-    this.actions = {};
-    
-    this.refs.inquiriesIncoming = () => this.event.event().collection(n.inquiriesIncoming);
-    this.refs.inquiriesQueue = () => this.event.event().collection(n.inquiriesQueue);
-  
-    this.actions.submitInquiry = async (inquiry) => {
-      await this.refs.inquiriesIncoming().add(inquiry);
-    };
-  
-  }
+    constructor(event: firestore.DocumentReference) {
+        super(event)
+        this.inquiriesIncoming = this.event.collection(n.inquiriesIncoming)
+        this.inquiriesQueue = this.event.collection(n.inquiriesQueue)
+    }
 }
 
 export interface Inquiry {
-  personId: number;
-  firstName: string;
-  lastName: string;
-  displayName: string;
-  churchName: string;
-  countryName: string;
-  text: string;
-  date?: number;
+    personId: number
+    firstName: string
+    lastName: string
+    displayName: string
+    churchName: string
+    countryName: string
+    text: string
+    date?: number
 }

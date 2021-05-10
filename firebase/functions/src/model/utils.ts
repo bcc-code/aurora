@@ -1,104 +1,115 @@
-import {Request} from 'express';
-import { n } from "../model/constants";
-import _ from 'lodash';
-import {Dictionary} from "lodash";
+import { Request } from 'express'
+import _ from 'lodash'
+import { firestore } from 'firebase-admin'
+import { logger } from '../log'
 
-export const asyncForEach = async (array, callback) => {
-  for (let index = 0; index < array.length; index++) {
-    await callback(array[index], index, array);
-  }
-};
+const log = logger('models/utils')
 
-export const asyncForEachParallel = async (array, callback) => {
-  var requests = [];
-
-  for (let index = 0; index < array.length; index++) {
-    requests[index] = callback(array[index], index, array);
-  }
-  return await Promise.all(requests);
-};
-
-export const calculateAge = birthdate => {
-  // Detect invalid date objects
-  if (isNaN(birthdate)) {
-    return 1000;
-  }
-
-  var diff_ms = Date.now() - birthdate.getTime();
-  var age_dt = new Date(diff_ms);
-
-  return Math.abs(age_dt.getUTCFullYear() - 1970);
-};
-
-export const deleteCollection = async (db, collectionPath, batchSize) => {
-  const collectionRef = db.collection(collectionPath);
-  const query = collectionRef.orderBy('__name__').limit(batchSize);
-
-  return new Promise((resolve, reject) => {
-    deleteQueryBatch(db, query, resolve).catch(reject);
-  });
+export const asyncForEach = async <T>(
+    array: T[],
+    callback: (e: T, index: number, array: T[]) => Promise<void>
+): Promise<void> => {
+    for (let index = 0; index < array.length; index++) {
+        // eslint-disable-next-line no-await-in-loop
+        await callback(array[index], index, array)
+    }
 }
 
-async function deleteQueryBatch(db, query, resolve) {
-  const snapshot = await query.get();
+export const parallelAsync = async <T_IN, T_OUT>(
+    array: T_IN[],
+    callback: (e: T_IN, index: number, array: T_IN[]) => Promise<T_OUT>
+): Promise<T_OUT[]> => {
+    let promises: Promise<T_OUT>[] = []
+    promises = array.map(callback)
+    return await Promise.all(promises)
+}
 
-  const batchSize = snapshot.size;
-  if (batchSize === 0) {
-    // When there are no documents left, we are done
-    resolve();
-    return;
-  }
+export const calculateAge = (birthdate: Date): number => {
+    const diff_ms = Date.now() - birthdate.getTime()
+    const age_dt = new Date(diff_ms)
 
-  // Delete documents in a batch
-  const batch = db.batch();
-  snapshot.docs.forEach((doc) => {
-    batch.delete(doc.ref);
-  });
-  await batch.commit();
+    return Math.abs(age_dt.getUTCFullYear() - 1970)
+}
 
-  // Recurse on the next process tick, to avoid
-  // exploding the stack.
-  process.nextTick(() => {
-    deleteQueryBatch(db, query, resolve);
-  });
+export const deleteCollection = async (
+    db: firestore.Firestore,
+    collectionPath: string,
+    batchSize: number
+): Promise<number> => {
+    const collectionRef = db.collection(collectionPath)
+    const query = collectionRef.orderBy('__name__').limit(batchSize)
+
+    return new Promise((resolve: (arg0: number) => void, reject): void => {
+        deleteQueryBatch(db, query, resolve).catch(reject)
+    })
+}
+
+async function deleteQueryBatch(
+    db: firestore.Firestore,
+    query: firestore.Query,
+    resolve: (arg0: number) => void
+) {
+    const snapshot = await query.get()
+
+    const batchSize = snapshot.size
+    if (batchSize === 0) {
+        // When there are no documents left, we are done
+        resolve(0)
+        return
+    }
+
+    // Delete documents in a batch
+    const batch = db.batch()
+    snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref)
+    })
+    await batch.commit()
+
+    // Recurse on the next process tick, to avoid
+    // exploding the stack.
+    process.nextTick(() => {
+        deleteQueryBatch(db, query, resolve).catch((e) => log.error(e))
+    })
+}
+
+type DeepSummable = {
+    [i: string]: number | DeepSummable | undefined
 }
 
 // mututates a to merge the sum of a and b
-export const sumDeep = (a, b) => {
-  Object.keys(b).forEach((key, idx) => {
-    const bVal = b[key];
-    const aVal = a[key];
-    try {
-      if (_.isNumber(bVal)) {
-        if (_.isNumber(aVal)) {
-          a[key] = aVal + bVal;
-        } else if (aVal == null) {
-          a[key] = bVal;
+export const sumDeep = (a: DeepSummable, b: DeepSummable): void => {
+    // TODO: This shoud not be "ANY"
+    Object.keys(b).forEach((key) => {
+        const bVal = b[key]
+        const aVal = a[key]
+        try {
+            if (_.isNumber(bVal)) {
+                if (_.isNumber(aVal)) {
+                    a[key] = aVal + bVal
+                } else if (aVal === null) {
+                    a[key] = bVal
+                }
+            } else {
+                if (_.isObjectLike(bVal)) {
+                    if (aVal === null) {
+                        a[key] = Object.assign({}, bVal)
+                    } else if (_.isObjectLike(aVal)) {
+                        sumDeep(aVal as DeepSummable, bVal as DeepSummable)
+                    }
+                }
+            }
+        } catch (error) {
+            log.error(error)
         }
-      } else {
-        if (_.isObjectLike(bVal)) {
-          if (aVal == null) {
-            a[key] = Object.assign({}, bVal);
-          } else if (_.isObjectLike(aVal)) {
-            sumDeep(aVal, bVal);
-          }
-        }
-      }
-
-    } catch (error) {
-      console.error(error.message);
-    }
-  })
+    })
 }
 
-export const getPersonId = (req : Request) : number | null => {
-  let personId = null;
-  if (req.user && n.claims.personId in req.user) {
-    let user = req.user as Dictionary<string>
-    personId = +user[n.claims.personId];
-    if (!personId || personId <= 0) {
-      personId = null;
+export const getPersonId = (req: Request): string => {
+    const personId =
+        req.user?.['https://login.bcc.no/claims/personId'].toFixed() ?? null
+    if (personId) {
+        return personId.toString()
     }
-  }
-  return personId;
+
+    throw new Error(`Unable to find personId: ${personId ?? '<null>'}`)
 }

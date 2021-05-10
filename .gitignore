@@ -4,6 +4,7 @@
 node_modules/
 firebase/public
 dist/
+.parcel-cache/
 
 config.json
 firebase-key.json

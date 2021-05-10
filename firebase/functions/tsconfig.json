@@ -1,19 +1,17 @@
 {
     "compilerOptions": {
-      "lib": ["es6"],
-	  "strict": true,
-      "module": "commonjs",
-      "noImplicitReturns": true,
-      "outDir": "dist",
-      "sourceMap": true,
-      "target": "es6",
-      "allowSyntheticDefaultImports": true,
-      "esModuleInterop": true,
-	  "resolveJsonModule": true,
-      "typeRoots": [
-        "./src/types"
-      ]
+        "lib": ["es6"],
+        "strict": true,
+        "module": "commonjs",
+        "noImplicitReturns": true,
+        "outDir": "dist",
+        "sourceMap": true,
+        "target": "es6",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "typeRoots": ["./src/types"]
     },
     "compileOnSave": true,
     "include": ["src"]
-  }
+}
