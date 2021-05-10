@@ -11,6 +11,7 @@ export const Components = {
     BUKGAMES: 'buk-games',
     WWR: 'wwr',
     VERSE: 'verse',
+    DEFAULTTEXT: 'default-text',
 }
 
 Object.slice = (obj, list) =>
@@ -22,4 +23,4 @@ export const ScreenLRComponents = Object.slice(Components, ['profile-pictures', 
 export const ScreenMComponents = Object.slice(Components, ['world-map', 'question', 'inquiry'])
 export const ScreenEComponents = Object.slice(Components, ['world-map', 'feed-pictures', 'inquiry', 'question', 'wwr', 'buk-games'])
 export const ScreenFComponents = Object.slice(Components, ['program', 'information', 'question', 'checkins-count', 'donation', 'inquiry', 'verse'])
-export const ScreenAComponents = Object.slice(Components, ['information', 'question', 'donation', 'wwr'])
+export const ScreenAComponents = Object.slice(Components, ['information', 'default-text', 'question', 'donation', 'wwr'])
