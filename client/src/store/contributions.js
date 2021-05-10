@@ -80,6 +80,10 @@ export default {
             const infCheck = (el) => el.type == 1;
             return state.desk.filter(infCheck).concat(state.feed.filter(infCheck));
         },
+        defaultTexts: (state) => {
+            const f = (el) => el.type == 4;
+            return state.desk.filter(f).concat(state.feed.filter(f));
+        },
         latestFeed: (state, getters) => {
             return getters.feed.slice(0,20);
         },

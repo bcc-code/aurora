@@ -4,7 +4,10 @@
         <Field name="showBackground" inline type="boolean" />
         <Field name="squeezeBackSize" label="screen.size" type="select" :options="['dobbel', 'normal']" />
         <Field name="component" type="select" :options="ScreenAComponents" />
+
         <Information v-if="screenOptions.component === ScreenAComponents.INFORMATION" option="information" />
+        <DefaultText v-if="screenOptions.component === ScreenAComponents.DEFAULTTEXT" option="defaultText" />
+
         <Question v-if="screenOptions.component === ScreenAComponents.QUESTION" option="question" />
         <Donation v-if="screenOptions.component === ScreenAComponents.DONATION" option="donation" />
         <template v-if="screenOptions.squeezeBackSize == 'normal'">
@@ -24,13 +27,15 @@ import Information from '../Components/Information'
 import Question from '../Components/Question'
 import Donation from '../Components/Donation'
 import BukGames from '../Components/BukGames'
+import DefaultText from '../Components/DefaultText'
 export default {
     components: {
         Actions,
         Information,
         Question,
         Donation,
-        BukGames
+        BukGames,
+        DefaultText,
     },
     props: ['screen'],
     data: function() {
@@ -42,6 +47,9 @@ export default {
                 squeezeBackSize: null,
                 showDonationSide: null,
                 karaokeMode: null,
+                defaultText: {
+                    defaultText: null,
+                },
                 information: {
                     information: null
                 },
