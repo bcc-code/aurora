@@ -1,6 +1,7 @@
 import { firestoreAction  } from 'vuexfire'
 import { db } from '@/data/db'
 import firebase from 'firebase'
+import { ContributionTypes } from '@/models/contribution.js'
 
 export default {
     namespaced: true,
@@ -41,6 +42,7 @@ export default {
             await contribCounter.set({ count: firebase.firestore.FieldValue.increment(count)})
         }),
         sendToFeedRef: firestoreAction(async (context, entry) => {
+            entry.type = ContributionTypes.CONTRIBUTION;
             await context.getters.feedRef.doc(entry.id).set({ ...entry })
             return context.getters.queueRef.doc(entry.id).delete()
         }),
