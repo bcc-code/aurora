@@ -23,7 +23,6 @@
                 :options="events.filter(el => el.id != selectedEvent.id)" select-key="id" select-label="name" />
             <Field name="banner" type="text" />
             <p class="col-span-full uppercase font-bold">{{$t('event.checkins')}}</p>
-            <Field name="syncRate" type="number" />
             <Field name="totalCheckins">
                 <span class="text-4xl font-bold" type="text">{{selectedEvent.checkedInUsers}}</span>
             </Field>

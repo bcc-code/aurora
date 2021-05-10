@@ -10,10 +10,6 @@ export default {
         }),
     },
     getters: {
-        syncRate: (_s, _g, _r, rootGetters) => {
-            var currentEvent = rootGetters['events/currentEvent'];
-            return currentEvent == null ? null : currentEvent.syncRate;
-        },
         getCheckins: (_s, _g, _r, rootGetters) => (time = 0) => {
             return rootGetters['events/eventRef'].collection('checkins')
                 .where('timestamp', '>=', time)

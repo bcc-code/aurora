@@ -27,7 +27,6 @@
 		"liveboard": "Liveboard"
 	},
 	"event": {
-		"syncRate": "Sync rate (s)",
 		"switchRate": "Switch rate (s)",
 		"checkins": "Checkins",
 		"totalCheckins": "Total checkins",
