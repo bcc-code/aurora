@@ -80,7 +80,6 @@ export default {
 				this.addLiveboardElement(component)
 			}
 		},
-        
     }
 }
 </script>
