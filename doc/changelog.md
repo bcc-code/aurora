@@ -18,9 +18,7 @@ Bumped to 1.4 because of the massive changes in the firebase functions.
   * Proper eslint config
   * Lots of small updates and upgrades
 
-### Added
 
-* Introduced animals into the world, we believe they're going to be a neat addition.
 
 
 
