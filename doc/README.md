@@ -1,2 +1,4 @@
-# Introduction
+# Main
+
+* [Changelog](changelog.md)
 

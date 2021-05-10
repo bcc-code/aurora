@@ -1,6 +1,7 @@
 # Table of contents
 
-* [Introduction](README.md)
+* [Main](README.md)
+* [Changelog](changelog.md)
 
 ## Functions API
 
