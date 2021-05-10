@@ -1,6 +1,8 @@
 # Changelog
 
-## \[1.3.7\] - 2021-05-10
+## \[1.4.0\] - 2021-05-10
+
+Bumped to 1.4 because of the massive changes in the firebase functions.
 
 ### Added
 
