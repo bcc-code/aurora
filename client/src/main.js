@@ -31,7 +31,7 @@ Vue.mixin({
             this.$toasted.error(err ? err : this.$t('messages.error'));
         },
         isTokenExpired(error) {
-            return error.response.status == 401 
+            return error.response.status == 401
                 && error.response.data.error.code == 'invalid_token'
                 && error.response.data.error.message == 'jwt expired'
         }
