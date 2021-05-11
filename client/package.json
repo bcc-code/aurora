@@ -24,7 +24,7 @@
     "json-stable-stringify": "^1.0.1",
     "jwt-decode": "^2.2.0",
     "loadjs": "^4.2.0",
-    "postcss": "^7.0.35",
+    "postcss": "^8.2.10",
     "set-value": "^3.0.2",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.3",
     "vue": "^2.6.12",
