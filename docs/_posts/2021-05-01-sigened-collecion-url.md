@@ -20,9 +20,7 @@ Get signed donations URL
 Sends back a collection of things.
 
 ```Status: 200 OK```
-```json
-{
+```{
   "url": "https://donation.bcc.no/donation"
-}
-```
+}```
 

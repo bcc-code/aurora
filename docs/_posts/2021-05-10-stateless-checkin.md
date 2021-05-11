@@ -1,5 +1,5 @@
 ---
-category: Checkin 
+category: Checkin
 url_path: '/checkin/stateless'
 title: 'Checkin to an event'
 type: 'POST'
@@ -20,8 +20,7 @@ This allows checkins without specifying the eventID.
 Sends back a collection of things.
 
 ```Status: 200 OK```
-```json
-{
+```{
 	"canCheckin": true,
 	"checkedIn": true,
 	"personId": 92929389932,
@@ -30,6 +29,5 @@ Sends back a collection of things.
 	"profilePicture": "<URL>",
 	"age": 293,
 	"linkedUsers": []
-}
-```
+}```
 
