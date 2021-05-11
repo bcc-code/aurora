@@ -8,7 +8,7 @@ import { adminCheck } from './middleware/adminCheck'
 import { generateResizedImage } from './middleware/generateThumbnails'
 import { jwtCheck } from './middleware/jwtCheck'
 import { syncUserAndClaims } from './middleware/syncUserAndClaims'
-import { checkin, checkinStatus, userCount } from './handlers/checkin'
+import { checkin, checkinStateless, checkinStatus, userCount } from './handlers/checkin'
 import { getDonationURL } from './handlers/utils'
 import { config } from './utils'
 import {
@@ -81,6 +81,9 @@ checkinHandler.post('/checkin/', (req: Request, res: Response) =>
 )
 checkinHandler.get('/checkin/userCount', (req: Request, res: Response) =>
     userCount(firestore, req, res)
+)
+checkinHandler.post('/checkin/stateless', (req: Request, res: Response) =>
+    checkinStateless(firestore, req, res)
 )
 
 const appHandler = handlerWithPrefix('app')

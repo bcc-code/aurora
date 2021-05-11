@@ -14,7 +14,6 @@ export const NewEvent = (name, order) => {
         checkedInUsers: 0,
 
         /* ONLY USED IN BCC ONLINE */
-        syncRate: 120,
         canSendInquiries: false,
         feed: {
             autoPush: false,

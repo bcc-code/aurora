@@ -29,7 +29,6 @@ export default {
             event.style.logo.computedValue = template && event.style.logo.useTemplate ? template.style.logo : event.style.logo.value || null
             event.style.primaryColor.computedValue = template && event.style.primaryColor.useTemplate ? template.style.primaryColor : event.style.primaryColor.value || null
             event.style.primaryColorDark.computedValue = template && event.style.primaryColorDark.useTemplate ? template.style.primaryColorDark : event.style.primaryColorDark.value || null
-            event.syncRate = parseInt(event.syncRate);
             event.feed.frequency = parseInt(event.feed.frequency);
             event.testimonyMaxDurationSeconds = parseInt(event.testimonyMaxDurationSeconds);
             event.nextEvent = (event.nextEvent != null) ? context.getters.eventsRef.doc(event.nextEvent.id) : null
