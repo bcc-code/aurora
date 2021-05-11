@@ -1,6 +1,8 @@
 # Changelog
 
-## \[1.3.7\] - 2021-05-10
+## \[1.4.0\] - 2021-05-10
+
+Bumped to 1.4 because of the massive changes in the firebase functions.
 
 ### Added
 
@@ -16,9 +18,7 @@
   * Proper eslint config
   * Lots of small updates and upgrades
 
-### Added
 
-* Introduced animals into the world, we believe they're going to be a neat addition.
 
 
 

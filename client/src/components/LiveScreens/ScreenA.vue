@@ -1,8 +1,14 @@
 <template>
     <section class="text-white flex w-full h-full overflow-hidden">
+
+        <video show="dummyVideo" src="https://storage.googleapis.com/bcc-online-backgrounds/1642599846.mp4" autoplay="autoplay" muted="muted" style="" loop="" :class="{
+            'video-normal': isNormal,
+            'video-double': isDobbel,
+        }"/>
+
         <div class="h-full relative transition-all" :class="{ 'w-8/12': isNormal, 'w-5/12': isDobbel }">
             <div class="faded-bg absolute inset-0 h-full pl-24 pr-6 flex flex-col justify-start" :class="{ 'py-12' : isNormal, 'py-16' : isDobbel }">
-                <div class="flex justify-center items-center mb-8" v-if="isDobbel">
+                <div class="flex justify-center items-center mb-8" style="min-height: 194px; max-height:194px;" v-if="isDobbel">
                     <Logo class="w-auto" :style="logoStyle.split(';').filter((el) => el.includes('transform')).join(';')"/>
                 </div>
                 <div class="flex flex-col items-center" :class="{ 'pt-2': isNormal }">
@@ -57,6 +63,7 @@ import DistanceTracker from '@/components/LiveScreens/TV/ScreenA/WWR/DistanceTra
 import QuestionWinner from '@/components/LiveScreens/TV/Question/QuestionWinner';
 import { mapModels } from '@/mixins/mapModels'
 import { mapGetters } from 'vuex'
+import keys from '@/utils/keys'
 
 export default {
     components: {
@@ -71,6 +78,9 @@ export default {
         DistanceTracker,
         DefaultText,
     },
+    data: () => ({
+        dummyVideo: keys.env != "production",
+    }),
     props: ['screen', 'logoStyle'],
     computed: {
         ...mapModels(['ScreenAComponents', 'ScreenAQuestionViews']),
@@ -110,5 +120,19 @@ export default {
 
 .fade-karaoke-enter, .fade-karaoke-leave-to {
   opacity: 0;
+}
+
+.video-double {
+    position: absolute;
+    top: 289px;
+    left: 96px;
+    width: 678px;
+}
+
+.video-normal {
+    position: absolute;
+    top: 57px;
+    left: 96px;
+    width: 1155px;
 }
 </style>
