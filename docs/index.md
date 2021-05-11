@@ -1,6 +1,6 @@
 # Main
 
-* [Changelog](changelog.md)
+* [Changelog](./changelog.md)
 
 ## API
 

@@ -2,9 +2,9 @@
 
 ## Utils
 
-* [signedDonationURL](signedDonationURL.md)
+* [signedDonationURL](./signedDonationURL.md)
 
 
 ## Checkin
 
-* [stateless](statelessCheckin.md)
+* [stateless](./statelessCheckin.md)
