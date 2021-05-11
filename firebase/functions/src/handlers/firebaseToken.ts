@@ -3,7 +3,6 @@ import { config } from '../utils'
 import passport from 'passport'
 import { AuthenticateOptions } from 'passport-auth0'
 import { syncUserAndClaims } from '../middleware/syncUserAndClaims'
-import { n } from '../model/constants'
 import { UserModel } from '../model/user'
 import { logger } from '../log'
 import { NextFunction, Request, Response } from 'express'
@@ -12,7 +11,7 @@ import * as gaxios from 'gaxios'
 
 const log = logger('handler/firebaseToken')
 
-export async function getToken(req: Request, res: Response, _: NextFunction) {
+export async function getToken(req: Request, res: Response) : Promise<void> {
     const personId = getPersonId(req)
     if (!personId) {
         return res
@@ -42,7 +41,7 @@ export async function getToken(req: Request, res: Response, _: NextFunction) {
     }
 }
 
-export async function login(req: Request, res: Response, next: NextFunction) {
+export async function login(req: Request, res: Response, next: NextFunction) : Promise<void> {
     const authOptions: AuthenticateOptions = {
         scope: 'openid email profile church country',
 
@@ -52,11 +51,11 @@ export async function login(req: Request, res: Response, next: NextFunction) {
     return passport.authenticate('auth0', authOptions)(req, res, next)
 }
 
-export async function processLoginCallback(
+export function processLoginCallback(
     req: Request,
     res: Response,
     next: NextFunction
-) {
+)  : void{
     try {
         passport.authenticate('auth0', (err, user) => {
             if (err) return next(err)
@@ -88,7 +87,7 @@ export async function processLoginCallback(
     }
 }
 
-export async function getIdToken(req: Request, res: Response, _: NextFunction) {
+export async function getIdToken(req: Request, res: Response) : Promise<void> {
     try {
         const result = await gaxios.request({
             method: 'POST',
@@ -105,7 +104,7 @@ export async function getIdToken(req: Request, res: Response, _: NextFunction) {
             expiresIn: string
         }
 
-        if (result.status == 200 && data.idToken) {
+        if (result.status === 200 && data.idToken) {
             return res
                 .send({
                     idToken: data.idToken,

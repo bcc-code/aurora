@@ -6,7 +6,7 @@ import { logger } from '../log'
 
 const log = logger('jwtCheck')
 
-export const jwtCheck = (req: Request, res: Response, next: NextFunction) => {
+export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void => {
     // get audience header
     let audience = req.headers.audience
     if (!audience) {

@@ -2,6 +2,10 @@ import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { EventModel } from '../model/event'
 import { getPersonId } from '../model/utils'
+import NodeCache from "node-cache";
+
+const checkinCache = new NodeCache( { stdTTL: 300, checkperiod: 60 } );
+const EVENTID = "eventID";
 
 export async function checkinStatus(
     db: firestore.Firestore,
@@ -30,8 +34,38 @@ export async function checkin(
     res: Response
 ): Promise<void> {
     const personId = getPersonId(req)
-    const eventId = req.query.eventId || req.body.eventId
+    const eventId = req.query.eventId as string || req.body.eventId as string
     const eventModel = new EventModel(db, eventId)
+    await eventModel.checkin.checkin(personId, [personId])
+    const updatedStatus = await eventModel.checkin.getCheckinStatus(personId)
+    return res.json(updatedStatus).end()
+}
+
+export async function checkinStateless(
+    db: firestore.Firestore,
+    req: Request,
+    res: Response,
+) : Promise<void> {
+    const personId = getPersonId(req)
+    if (!personId) {
+        return res.status(401).end()
+    }
+
+    let eventId : string | undefined = checkinCache.get(EVENTID)
+    console.error(eventId);
+    if (!eventId) {
+        console.error("CACHE MISS!!!");
+        const config = (await db.collection('/configs').doc('brunstadtv-app').get()).data()
+        if (!config) {
+            return res.status(500).end()
+        }
+
+        const currentEvent = config.currentEventPath as firestore.DocumentReference
+        eventId = currentEvent.id;
+        checkinCache.set(EVENTID, eventId)
+    }
+
+    const eventModel = new EventModel(db, eventId);
     await eventModel.checkin.checkin(personId, [personId])
     const updatedStatus = await eventModel.checkin.getCheckinStatus(personId)
     return res.json(updatedStatus).end()

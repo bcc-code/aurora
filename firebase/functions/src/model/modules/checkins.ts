@@ -147,7 +147,7 @@ export class CheckinModule extends Module {
         await batch.commit()
 
         const event = (await this.event.get()).data() as Record<string, number>
-        const checkinFactor = !_.isFinite(event?.checkinFactor)
+        const checkinFactor = _.isFinite(event?.checkinFactor)
             ? event?.checkinFactor
             : 1 // Because NaN is a number
 
