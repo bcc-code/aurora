@@ -18,7 +18,9 @@ export default {
         },
         btvConfigRef: () => {
             return db.collection('configs').doc('brunstadtv-app')
-        }
-        
+        },
+        btvConfig: (state) => {
+            return state.config
+        },
     }
 }

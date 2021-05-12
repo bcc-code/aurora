@@ -81,6 +81,7 @@ export default {
         selectedEventRef: (state, getters) => {
             return getters.eventsRef.doc(state.selectedEventId || getters.currentEvent.id)
         },
+
         selectedEvent: (state) => {
             return state.events.find(event => event.id == state.selectedEventId)
         },
