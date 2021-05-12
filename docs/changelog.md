@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+## \[1.4.1\] - 2021-05-12
+
+### Added
+
+* Demo video on screens for non-prod envs
+* Stateless checkin
+* Docs using GH pages
+
+
 ## \[1.4.0\] - 2021-05-10
 
 Bumped to 1.4 because of the massive changes in the firebase functions.
@@ -17,8 +28,3 @@ Bumped to 1.4 because of the massive changes in the firebase functions.
   * Parcel 2
   * Proper eslint config
   * Lots of small updates and upgrades
-
-
-
-
-

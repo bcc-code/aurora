@@ -4,6 +4,7 @@
         <main class="pb-8">
             <transition name="height">
                 <EventNavbar class="mb-5" v-if="selectedEvent" />
+                <GlobalNavbar class="mb-5" v-else />
             </transition>
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:max-w-7xl lg:px-8" style="min-height: calc(100vh - 27rem)">
                 <router-view v-if="isAuthenticated && isMounted" />
@@ -21,12 +22,14 @@
 <script>
 import Navbar from '@/components/Layout/Navbar'
 import EventNavbar from '@/components/Layout/EventNavbar'
+import GlobalNavbar from '@/components/Layout/GlobalNavbar'
 import { mapActions, mapGetters, mapState } from 'vuex'
 import keys from '@/utils/keys'
 export default {
     components: {
         Navbar,
-        EventNavbar
+        EventNavbar,
+        GlobalNavbar,
     },
 	data: function(){
 		return {

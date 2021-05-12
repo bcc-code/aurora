@@ -25,26 +25,31 @@ import Signout from "@/views/Authentication/Signout"
 import Unauthorized from '@/views/Unauthorized'
 import NotFound from "@/views/NotFound"
 
+import GlobalSettings from '@/views/GlobalSettings'
+import ImpEx from '@/views/ImpEx'
+
 export default [
-	{ path: "/", name: "events", component: Events },
-	{ path: "/callback", name: "callback", component: Callback, meta: { unprotected: true }},
-	{ path: "/signout", name: "signout", component: Signout, meta: { unprotected: true }},
-	{ path: '/unauthorized', name: 'unauthorized', component: Unauthorized, meta: { unprotected: true } },
-	{ path: "/screens/:id", name: "livescreen", component: LiveScreen, meta: { unprotected: true } },
-	{ path: "/templates", name: "templates", component: EventTemplates },
-	{ path: "/templates/:templateId", name: "template", component: EventTemplate },
-	{ path: "/:eventId", component: Event, children: [
-		{ path: "", name: "dashboard", component: EditEvent },
-		{ path: "gameboard", name: "gameboard", component: Questions },
-		{ path: "liveboard", name: "liveboard", component: Liveboard },
-		{ path: "translations",	name: "translations", component: Translation, meta: { accessLevel : 'translate' } },
-		{ path: "inquiries", name: "inquiries", component: Inquiries },
-		{ path: "feed", name: "feed", component: Feed, meta: { accessLevel : 'desk' } },
-		{ path: "desk", name: "desk", component: Info, meta: { accessLevel : 'desk' } },
-		{ path: "program", name: "program", component: Program },
-		{ path: "screens", name: "screens", component: ManageScreens, meta: { accessLevel : 'admin' } },
-		{ path: "profile-pictures",	name: "profile-pictures", component: ProfilePictures, meta: { accessLevel : 'desk' } },
-		{ path: "competition", name: "competition", component: CompetitionValidation, meta: { accessLevel : 'desk' } }
-	]},
-	{ path: "*", name: "not-found", component: NotFound }
+    { path: "/", name: "events", component: Events },
+    { path: "/globalconf", name: "globalconf", component: GlobalSettings },
+    { path: "/impex", name: "impex", component: ImpEx },
+    { path: "/callback", name: "callback", component: Callback, meta: { unprotected: true }},
+    { path: "/signout", name: "signout", component: Signout, meta: { unprotected: true }},
+    { path: '/unauthorized', name: 'unauthorized', component: Unauthorized, meta: { unprotected: true } },
+    { path: "/screens/:id", name: "livescreen", component: LiveScreen, meta: { unprotected: true } },
+    { path: "/templates", name: "templates", component: EventTemplates },
+    { path: "/templates/:templateId", name: "template", component: EventTemplate },
+    { path: "/:eventId", component: Event, children: [
+        { path: "", name: "dashboard", component: EditEvent },
+        { path: "gameboard", name: "gameboard", component: Questions },
+        { path: "liveboard", name: "liveboard", component: Liveboard },
+        { path: "translations",	name: "translations", component: Translation, meta: { accessLevel : 'translate' } },
+        { path: "inquiries", name: "inquiries", component: Inquiries },
+        { path: "feed", name: "feed", component: Feed, meta: { accessLevel : 'desk' } },
+        { path: "desk", name: "desk", component: Info, meta: { accessLevel : 'desk' } },
+        { path: "program", name: "program", component: Program },
+        { path: "screens", name: "screens", component: ManageScreens, meta: { accessLevel : 'admin' } },
+        { path: "profile-pictures",	name: "profile-pictures", component: ProfilePictures, meta: { accessLevel : 'desk' } },
+        { path: "competition", name: "competition", component: CompetitionValidation, meta: { accessLevel : 'desk' } }
+    ]},
+    { path: "*", name: "not-found", component: NotFound }
 ]

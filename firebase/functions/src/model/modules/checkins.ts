@@ -15,6 +15,7 @@ interface CheckinDoc {
     checkedInBy: number
     timestamp: number
     coords: firestore.GeoPoint
+    platform: string
 }
 
 export class CheckinStatus {
@@ -103,7 +104,7 @@ export class CheckinModule extends Module {
         }
     }
 
-    async checkin(currentPersonId: string, userIds: string[]): Promise<void> {
+    async checkin(currentPersonId: string, userIds: string[], platform = "NONE"): Promise<void> {
         const coords = new firebaseadmin.firestore.GeoPoint(0, 0) // We keep this in case anything expects it
         const currentUser = await this.userModel.userRef(currentPersonId).get()
 
@@ -113,13 +114,15 @@ export class CheckinModule extends Module {
 
         if (currentUser.exists) {
             const currentStatus = await this.getCheckinStatus(currentPersonId)
-            if (userIds.includes(currentPersonId) && currentStatus.canCheckin) {
+            if (userIds.includes(currentPersonId) && currentStatus.canCheckin && currentStatus.checkedIn === false) {
                 const newCheckin: CheckinDoc = {
                     personId: Number(currentPersonId),
                     checkedInBy: Number(currentPersonId),
                     coords: coords,
                     timestamp: Date.now(),
+                    platform: platform,
                 }
+
                 batch.set(this.checkinRef(currentPersonId), newCheckin)
                 newCheckinCount++
             }
@@ -127,13 +130,14 @@ export class CheckinModule extends Module {
                 currentStatus.linkedUsers.map((linkedUser: CheckinStatus) => {
                     if (
                         userIds.includes(linkedUser.personId.toString()) &&
-                        linkedUser.canCheckin
+                        linkedUser.canCheckin && linkedUser.checkedIn === false
                     ) {
                         const newCheckin: CheckinDoc = {
                             personId: linkedUser.personId,
                             checkedInBy: Number(currentPersonId),
                             coords: coords,
                             timestamp: Date.now(),
+                            platform: platform,
                         }
                         batch.set(
                             this.checkinRef(linkedUser.personId.toString()),
@@ -147,7 +151,7 @@ export class CheckinModule extends Module {
         await batch.commit()
 
         const event = (await this.event.get()).data() as Record<string, number>
-        const checkinFactor = !_.isFinite(event?.checkinFactor)
+        const checkinFactor = _.isFinite(event?.checkinFactor)
             ? event?.checkinFactor
             : 1 // Because NaN is a number
 

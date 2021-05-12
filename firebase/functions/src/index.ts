@@ -8,7 +8,7 @@ import { adminCheck } from './middleware/adminCheck'
 import { generateResizedImage } from './middleware/generateThumbnails'
 import { jwtCheck } from './middleware/jwtCheck'
 import { syncUserAndClaims } from './middleware/syncUserAndClaims'
-import { checkin, checkinStatus, userCount } from './handlers/checkin'
+import { checkin, checkinStateless, checkinStatus, userCount } from './handlers/checkin'
 import { getDonationURL } from './handlers/utils'
 import { config } from './utils'
 import {
@@ -82,6 +82,9 @@ checkinHandler.post('/checkin/', (req: Request, res: Response) =>
 checkinHandler.get('/checkin/userCount', (req: Request, res: Response) =>
     userCount(firestore, req, res)
 )
+checkinHandler.post('/checkin/stateless', (req: Request, res: Response) =>
+    checkinStateless(firestore, req, res)
+)
 
 const appHandler = handlerWithPrefix('app')
 
@@ -91,8 +94,8 @@ competitionHandler.post('/competition/entry', (req: Request, res: Response) =>
 )
 
 const deleteHandler = adminHandlerWithPrefix('delete')
-deleteHandler.post('/event/:event/question/:questionId', deleteQuestion)
-deleteHandler.post('/event/:event', deleteEvent)
+deleteHandler.post('/delete/event/:event/question/:questionId', deleteQuestion)
+deleteHandler.post('/delete/event/:event', deleteEvent)
 
 const tokenHandler = insecureHandlerWithPrefix('firebase')
 tokenHandler.use(cookieSession(sessionSettings))
