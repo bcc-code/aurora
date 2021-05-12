@@ -24,7 +24,9 @@
 		"profile-pictures": "Profile pictures",
 		"competition": "Competition",
 		"not-found": "Not found",
-		"liveboard": "Liveboard"
+		"liveboard": "Liveboard",
+		"impex": "Import/Export",
+		"globalconf": "Global Settings"
 	},
 	"event": {
 		"switchRate": "Switch rate (s)",
