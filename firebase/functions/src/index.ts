@@ -94,8 +94,8 @@ competitionHandler.post('/competition/entry', (req: Request, res: Response) =>
 )
 
 const deleteHandler = adminHandlerWithPrefix('delete')
-deleteHandler.post('/event/:event/question/:questionId', deleteQuestion)
-deleteHandler.post('/event/:event', deleteEvent)
+deleteHandler.post('/delete/event/:event/question/:questionId', deleteQuestion)
+deleteHandler.post('/delete/event/:event', deleteEvent)
 
 const tokenHandler = insecureHandlerWithPrefix('firebase')
 tokenHandler.use(cookieSession(sessionSettings))
