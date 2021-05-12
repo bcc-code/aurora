@@ -54,7 +54,6 @@ export async function checkinStateless(
     let eventId : string | undefined = checkinCache.get(EVENTID)
     console.error(eventId);
     if (!eventId) {
-        console.error("CACHE MISS!!!");
         const config = (await db.collection('/configs').doc('brunstadtv-app').get()).data()
         if (!config) {
             return res.status(500).end()
@@ -65,8 +64,11 @@ export async function checkinStateless(
         checkinCache.set(EVENTID, eventId)
     }
 
+    const q = req.query as Record<string,string|undefined>
+    const platform = q["platform"] ?? "NONE"
+
     const eventModel = new EventModel(db, eventId);
-    await eventModel.checkin.checkin(personId, [personId])
+    await eventModel.checkin.checkin(personId, [personId], platform)
     const updatedStatus = await eventModel.checkin.getCheckinStatus(personId)
     return res.json(updatedStatus).end()
 }

@@ -15,6 +15,7 @@ interface CheckinDoc {
     checkedInBy: number
     timestamp: number
     coords: firestore.GeoPoint
+    platform: string
 }
 
 export class CheckinStatus {
@@ -103,7 +104,7 @@ export class CheckinModule extends Module {
         }
     }
 
-    async checkin(currentPersonId: string, userIds: string[]): Promise<void> {
+    async checkin(currentPersonId: string, userIds: string[], platform = "NONE"): Promise<void> {
         const coords = new firebaseadmin.firestore.GeoPoint(0, 0) // We keep this in case anything expects it
         const currentUser = await this.userModel.userRef(currentPersonId).get()
 
@@ -119,7 +120,9 @@ export class CheckinModule extends Module {
                     checkedInBy: Number(currentPersonId),
                     coords: coords,
                     timestamp: Date.now(),
+                    platform: platform,
                 }
+
                 batch.set(this.checkinRef(currentPersonId), newCheckin)
                 newCheckinCount++
             }
@@ -134,6 +137,7 @@ export class CheckinModule extends Module {
                             checkedInBy: Number(currentPersonId),
                             coords: coords,
                             timestamp: Date.now(),
+                            platform: platform,
                         }
                         batch.set(
                             this.checkinRef(linkedUser.personId.toString()),

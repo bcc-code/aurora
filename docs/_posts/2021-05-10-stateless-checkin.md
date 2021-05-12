@@ -13,6 +13,10 @@ This allows checkins without specifying the eventID.
 
 * The headers must include a **valid authentication token**.
 
+**Url Params**
+
+* `platform`: string (optional) - Provide a string for analytics purposes
+
 ```Authentication: Bearer <JWT>```
 
 ### Response

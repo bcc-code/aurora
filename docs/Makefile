@@ -19,4 +19,7 @@ components: component.json
 clean:
 	rm -fr build components $(TEMPLATES)
 
-.PHONY: clean
+watch:
+	jekyll serve --port 4014 --watch
+
+.PHONY: clean watch
