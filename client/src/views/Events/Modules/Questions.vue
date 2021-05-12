@@ -4,7 +4,8 @@
         <List v-else :elements="questions" @sorted="onSorted">
             <section slot="header">
                 <div class="w-full flex flex-wrap justify-between mb-3 align-items-baseline">
-                    <button class="btn" :class="pollIsLive ? 'btn-red': 'btn-green'" @click="toggleQuizz">{{pollIsLive ? 'Stop quizz': 'Start quizz'}}</button>
+                    <button class="btn" :class="pollIsLive ? 'btn-red': 'btn-green'" @click="toggleQuizz" v-if="!toggleInProgress">{{pollIsLive ? 'Stop quizz': 'Start quizz'}}</button>
+                    <button v-else class="btn" disabled>Working...</button>
                 </div>
             </section>
             <template v-slot:list="{ elements, searchQuery }">
@@ -17,7 +18,7 @@
                 <NewElement v-if="$can('create', 'question')" :order="nextOrder" @add="addQuestion" />
             </template>
         </List>
-        <SlideOver v-show="selectedQuestion != null" ref="editSldier" 
+        <SlideOver v-show="selectedQuestion != null" ref="editSldier"
             :open="selectedQuestion != null"
             @close="$store.commit('questions/setSelectedQuestionId', null)">
                 <template class="w-full mt-8" v-if="selectedQuestion != null">
@@ -59,6 +60,7 @@ export default {
     data: function(){
         return {
             loaded: false,
+            toggleInProgress: false,
             quizz: [],
         }
     },
@@ -101,12 +103,14 @@ export default {
             await this.updateQuestionRef(this.selectedQuestion).then(this.showSuccess).catch(this.showError)
         },
         async toggleQuizz() {
+            this.toggleInProgress = true;
             if (this.pollIsLive)
                 await this.stopQuizzRef()
             else {
                 await this.startQuizzRef(this.quizz)
                 this.quizz = []
             }
+            this.toggleInProgress = false;
         }
     },
 }
