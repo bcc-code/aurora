@@ -114,7 +114,8 @@ export class CheckinModule extends Module {
 
         if (currentUser.exists) {
             const currentStatus = await this.getCheckinStatus(currentPersonId)
-            if (userIds.includes(currentPersonId) && currentStatus.canCheckin) {
+            console.log(currentStatus);
+            if (userIds.includes(currentPersonId) && currentStatus.canCheckin && currentStatus.checkedIn === false) {
                 const newCheckin: CheckinDoc = {
                     personId: Number(currentPersonId),
                     checkedInBy: Number(currentPersonId),
@@ -130,7 +131,7 @@ export class CheckinModule extends Module {
                 currentStatus.linkedUsers.map((linkedUser: CheckinStatus) => {
                     if (
                         userIds.includes(linkedUser.personId.toString()) &&
-                        linkedUser.canCheckin
+                        linkedUser.canCheckin && linkedUser.checkedIn === false
                     ) {
                         const newCheckin: CheckinDoc = {
                             personId: linkedUser.personId,
