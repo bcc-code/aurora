@@ -42,7 +42,7 @@ async function approveCompetitionEntry(competitionId, personId, distance) {
     var body = {
         personId: personId,
         distance: 0,
-        overrideMaxDistance: distance 
+        overrideMaxDistance: distance
     }
     return sendRequest('POST', `competition/entry?competitionId=${competitionId}`, body)
 }
@@ -53,6 +53,10 @@ async function deleteQuestion(eventId, questionId) {
 
 async function deleteEvent(eventId) {
     return sendRequest('POST', `delete/event/${eventId}`)
+}
+
+async function exportData(toExport) {
+    return sendRequest('POST', `impex/export`, toExport);
 }
 
 async function collectionResults() {
@@ -69,7 +73,7 @@ axios.interceptors.response.use(
     (response) => {
         return response
     },
-    async (error) => { 
+    async (error) => {
         if (error.response.status === 401
             && error.response.data.error.code == 'invalid_token'
             && error.response.data.error.message == 'jwt expired') {
@@ -89,5 +93,6 @@ export default {
     collectionResults,
     startPoll,
     deleteEvent,
-    deleteQuestion
+    deleteQuestion,
+    exportData,
 };
