@@ -38,7 +38,7 @@ export default {
             return context.getters.deskRef.doc(entry.id).delete()
         }),
         updateContribsCount: firestoreAction(async (context, count) => {
-            const contribCounter = await context.rootGetters['events/selectedEventRef'].collection('counters').doc('contributions')
+            const contribCounter = await context.rootGetters['events/selectedEventRef'].collection('counters').doc('feedContributions')
             await contribCounter.set({ count: firebase.firestore.FieldValue.increment(count)})
         }),
         sendToFeedRef: firestoreAction(async (context, entry) => {
