@@ -105,6 +105,10 @@ tokenHandler.get('/firebase/', jwtCheck, syncUserAndClaims, getToken)
 tokenHandler.get('/firebase/login', login)
 tokenHandler.get('/firebase/callback', processLoginCallback)
 tokenHandler.get('/firebase/idtoken', getIdToken)
+tokenHandler.post('/firebase/', jwtCheck, syncUserAndClaims, getToken)
+tokenHandler.post('/firebase/login', login)
+tokenHandler.post('/firebase/callback', processLoginCallback)
+tokenHandler.post('/firebase/idtoken', getIdToken)
 
 const pollHandler = handlerWithPrefix('poll')
 pollHandler.post(
