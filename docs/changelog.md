@@ -1,7 +1,5 @@
 # Changelog
 
-## Unreleased
-
 ## \[1.4.3\] - 2021-05-18
 
 ### Added
@@ -9,10 +7,11 @@
 * Add global settings menu
 * Preload images in feed before animating the el in
 * Handle post requests on /firebase/ (for AppleTV)
+* Count of contributions pushed
+* Dummy collection URL function
 
 ### Fixed
 
-* Proper updates for contribs counter
 * Fix broken delete routes
 * Fix wrong type when picking winner
  
