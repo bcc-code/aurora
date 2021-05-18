@@ -1,5 +1,7 @@
 # BCC Online
 
+Changelog can be found at [https://doc.bcc.online/changelog](https://doc.bcc.online/changelog)
+
 ## Getting started
 
 * In `./client/` 

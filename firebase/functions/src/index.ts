@@ -94,8 +94,8 @@ competitionHandler.post('/competition/entry', (req: Request, res: Response) =>
 )
 
 const deleteHandler = adminHandlerWithPrefix('delete')
-deleteHandler.post('/event/:event/question/:questionId', deleteQuestion)
-deleteHandler.post('/event/:event', deleteEvent)
+deleteHandler.post('/delete/event/:event/question/:questionId', deleteQuestion)
+deleteHandler.post('/delete/event/:event', deleteEvent)
 
 const tokenHandler = insecureHandlerWithPrefix('firebase')
 tokenHandler.use(cookieSession(sessionSettings))
@@ -105,6 +105,10 @@ tokenHandler.get('/firebase/', jwtCheck, syncUserAndClaims, getToken)
 tokenHandler.get('/firebase/login', login)
 tokenHandler.get('/firebase/callback', processLoginCallback)
 tokenHandler.get('/firebase/idtoken', getIdToken)
+tokenHandler.post('/firebase/', jwtCheck, syncUserAndClaims, getToken)
+tokenHandler.post('/firebase/login', login)
+tokenHandler.post('/firebase/callback', processLoginCallback)
+tokenHandler.post('/firebase/idtoken', getIdToken)
 
 const pollHandler = handlerWithPrefix('poll')
 pollHandler.post(

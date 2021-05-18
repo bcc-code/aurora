@@ -241,63 +241,71 @@ export class PollModule extends Module {
         let candidates = []
         let correctResponsesList
 
-        if (!question) {
-            throw Error(`Unable to get data for question: ${questionId}`)
-        }
+        try {
+            if (!question) {
+                throw Error(`Unable to get data for question: ${questionId}`)
+            }
 
-        switch (question.type) {
-            case 'multiple-choice':
-                const correctAnswersList = await this.answers(questionId)
-                    .where('correct', '==', true)
-                    .get()
-                const correctAnswers = correctAnswersList.docs.map(
-                    (doc) => doc.data().id
-                )
-                if (!correctAnswers || correctAnswers.length <= 0) {
-                    break
-                }
-                correctResponsesList = await this.responses
-                    .where('question', '==', questionId)
-                    .where('selected', 'array-contains-any', correctAnswers)
-                    .get()
-                candidates = correctResponsesList.docs.map(
-                    (doc) => doc.data().personId
-                )
-                break
-            case 'slider':
-                correctResponsesList = await this.responses
-                    .where('question', '==', questionId)
-                    .where(
-                        'selected',
-                        'array-contains',
-                        question.slider.correct || 0
+            switch (question.type) {
+                case 'multiple-choice':
+                    const correctAnswersList = await this.answers(questionId)
+                        .where('correct', '==', true)
+                        .get()
+                    const correctAnswers = correctAnswersList.docs.map(
+                        (doc) => doc.data().id
                     )
-                    .get()
-                if (correctResponsesList.docs.length !== 0) {
+                    if (!correctAnswers || correctAnswers.length <= 0) {
+                        break
+                    }
+                    correctResponsesList = await this.responses
+                        .where('question', '==', questionId)
+                        .where('selected', 'array-contains-any', correctAnswers)
+                        .get()
                     candidates = correctResponsesList.docs.map(
                         (doc) => doc.data().personId
                     )
                     break
-                }
-                candidates = (
-                    await this.responses
+                case 'slider':
+                    correctResponsesList = await this.responses
+                        .where('question', '==', questionId)
+                        .where(
+                            'selected',
+                            'array-contains',
+                            question.slider.correct || 0
+                        )
+                        .get()
+                    if (correctResponsesList.docs.length !== 0) {
+                        candidates = correctResponsesList.docs.map(
+                            (doc) => doc.data().personId
+                        )
+                        break
+                    }
+                    candidates = (
+                        await this.responses
                         .where('question', '==', questionId)
                         .get()
-                ).docs.map((doc) => doc.data().personId)
-                break
-            default:
-                break
-        }
-        if (candidates.length === 0) return false
+                    ).docs.map((doc) => doc.data().personId)
+                    break
+                default:
+                    break
+            }
 
-        const i = Math.floor(Math.random() * candidates.length)
-        const winnerPersonId = candidates[i] as string
-        const winner = this.userModel.userRef(winnerPersonId)
-        await this.question(questionId).update({ winner }) // TODO: What's going on here?
+            if (candidates.length === 0) {
+                return false
+            }
+
+            const i = Math.floor(Math.random() * candidates.length)
+            const winnerPersonId = candidates[i] as number
+            const winner = this.userModel.userRef(winnerPersonId.toString())
+            await this.question(questionId).update({ winner }) // TODO: What's going on here?
+        } catch (e) {
+            log.error(e)
+            return false;
+        }
         return true
     }
 
-    async updatePollStats(currentQuestionId: string): Promise<{}> {
+    async updatePollStats(currentQuestionId: string): Promise<any> {
         const { answers } = await this.loadPollData()
 
         const allQaShards = await this.pollStats.get()
