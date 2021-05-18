@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+## \[1.4.3\] - 2021-05-18
+
+### Added
+
+* Add global settings menu
+* Preload images in feed before animating the el in
+* Handle post requests on /firebase/ (for AppleTV)
+
+### Fixed
+
+* Proper updates for contribs counter
+* Fix broken delete routes
+* Fix wrong type when picking winner
+ 
+## \[1.4.2\]
+
+### Fixed
+
+* Do not increase checkin counter if the person is already checked in
+
 ## \[1.4.1\] - 2021-05-12
 
 ### Added
