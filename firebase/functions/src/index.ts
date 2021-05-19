@@ -2,7 +2,7 @@ import * as functions from 'firebase-functions'
 import cookieSession from 'cookie-session'
 import cors from 'cors'
 import express, { Response, Request, Application } from 'express'
-import firebaseAdmin from 'firebase-admin'
+import firebaseAdmin, {storage} from 'firebase-admin'
 import { ErrorHandler, addPrefix } from './handlers/handler'
 import { adminCheck } from './middleware/adminCheck'
 import { generateResizedImage } from './middleware/generateThumbnails'
@@ -40,13 +40,19 @@ import {
 import { newFeedPost } from './handlers/feed'
 import { newInquiry } from './handlers/inquiry'
 import { passport, sessionSettings } from './middleware/passport'
+import { Bucket } from '@google-cloud/storage'
 
 
 type HandlerWithDB = (db: firebaseAdmin.firestore.Firestore, req: Request, res: Response) => Promise<void>
+type HandlerWithBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket , req: Request, res: Response) => Promise<void>
 type Handler = (req: Request, res: Response) => Promise<void>
 
 const withDB = (db: firebaseAdmin.firestore.Firestore, f : HandlerWithDB) : Handler  =>  {
     return (req: Request, res: Response) => f(db, req, res)
+}
+
+const withBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket, f : HandlerWithBucket) : Handler  =>  {
+    return (req: Request, res: Response) => f(db, bucket, req, res)
 }
 
 const log = logger('index')
@@ -56,7 +62,7 @@ const firebaseApp = firebaseAdmin.initializeApp({
     databaseURL: `https://${config.firebaseServiceAccount.projectId}.firebaseio.com`,
 })
 
-const impExBucket = firebaseApp.storage().bucket(config.impexBucket);
+const impExBucket = firebaseApp.storage().bucket(config.app.impexBucket);
 
 log.info('Cloud functions initializing...')
 
@@ -140,7 +146,7 @@ const utilsHandler = handlerWithPrefix('utils')
 utilsHandler.get('/utils/signedDonationURL', getDonationURL);
 
 const impexHandler = adminHandlerWithPrefix('impex')
-impexHandler.post('/impex/export', withDB(firestore, exportData));
+impexHandler.post('/impex/export', withBucket(firestore, impExBucket, exportData));
 
 log.info('Ready.')
 
