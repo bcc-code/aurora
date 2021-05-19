@@ -2,6 +2,10 @@
 
 ## (unreleased) \[1.4.4\] - 2021-05-19
 
+### Changed
+
+* Updated donations text on screen A
+
 ### Fixed
 
 * "Default Text" component not showing up on screen A

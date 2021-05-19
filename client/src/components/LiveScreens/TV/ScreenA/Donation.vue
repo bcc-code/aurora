@@ -9,15 +9,14 @@
         <div class="w-full border-l-4 border-white shadow-text text-white leading-snug px-4 flex justify-center gap-5">
             <div :class="size =='small' ? showResults ? 'w-1/2' : 'w-full px-8' : 'w-2/3'">
                 <template v-if="isSmallWithResults">
-                    <p class="uppercase font-semibold text-3xl">BIDRA I BTV APP</p>
-                    <p class="italic text-3xl pb-2">eller på portalen</p>
+                    <p class="uppercase font-semibold text-3xl">Kollekt til BCC</p>
                 </template>
                 <template v-else>
                     <p class="uppercase font-semibold text-4xl pb-2">KOLLEKT TIL BCC</p>
                 </template>
                 <div class="relative bg-black bg-opacity-25 rounded-xl text-3xl leading-tight text-left">
                     <div class="flex flex-wrap items-center justify-center">
-                        <p class="py-5 px-2 leading-snug text-4xl text-center">Bidra via <strong class="italic">BrunstadTV-appen</strong><br>eller<br>på <strong class="italic">donation.bcc.no</strong></p>
+                        <p class="py-5 px-2 leading-snug text-4xl text-center">Bidra via <strong class="italic">BrunstadTV-appen</strong><br>eller<br>på <strong class="italic">portalen</strong></p>
                     </div>
                 </div>
             </div>
