@@ -1,6 +1,33 @@
 # Changelog
 
-## Unreleased
+## \[1.4.4\] - 2021-05-19
+
+### Fixed
+
+* "Default Text" component not showing up on screen A
+  * This is related to the creation of a new event, so all events created prior to 1.4.4 have this issue.
+  * It can be manually fixed in the DB
+
+## \[1.4.3\] - 2021-05-18
+
+### Added
+
+* Add global settings menu
+* Preload images in feed before animating the el in
+* Handle post requests on /firebase/ (for AppleTV)
+* Count of contributions pushed
+* Dummy collection URL function
+
+### Fixed
+
+* Fix broken delete routes
+* Fix wrong type when picking winner
+ 
+## \[1.4.2\]
+
+### Fixed
+
+* Do not increase checkin counter if the person is already checked in
 
 ## \[1.4.1\] - 2021-05-12
 

@@ -83,6 +83,7 @@ export const NewScreen = (id, order) => {
             newScreen.options.donation = { showResults: false, size: null }
             newScreen.options.question = { question: null, view: null, showCorrectAnswer: true, finished: false }
             newScreen.options.information = { information: null }
+            newScreen.options.defaultText = { defaultText: null }
             break;
         case 'F':
             newScreen.options.component = null
