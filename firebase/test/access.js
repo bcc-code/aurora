@@ -48,6 +48,8 @@ beforeEach(async () => {
 
     await adminApp.firestore().collection("/events/34/feed-outgoing").doc("2").set({"name": "Jane Doe"});
     await adminApp.firestore().collection("/events/34/feed-outgoing/2/private").doc("person").set({personId: "2"});
+
+    await adminApp.firestore().collection("/events/34/counters/").doc("contributionsCount").set({count: 17});
 });
 
 before(async () => {
@@ -107,12 +109,12 @@ describe("BCC.online", () => {
         await firebase.assertFails(db.collection("/events").doc("1").get());
         await firebase.assertFails(db.collection("/gameboard").doc("1").get());
         await firebase.assertFails(db.collection("/questions").doc("1").get());
+        await firebase.assertFails(db.collection("/events/34/counters").doc("contributionsCount").get());
     });
 
     it("should allow logged in users to read most of the things", async () => {
         let db = getAuthedFirestore(user);
         await firebase.assertSucceeds(db.collection("/configs").doc("test-config").get());
-        await firebase.assertSucceeds(db.collection("/churches").doc("1").get());
         await firebase.assertSucceeds(db.collection("/competitions").doc("1").get());
         await firebase.assertSucceeds(db.collection("/events").doc("22").get());
         await firebase.assertSucceeds(db.collection("/events/22/questions").get());
@@ -128,6 +130,14 @@ describe("BCC.online", () => {
         await firebase.assertSucceeds(db.collection("/events/34/checkins").doc("2").get());
         await firebase.assertSucceeds(db.collection("/events/34/feed-outgoing").doc("1").get());
         await firebase.assertSucceeds(db.collection("/events/34/feed-outgoing").doc("2").get());
+
+    });
+
+    it("should allow logged in users to read counters", async () => {
+        let db = getAuthedFirestore(user);
+        await firebase.assertSucceeds(db.collection("/events/34/counters"));
+        await firebase.assertSucceeds(db.collection("/events/34/counters").doc("contributionsCount"));
+        await firebase.assertSucceeds(db.collection("/events/34/counters").doc("contributionsCount").get());
     });
 
     it("should not be possible to read private data of other users", async () => {

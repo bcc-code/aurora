@@ -67,6 +67,9 @@ service cloud.firestore {
       match /liveboard/{componentId=**} {
         allow read: if isLoggedIn();
       }
+      match /counters/{counter=**} {
+       allow read: if isLoggedIn();
+      }
 
       match /program/{programId=**} {
         allow read: if isLoggedIn();
