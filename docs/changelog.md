@@ -1,12 +1,13 @@
 # Changelog
 
-## \[1.4.4\] - 2021-05-19
+## (unreleased) \[1.4.4\] - 2021-05-19
 
 ### Fixed
 
 * "Default Text" component not showing up on screen A
   * This is related to the creation of a new event, so all events created prior to 1.4.4 have this issue.
   * It can be manually fixed in the DB
+* Persons with no ChurchID are unable to submit contributions
 
 ## \[1.4.3\] - 2021-05-18
 

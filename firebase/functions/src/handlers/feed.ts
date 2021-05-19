@@ -1,4 +1,3 @@
-import { n } from '../model/constants'
 import { EventModel } from '../model/event'
 import { UserModel } from '../model/user'
 import { logger } from '../log'
@@ -27,13 +26,17 @@ export async function newFeedPost(
                 .end()
         }
         const currentUser = currentUserObj.data() as IUser
-        const churchDoc = await userModel
-            .churchRef((currentUser.churchId ?? '').toString())
-            .get()
-        if (churchDoc.exists) {
-            const data = churchDoc.data()!
-            currentUser.churchName = data.name
-            currentUser.countryName = data.country
+
+        const churchId = currentUser.churchId ?? null
+        if (churchId !== null) {
+            const churchDoc = await userModel
+                .churchRef((currentUser.churchId ?? '').toString())
+                .get()
+            if (churchDoc.exists) {
+                const data = churchDoc.data()!
+                currentUser.churchName = data.name
+                currentUser.countryName = data.country
+            }
         }
 
         const feedEntry: FeedEntry = {

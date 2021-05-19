@@ -106,8 +106,8 @@ export const sumDeep = (a: DeepSummable, b: DeepSummable): void => {
 
 export const getPersonId = (req: Request): string => {
     const personId =
-        req.user?.['https://login.bcc.no/claims/personId'].toFixed() ?? null
-    if (personId) {
+        req.user?.['https://login.bcc.no/claims/personId'].toFixed() ?? ""
+    if (personId !== "") {
         return personId.toString()
     }
 
