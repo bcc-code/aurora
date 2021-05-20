@@ -1,6 +1,6 @@
 # Changelog
 
-## (unreleased) \[1.4.4\] - 2021-05-19
+## \[1.4.5\] - 2021-05-20
 
 ### Changed
 
@@ -12,6 +12,8 @@
   * This is related to the creation of a new event, so all events created prior to 1.4.4 have this issue.
   * It can be manually fixed in the DB
 * Persons with no ChurchID are unable to submit contributions
+* Updated verse shorthands so they are compatible with the server
+* Init *counter* not counters
 
 ## \[1.4.3\] - 2021-05-18
 
