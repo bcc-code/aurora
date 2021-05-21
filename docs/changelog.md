@@ -1,6 +1,6 @@
 # Changelog
 
-## \[1.4.6\] - Unreleased
+## \[1.4.6\] - 2021-05-21
 
 ### Added
 
