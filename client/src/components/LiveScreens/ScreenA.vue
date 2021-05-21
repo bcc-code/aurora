@@ -79,7 +79,7 @@ export default {
         DefaultText,
     },
     data: () => ({
-        dummyVideo: keys.env != "production",
+        dummyVideo: false, // Quickfix because it was showing up in production
     }),
     props: ['screen', 'logoStyle'],
     computed: {
