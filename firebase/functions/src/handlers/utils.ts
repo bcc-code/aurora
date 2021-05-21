@@ -1,22 +1,32 @@
 import { Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
 import * as gaxios from 'gaxios'
+import { logger } from '../log'
+import { config } from '../utils'
+
+const log = logger('utilsHandler')
 
 export async function getDonationURL(req: Request, res: Response) : Promise<void> {
     const personId: string | null = getPersonId(req);
-    console.log(`Donation url requested for ${personId}`);
 
-    const url = 'https://donation-api-stage.azurewebsites.net/api/Authenticate/AuthenticatedUrl'
+    const url = config.app.donationsUrl as string
+    const token = Buffer.from(`${config.app.donationsApiKey}:${personId}`).toString('base64')
 
-    const result = await gaxios.request({
-        method: 'POST',
-        url,
-        headers: {
-            Authorization: req.headers.authorization,
-        },
-    });
+    let outUrl = "https://donation.bcc.no/"
+    try {
+        const result = await gaxios.request({
+            method: 'POST',
+            timeout: 5000, // We wait at most 5 seconds
+            url,
+            headers: {
+                'x-api-key': token,
+            },
+        });
 
-    console.log(result);
-
-    res.json({ url: "https://donation.bcc.no/donation" }).end();
+        outUrl = result.data as string ?? outUrl;
+    } catch (e) {
+        log.error(e)
+    } finally {
+        res.json({ url: outUrl }).end();
+    }
 }
