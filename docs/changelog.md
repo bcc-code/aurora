@@ -1,5 +1,11 @@
 # Changelog
 
+## \[1.4.6\] - Unreleased
+
+### Added
+
+* Proper API for authenticated donations URL
+
 ## \[1.4.5\] - 2021-05-20
 
 ### Changed

@@ -11,6 +11,8 @@
   },
   "app": {
     "baseUrl": "http://localhost:8080",
-	"sharedApiKey": "<REPLACE>"
+	"sharedApiKey": "<REPLACE>",
+	"donationsApiKey": "<REPLACE>",
+	"donationsUrl": "<REPLACE>"
   }
 }
