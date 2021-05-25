@@ -3835,7 +3835,7 @@
 		]
 	},
 	{
-		"abbr": "Amos",
+		"abbr": "Am",
 		"book": "Amos",
 		"translated": {
 			"no": {
@@ -3882,7 +3882,7 @@
 		]
 	},
 	{
-		"abbr": "Obad",
+		"abbr": "Ob",
 		"book": "Obadiah",
 		"translated": {
 			"no": {
@@ -3897,7 +3897,7 @@
 		]
 	},
 	{
-		"abbr": "Jonah",
+		"abbr": "Jon",
 		"book": "Jonah",
 		"translated": {
 			"no": {
@@ -4145,7 +4145,7 @@
 		]
 	},
 	{
-		"abbr": "Matt",
+		"abbr": "Mt",
 		"book": "Matthew",
 		"translated": {
 			"no": {
@@ -4268,7 +4268,7 @@
 		]
 	},
 	{
-		"abbr": "Mark",
+		"abbr": "Mk",
 		"book": "Mark",
 		"translated": {
 			"no": {
@@ -4343,7 +4343,7 @@
 		]
 	},
 	{
-		"abbr": "Luke",
+		"abbr": "Lk",
 		"book": "Luke",
 		"translated": {
 			"no": {
@@ -4450,7 +4450,7 @@
 		]
 	},
 	{
-		"abbr": "John",
+		"abbr": "Jn",
 		"book": "John",
 		"translated": {
 			"no": {
@@ -5005,7 +5005,7 @@
 		]
 	},
 	{
-		"abbr": "1Thess",
+		"abbr": "1Ths",
 		"book": "1 Thessalonians",
 		"translated": {
 			"no": {
@@ -5036,7 +5036,7 @@
 		]
 	},
 	{
-		"abbr": "2Thess",
+		"abbr": "2Ths",
 		"book": "2 Thessalonians",
 		"translated": {
 			"no": {
@@ -5307,7 +5307,7 @@
 		]
 	},
 	{
-		"abbr": "1John",
+		"abbr": "1Jn",
 		"book": "1 John",
 		"translated": {
 			"no": {
@@ -5338,7 +5338,7 @@
 		]
 	},
 	{
-		"abbr": "2John",
+		"abbr": "2Jn",
 		"book": "2 John",
 		"translated": {
 			"no": {
@@ -5353,7 +5353,7 @@
 		]
 	},
 	{
-		"abbr": "3John",
+		"abbr": "3Jn",
 		"book": "3 John",
 		"translated": {
 			"no": {

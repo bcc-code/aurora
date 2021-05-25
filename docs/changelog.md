@@ -1,12 +1,25 @@
 # Changelog
 
-## \[1.4.4\] - 2021-05-19
+## \[1.4.6\] - 2021-05-21
+
+### Added
+
+* Proper API for authenticated donations URL
+
+## \[1.4.5\] - 2021-05-20
+
+### Changed
+
+* Updated donations text on screen A
 
 ### Fixed
 
 * "Default Text" component not showing up on screen A
   * This is related to the creation of a new event, so all events created prior to 1.4.4 have this issue.
   * It can be manually fixed in the DB
+* Persons with no ChurchID are unable to submit contributions
+* Updated verse shorthands so they are compatible with the server
+* Init *counter* not counters
 
 ## \[1.4.3\] - 2021-05-18
 

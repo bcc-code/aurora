@@ -10,8 +10,8 @@ export const syncUserAndClaims = async (
     req: Request,
     res: Response,
     next: NextFunction
-) => {
-    if (req.user == null) {
+) : Promise<void> => {
+    if (req.user === null) {
         log.error('syncUserAndClaims - req.user is null!')
         return res.status(500).send({ message: 'Invalid user.' }).end()
     }

@@ -1,7 +1,7 @@
 import * as firebaseAdmin from 'firebase-admin'
 import equal from 'fast-deep-equal'
 import { n } from './constants'
-import { IUser, UserActions, UserRefs, UserGetters } from '../types/user'
+import { IUser } from '../types/user'
 import { logger } from '../log'
 import { firestore } from 'firebase-admin'
 import {
@@ -13,9 +13,6 @@ import { UserRecord } from 'firebase-functions/lib/providers/auth'
 const log = logger('model/user')
 
 export class UserModel {
-    refs: UserRefs
-    getters: UserGetters
-    actions: UserActions
     db: firestore.Firestore
 
     churches: firestore.CollectionReference<firestore.DocumentData>
@@ -24,9 +21,6 @@ export class UserModel {
 
     constructor(firestore: firestore.Firestore) {
         this.db = firestore
-        this.refs = {}
-        this.getters = {}
-        this.actions = {}
 
         this.churches = this.db.collection(n.churches)
         this.users = this.db.collection(n.users)
@@ -152,6 +146,7 @@ export class UserModel {
             update,
             localBatch
         )
+
         if (
             update.firstName !== userData.firstName ||
             update.lastName !== userData.lastName ||
@@ -355,10 +350,15 @@ export class UserModel {
                     user.countryName = userChurch.country
                 }
             } else {
+                log.warn("ChurchID unusable for person ", loggedInUser[n.claims.personId], " Provided id: ", loggedInUser[n.claims.churchId])
                 user.churchName = ''
                 user.countryName = ''
             }
+        } else {
+            log.warn("No churchID claim present for person ", loggedInUser[n.claims.personId])
         }
+
+
 
         user.hasMembership = loggedInUser[n.claims.hasMembership] !== undefined
         const result = await this.createOrUpdate(user)

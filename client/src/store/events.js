@@ -18,7 +18,7 @@ export default {
             const eventId = `${context.getters.nextId()}`;
             const doc = await context.getters.eventsRef.doc(eventId)
             await doc.set({ ...event })
-            await doc.collection('counters').doc('feedContributions').set({ counter: 0 });
+            await doc.collection('counters').doc('feedContributions').set({ count: 0 });
             return eventId
         }),
         updateEvent: firestoreAction((context, event) => {
