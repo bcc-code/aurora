@@ -315,10 +315,10 @@ export class PollModule extends Module {
             return {}
         }
 
-        const total = {}
-        const totalCorrect = {}
+        let intTotal = 0;
+        let intTotalCorrect = 0
         const current = {}
-        const currentTotal = {}
+        let intCurrentTotal = 0
         let shardData = {}
 
         for (let i = 0; i < shards.length; i++) {
@@ -333,35 +333,42 @@ export class PollModule extends Module {
                 log.error(`Shard '${shards[i].id}' has an error, skipping.`)
                 continue
             }
+
+            if (!answersForQuestion) {
+                console.error("answersForQuestion missing");
+                continue
+            }
+
             const answer = answersForQuestion.find((a) => a.id === answerId)
             if (answer === null) {
                 log.error(`Shard '${shards[i].id}' has an error, skipping.`)
                 continue
             }
 
-            sumDeep(total, shardData)
+            intTotal += shardData.total;
             if (answer.data().correct === true) {
-                sumDeep(totalCorrect, shardData)
+                intTotalCorrect += shardData.total;
             }
 
             if (questionId === currentQuestionId) {
-                sumDeep(currentTotal, shardData)
+                intCurrentTotal += shardData.total
 
                 const answerWrapper: {
                     [i: string]: Record<string, unknown>
                 } = {}
                 answerWrapper[answerId] = shardData
-                sumDeep(current, answerWrapper)
+                current[answerId] = shardData.total + (current[answerId] || 0)
             }
         }
         const result = {
             total: {
-                total: total,
-                correct: totalCorrect,
+                total: intTotal,
+                correct: intTotalCorrect,
             },
             currentQuestion: current,
-            currentTotal: currentTotal,
+            currentTotal: intCurrentTotal,
         }
+
         await this.pollSummary.set(result)
         return result
     }
