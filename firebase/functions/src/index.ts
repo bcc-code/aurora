@@ -118,7 +118,6 @@ pollHandler.post(
 )
 pollHandler.post(
     '/poll/updateStats',
-    adminCheck,
     (req: Request, res: Response) => updatePollStats(firestore, req, res)
 )
 pollHandler.post('/poll/start', adminCheck, (req: Request, res: Response) =>
