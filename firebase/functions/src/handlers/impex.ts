@@ -15,22 +15,30 @@ async function exportLiveboard(event : firestore.DocumentReference) : Promise<Li
 }
 
 export async function exportData(
-    storage: Bucket,
     db: firestore.Firestore,
+    storage: Bucket,
     req: Request<ParamsDictionary, ExportRequest, ExportRequest, qs.ParsedQs>,
     res: Response,
 ) : Promise<void> {
+    console.log(req.body);
     const eventId = req.body.eventId ?? "";
     if (!eventId) {
         res.status(400).json({
             "message": "eventId is required",
-        })
+        }).end()
+        return
     }
 
-    const event = new EventModel(db, eventId)
 
-    const exp = {
-        liveboard: await exportLiveboard(event.eventRef),
+    try {
+        const event = new EventModel(db, eventId)
+
+        const exp = {
+            liveboard: await exportLiveboard(event.eventRef),
+        }
+        await storage.file("env/text.json").save(JSON.stringify(exp))
+    } catch (e) {
+        log.error(e)
     }
 
     res.status(200).json(exp).end();

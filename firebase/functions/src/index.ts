@@ -45,7 +45,7 @@ import { Bucket } from '@google-cloud/storage'
 
 type HandlerWithDB = (db: firebaseAdmin.firestore.Firestore, req: Request, res: Response) => Promise<void>
 type HandlerWithBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket , req: Request, res: Response) => Promise<void>
-type Handler = (req: Request, res: Response) => Promise<void>
+type Handler = (req: Request, res: Response) => void
 
 const withDB = (db: firebaseAdmin.firestore.Firestore, f : HandlerWithDB) : Handler  =>  {
     return (req: Request, res: Response) => f(db, req, res)
