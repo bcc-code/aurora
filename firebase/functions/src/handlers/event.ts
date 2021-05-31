@@ -2,9 +2,9 @@ import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { EventModel } from '../model/event'
 import { ParamsDictionary } from 'express-serve-static-core'
-//import * as NodeCache from "node-cache";
+import * as NodeCache from "node-cache";
 
-//const eventsCache = new NodeCache( { stdTTL: 10, checkperiod: 1 } );
+const eventsCache = new NodeCache( { stdTTL: 10, checkperiod: 1 } ) as NodeCache;
 
 interface EventDataRequest {
     eventId?: string
@@ -44,7 +44,10 @@ export async function getEventData(
         return
     }
 
-    // TODO: Cache
+    if (eventsCache.has(eventId)) {
+        res.json(eventsCache.get(eventId)).end()
+        return
+    }
 
     const event = new EventModel(db, eventId)
     const eventData = (await event.eventRef.get()).data()
@@ -54,12 +57,16 @@ export async function getEventData(
     }
 
     const logo = eventData.logo as TemplatedValue<string>
-    res.json({
+    const data = {
         id: eventId,
         name: eventData.name as string ?? "",
 
         // TODO: Placeholders
         logo: logo.computedValue,
         banner: eventData.banner as (string | undefined),
-    })
+    }
+
+    eventsCache.set(eventId, data)
+
+    res.json(data);
 }
