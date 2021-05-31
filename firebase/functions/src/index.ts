@@ -11,6 +11,7 @@ import { syncUserAndClaims } from './middleware/syncUserAndClaims'
 import { checkin, checkinStateless, checkinStatus, userCount } from './handlers/checkin'
 import { getDonationURL } from './handlers/utils'
 import { config } from './utils'
+import { eventList, getEventData } from './handlers/event'
 import {
     generatePoll,
     submitPollResponse,
@@ -171,6 +172,14 @@ userHandler.get('/user/profileImage', (req: Request, res: Response) =>
 const utilsHandler = handlerWithPrefix('utils')
 utilsHandler.get('/utils/signedDonationURL', getDonationURL);
 
+const eventHandler = adminHandlerWithPrefix('events')
+eventHandler.get('/events/list', (req: Request, res: Response) =>
+    eventList(firestore, req, res)
+)
+eventHandler.get('/events/data', (req: Request, res: Response) =>
+    getEventData(firestore, req, res)
+)
+
 log.info('Ready.')
 
 module.exports = {
@@ -187,6 +196,7 @@ module.exports = {
     poll: functions.region('europe-west1').https.onRequest(pollHandler),
     utils: functions.region('europe-west1').https.onRequest(utilsHandler),
     user: functions.region('europe-west1').https.onRequest(userHandler),
+    events: functions.region('europe-west1').https.onRequest(eventHandler),
     thumbnail: functions
         .region('europe-west1', 'us-central1')
         .storage.object()

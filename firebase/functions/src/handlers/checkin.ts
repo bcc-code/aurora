@@ -52,7 +52,6 @@ export async function checkinStateless(
     }
 
     let eventId : string | undefined = checkinCache.get(EVENTID)
-    console.error(eventId);
     if (!eventId) {
         const config = (await db.collection('/configs').doc('brunstadtv-app').get()).data()
         if (!config) {
