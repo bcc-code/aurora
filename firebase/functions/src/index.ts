@@ -53,8 +53,8 @@ log.info('Cloud functions initializing...')
 const insecureHandlerWithPrefix = (prefix: string): Application => {
     const handler = express()
     handler.use(cors())
-    handler.use(addPrefix(prefix)) // ?? Type sig?
-    handler.use(ErrorHandler) // ?? What's going on with the type sig?
+    handler.use(addPrefix(prefix))
+    handler.use(ErrorHandler)
     return handler
 }
 

@@ -2,9 +2,9 @@ import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { EventModel } from '../model/event'
 import { ParamsDictionary } from 'express-serve-static-core'
-import * as NodeCache from "node-cache";
+import NodeCache from "node-cache";
 
-const eventsCache = new NodeCache( { stdTTL: 10, checkperiod: 1 } ) as NodeCache;
+const eventsCache = new NodeCache( { stdTTL: 10, checkperiod: 1 } );
 
 interface EventDataRequest {
     eventId?: string
