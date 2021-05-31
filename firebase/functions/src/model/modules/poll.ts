@@ -1,4 +1,4 @@
-import { deleteCollection, parallelAsync, sumDeep } from '../utils'
+import { deleteCollection, parallelAsync } from '../utils'
 import { n } from '../constants'
 import { UserModel } from '../user'
 import _get from 'lodash/get'
