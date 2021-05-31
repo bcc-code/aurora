@@ -1,4 +1,4 @@
-import { calculateAge, sumDeep } from './model/utils'
+import { calculateAge } from './model/utils'
 import * as googleServiceKey from '../firebase-key.json'
 import configRaw from './configs/config.json'
 
@@ -12,4 +12,4 @@ const config = {
     ...(configRaw as Record<string, unknown>),
     firebaseServiceAccount,
 }
-export { config, calculateAge, sumDeep }
+export { config, calculateAge }

@@ -108,7 +108,7 @@ export default {
         totalResponses() {
             var total = 0;
             for (var answer in this.stats.currentQuestion) {
-                total += _.get(this.stats, `currentQuestion.${answer}.total`) || 0
+                total += this.stats.currentQuestion[answer] || 0;
             }
             return total;
         },
@@ -137,7 +137,8 @@ export default {
         },
         answerStats(answerId) {
             var answer = this.stats;
-            var total = _.get(this.stats, `currentQuestion.${answerId}.total`) || 0;
+            let aStats = this.stats.currentQuestion[answerId] || 0;
+            var total = aStats
             return {
                 id: answerId,
                 total: total,
@@ -175,7 +176,7 @@ export default {
 </script>
 
 <style scoped>
-.zoom-enter-active, 
+.zoom-enter-active,
 .zoom-leave-active {
   transition: opacity 1s, transform 1s;
   position: absolute;

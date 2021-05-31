@@ -45,8 +45,7 @@ export default {
 					this.isLoggedIn = true
 					await this.bindFirebase();
 					return;
-				}
-				catch(e) { 
+                } catch(e) {
 					localStorage.removeItem(keys.AUTH0.CLIENT_ID);
 					localStorage.removeItem('firebase-' + keys.AUTH0.CLIENT_ID);
 					window.location.reload();
@@ -65,7 +64,7 @@ export default {
 			else {
 				try {
 					this.loginError = null;
-					await firebase.auth()
+					let user = await firebase.auth()
 					.signInWithEmailAndPassword("screens@bcc.online", password)
 					this.isLoggedIn = true;
 					await this.bindFirebase();
@@ -76,7 +75,7 @@ export default {
 					this.isLoggedIn = false;
 				}
 			}
-			
+
 		}
 	},
 	watch: {
@@ -101,7 +100,7 @@ export default {
 	width: 100%;
 	color:#FFF;
 	font-size: 150%;
-	cursor: url('/cursor.png') 11 11, auto;	
+	cursor: url('/cursor.png') 11 11, auto;
 }
 
 /* width */

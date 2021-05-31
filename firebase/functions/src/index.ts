@@ -6,7 +6,7 @@ import firebaseAdmin from 'firebase-admin'
 import { ErrorHandler, addPrefix } from './handlers/handler'
 import { adminCheck } from './middleware/adminCheck'
 import { generateResizedImage } from './middleware/generateThumbnails'
-import { jwtCheck } from './middleware/jwtCheck'
+import { jwtCheck, jwtCheckMiddleware } from './middleware/jwtCheck'
 import { syncUserAndClaims } from './middleware/syncUserAndClaims'
 import { checkin, checkinStateless, checkinStatus, userCount } from './handlers/checkin'
 import { getDonationURL } from './handlers/utils'
@@ -60,7 +60,7 @@ const insecureHandlerWithPrefix = (prefix: string): Application => {
 
 const handlerWithPrefix = (prefix: string): Application => {
     const handler = insecureHandlerWithPrefix(prefix)
-    handler.use(jwtCheck)
+    handler.use(jwtCheckMiddleware(firebaseApp))
     handler.use(syncUserAndClaims)
     return handler
 }
@@ -119,7 +119,6 @@ pollHandler.post(
 )
 pollHandler.post(
     '/poll/updateStats',
-    adminCheck,
     (req: Request, res: Response) => updatePollStats(firestore, req, res)
 )
 pollHandler.post('/poll/start', adminCheck, (req: Request, res: Response) =>

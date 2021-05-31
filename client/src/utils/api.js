@@ -1,5 +1,6 @@
 import axios from 'axios';
 import keys from './keys';
+import firebase from 'firebase';
 const baseUri = keys.API.BASE_PATH;
 
 /**
@@ -8,7 +9,13 @@ const baseUri = keys.API.BASE_PATH;
 async function sendRequest(requestMethod, requestUrl, bodyData = null, headers = {}, auth = true){
     if (auth) {
         var accessToken = localStorage.getItem(keys.AUTH0.CLIENT_ID);
-        headers.Authorization = 'Bearer ' + accessToken;
+
+        if (!accessToken) {
+            accessToken = await firebase.auth().currentUser.getIdToken()
+            headers["x-api-token"]= accessToken
+        } else {
+            headers.Authorization = 'Bearer ' + accessToken;
+        }
     }
     headers.audience = keys.AUTH0.CLIENT_ID;
     return axios({
@@ -42,7 +49,7 @@ async function approveCompetitionEntry(competitionId, personId, distance) {
     var body = {
         personId: personId,
         distance: 0,
-        overrideMaxDistance: distance 
+        overrideMaxDistance: distance
     }
     return sendRequest('POST', `competition/entry?competitionId=${competitionId}`, body)
 }
@@ -69,7 +76,7 @@ axios.interceptors.response.use(
     (response) => {
         return response
     },
-    async (error) => { 
+    async (error) => {
         if (error.response.status === 401
             && error.response.data.error.code == 'invalid_token'
             && error.response.data.error.message == 'jwt expired') {
