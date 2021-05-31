@@ -172,7 +172,7 @@ userHandler.get('/user/profileImage', (req: Request, res: Response) =>
 const utilsHandler = handlerWithPrefix('utils')
 utilsHandler.get('/utils/signedDonationURL', getDonationURL);
 
-const eventHandler = adminHandlerWithPrefix('events')
+const eventHandler = handlerWithPrefix('events')
 eventHandler.get('/events/list', (req: Request, res: Response) =>
     eventList(firestore, req, res)
 )
