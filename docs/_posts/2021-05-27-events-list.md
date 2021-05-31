@@ -1,7 +1,7 @@
 ---
 category: Events
 url_path: '/events/list'
-title: 'Get list of open events'
+title: 'Get list of events that are not archived'
 type: 'GET'
 
 layout: null
