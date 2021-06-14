@@ -1,4 +1,4 @@
-import { calculateAge, sumDeep } from './model/utils'
+import { calculateAge } from './model/utils'
 import * as googleServiceKey from '../firebase-key.json'
 import configRaw from './configs/config.json'
 import { firestore } from 'firebase-admin'
@@ -46,3 +46,4 @@ export async function exportCollection(db: firestore.Firestore, path : string) :
     return coll;
 }
 
+export { config, calculateAge }

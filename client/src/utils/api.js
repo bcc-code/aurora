@@ -1,5 +1,6 @@
 import axios from 'axios';
 import keys from './keys';
+import firebase from 'firebase';
 const baseUri = keys.API.BASE_PATH;
 
 /**
@@ -8,7 +9,13 @@ const baseUri = keys.API.BASE_PATH;
 async function sendRequest(requestMethod, requestUrl, bodyData = null, headers = {}, auth = true){
     if (auth) {
         var accessToken = localStorage.getItem(keys.AUTH0.CLIENT_ID);
-        headers.Authorization = 'Bearer ' + accessToken;
+
+        if (!accessToken) {
+            accessToken = await firebase.auth().currentUser.getIdToken()
+            headers["x-api-token"]= accessToken
+        } else {
+            headers.Authorization = 'Bearer ' + accessToken;
+        }
     }
     headers.audience = keys.AUTH0.CLIENT_ID;
     return axios({

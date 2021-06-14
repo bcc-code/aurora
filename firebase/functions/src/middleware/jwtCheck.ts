@@ -3,8 +3,27 @@ import jwks from 'jwks-rsa'
 import { NextFunction, Request, Response } from 'express'
 import config from '../configs/config.json'
 import { logger } from '../log'
+import firebase from 'firebase-admin'
 
 const log = logger('jwtCheck')
+
+export const jwtCheckFull = async (admin: firebase.app.App,req: Request, res: Response, next: NextFunction) : Promise<void> => {
+    const fbToken = req.header('x-api-token')
+    if (!fbToken) {
+        // Check for BCC token
+        return jwtCheck(req, res, next)
+    }
+
+    try {
+        // Check for FB token
+        await admin.auth().verifyIdToken(fbToken)
+    } catch(e) {
+        console.error(e)
+        return res.status(401).end()
+    }
+
+    return next();
+}
 
 export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void => {
     // get audience header
@@ -15,15 +34,16 @@ export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void
         )
         audience = config.auth0.clientId
     }
-    console.log(`https://${config.auth0.domain}/.well-known/jwks.json`)
+
+    const secret = jwks.expressJwtSecret({
+        cache: false,
+        rateLimit: true,
+        jwksRequestsPerMinute: 10,
+        jwksUri: `https://${config.auth0.domain}/.well-known/jwks.json`,
+    })
 
     jwt({
-        secret: jwks.expressJwtSecret({
-            cache: false,
-            rateLimit: true,
-            jwksRequestsPerMinute: 10,
-            jwksUri: `https://${config.auth0.domain}/.well-known/jwks.json`,
-        }),
+        secret,
         audience: audience,
         issuer: `https://${config.auth0.domain}/`,
         algorithm: 'RS256',
@@ -42,4 +62,8 @@ export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void
             next()
         }
     })
+}
+
+export const jwtCheckMiddleware = (admin: firebase.app.App) : ((req: Request, res: Response, next: NextFunction) => Promise<void>) => {
+    return (req, res, next) => { return jwtCheckFull(admin, req, res, next) }
 }

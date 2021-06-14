@@ -1,5 +1,16 @@
 # Changelog
 
+## \[1.4.11\] - 2021-06-07
+
+### Added
+
+* Events api for BTV
+* Allow firebase functions to accept firebase tokens (Machine auth)
+
+## \[1.4.7 - 1.4.10\]
+
+* Various hotfixes
+
 ## \[1.4.6\] - 2021-05-21
 
 ### Added

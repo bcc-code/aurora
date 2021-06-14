@@ -1,5 +1,4 @@
 import { Request } from 'express'
-import _ from 'lodash'
 import { firestore } from 'firebase-admin'
 import { logger } from '../log'
 
@@ -69,38 +68,6 @@ async function deleteQueryBatch(
     // exploding the stack.
     process.nextTick(() => {
         deleteQueryBatch(db, query, resolve).catch((e) => log.error(e))
-    })
-}
-
-type DeepSummable = {
-    [i: string]: number | DeepSummable | undefined
-}
-
-// mututates a to merge the sum of a and b
-export const sumDeep = (a: DeepSummable, b: DeepSummable): void => {
-    // TODO: This shoud not be "ANY"
-    Object.keys(b).forEach((key) => {
-        const bVal = b[key]
-        const aVal = a[key]
-        try {
-            if (_.isNumber(bVal)) {
-                if (_.isNumber(aVal)) {
-                    a[key] = aVal + bVal
-                } else if (aVal === null) {
-                    a[key] = bVal
-                }
-            } else {
-                if (_.isObjectLike(bVal)) {
-                    if (aVal === null) {
-                        a[key] = Object.assign({}, bVal)
-                    } else if (_.isObjectLike(aVal)) {
-                        sumDeep(aVal as DeepSummable, bVal as DeepSummable)
-                    }
-                }
-            }
-        } catch (error) {
-            log.error(error)
-        }
     })
 }
 

@@ -6,12 +6,13 @@ import firebaseAdmin, {storage} from 'firebase-admin'
 import { ErrorHandler, addPrefix } from './handlers/handler'
 import { adminCheck } from './middleware/adminCheck'
 import { generateResizedImage } from './middleware/generateThumbnails'
-import { jwtCheck } from './middleware/jwtCheck'
+import { jwtCheck, jwtCheckMiddleware } from './middleware/jwtCheck'
 import { syncUserAndClaims } from './middleware/syncUserAndClaims'
 import { checkin, checkinStateless, checkinStatus, userCount } from './handlers/checkin'
 import { getDonationURL } from './handlers/utils'
 import { exportData } from './handlers/impex'
 import { config } from './utils'
+import { eventList, getEventData } from './handlers/event'
 import {
     generatePoll,
     submitPollResponse,
@@ -69,14 +70,14 @@ log.info('Cloud functions initializing...')
 const insecureHandlerWithPrefix = (prefix: string): Application => {
     const handler = express()
     handler.use(cors())
-    handler.use(addPrefix(prefix)) // ?? Type sig?
-    handler.use(ErrorHandler) // ?? What's going on with the type sig?
+    handler.use(addPrefix(prefix))
+    handler.use(ErrorHandler)
     return handler
 }
 
 const handlerWithPrefix = (prefix: string): Application => {
     const handler = insecureHandlerWithPrefix(prefix)
-    handler.use(jwtCheck)
+    handler.use(jwtCheckMiddleware(firebaseApp))
     handler.use(syncUserAndClaims)
     return handler
 }
@@ -118,12 +119,36 @@ tokenHandler.post('/firebase/callback', processLoginCallback)
 tokenHandler.post('/firebase/idtoken', getIdToken)
 
 const pollHandler = handlerWithPrefix('poll')
+<<<<<<< HEAD
 pollHandler.post('/poll/pickWinner', adminCheck, withDB(firestore, pickWinner));
 pollHandler.post('/poll/updateStats', adminCheck, withDB(firestore, updatePollStats));
 pollHandler.post('/poll/start', adminCheck, withDB(firestore, startPoll));
 pollHandler.post('/poll/clearAll', adminCheck, withDB(firestore, pollClearAll));
 pollHandler.post('/poll/generate', withDB(firestore, generatePoll));
 pollHandler.post('/poll/response', withDB(firestore, submitPollResponse));
+=======
+pollHandler.post(
+    '/poll/pickWinner',
+    adminCheck,
+    (req: Request, res: Response) => pickWinner(firestore, req, res)
+)
+pollHandler.post(
+    '/poll/updateStats',
+    (req: Request, res: Response) => updatePollStats(firestore, req, res)
+)
+pollHandler.post('/poll/start', adminCheck, (req: Request, res: Response) =>
+    startPoll(firestore, req, res)
+)
+pollHandler.post('/poll/clearAll', adminCheck, (req: Request, res: Response) =>
+    pollClearAll(firestore, req, res)
+)
+pollHandler.post('/poll/generate', (req: Request, res: Response) =>
+    generatePoll(firestore, req, res)
+)
+pollHandler.post('/poll/response', (req: Request, res: Response) =>
+    submitPollResponse(firestore, req, res)
+)
+>>>>>>> develop
 
 const feedHandler = handlerWithPrefix('feed')
 feedHandler.post('/feed/incoming', withDB(firestore, newFeedPost));
@@ -148,6 +173,14 @@ utilsHandler.get('/utils/signedDonationURL', getDonationURL);
 const impexHandler = adminHandlerWithPrefix('impex')
 impexHandler.post('/impex/export', withBucket(firestore, impExBucket, exportData));
 
+const eventHandler = handlerWithPrefix('events')
+eventHandler.get('/events/list', (req: Request, res: Response) =>
+    eventList(firestore, req, res)
+)
+eventHandler.get('/events/data', (req: Request, res: Response) =>
+    getEventData(firestore, req, res)
+)
+
 log.info('Ready.')
 
 module.exports = {
@@ -165,6 +198,7 @@ module.exports = {
     utils: functions.region('europe-west1').https.onRequest(utilsHandler),
     user: functions.region('europe-west1').https.onRequest(userHandler),
     impex: functions.region('europe-west1').https.onRequest(impexHandler),
+    events: functions.region('europe-west1').https.onRequest(eventHandler),
     thumbnail: functions
         .region('europe-west1', 'us-central1')
         .storage.object()
