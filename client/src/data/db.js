@@ -22,7 +22,6 @@ if (config.firebase.logLevel) {
 
 export const db = firebaseApp.firestore();
 export const storage = firebaseApp.storage().ref();
-export const impexBucket = firebaseApp.storage('gs://bcco-impex').ref()
 
 const { TimeStamp, GeoPoint } = firebase.firestore
 export { TimeStamp, GeoPoint }
