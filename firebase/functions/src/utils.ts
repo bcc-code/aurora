@@ -23,6 +23,7 @@ interface Config {
     };
 
     app: {
+        instance: string,
         baseUrl: string,
         name: string,
         id: string,

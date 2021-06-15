@@ -2,7 +2,7 @@
     <section class="form-field" :class="{'flex flex-row-reverse items-center justify-end': inline }">
         <label v-if="!hideLabel" class="form-label" :class="{ 'mb-0': inline }">{{$t(label)}}</label>
         <div :class="{ 'mt-1': !inline }">
-            <input v-if="['input', 'text', 'number'].includes(type)" :type="type" class="form-input" v-model="model">
+            <input v-if="['input', 'text', 'number'].includes(type)" :type="type" :pattern="pattern" class="form-input" v-model="model">
                 <select v-if="type == 'select'" class="form-input" v-model="model">
                     <option v-if="allowEmpty" value=""></option>
                     <option v-for="option in options" :key="option.id" :value="resolve(option, selectKey)">
@@ -34,11 +34,13 @@ export default {
         inline: { type: Boolean, default: false },
         helper: { type: String, required: false },
         type: { type: String, required: false },
+        pattern: { type: String, required: false },
         // Select/Lookup props
         options: { type: Array | Object, required: false },
         allowEmpty: { type: Boolean, default: false },
         selectKey: { type: String, required: false },
         selectLabel: { type: String | Function, required: false },
+
     },
     computed: {
         model: {

@@ -66,6 +66,14 @@ async function exportData(toExport) {
     return sendRequest('POST', `impex/export`, toExport);
 }
 
+async function listExports() {
+    return sendRequest('GET', `impex/listExports`);
+}
+
+async function importData(toImport) {
+    return sendRequest('POST', `impex/import`, toImport);
+}
+
 async function collectionResults() {
     return axios({
         method: 'GET',
@@ -93,13 +101,15 @@ axios.interceptors.response.use(
 );
 
 export default {
-    updateResponsesStats,
-    pickWinner,
-    updateUserCount,
     approveCompetitionEntry,
     collectionResults,
-    startPoll,
     deleteEvent,
     deleteQuestion,
     exportData,
+    importData,
+    listExports,
+    pickWinner,
+    startPoll,
+    updateResponsesStats,
+    updateUserCount,
 };

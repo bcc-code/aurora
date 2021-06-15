@@ -1,3 +1,5 @@
+import { TransatedString } from './translated'
+
 export interface Gradient {
     from: string,
     to: string,
@@ -42,8 +44,6 @@ export enum Icon {
     NONE = '',
 }
 
-export type TransatedString = Record<string, string>
-
 export interface Button {
     action: Action,
     color?: string,
@@ -65,3 +65,6 @@ export interface Liveboard {
     title: TransatedString
 }
 
+export interface LiveboardExport {
+    liveboard: Liveboard[]
+}
