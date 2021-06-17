@@ -15,11 +15,6 @@ import {TemplatedString} from '../types/templated'
 const log = logger('handler/impex');
 const EXPORT_FORMAT_VERSION = "1";
 
-async function exportLiveboard(event : firestore.DocumentReference) : Promise<Liveboard[]> {
-    const liveboardComponents = await event.collection("liveboard").get()
-    return liveboardComponents.docs.map((c) => c.data() as Liveboard)
-}
-
 async function exportEventData(event : firestore.DocumentReference) : Promise<EventData> {
     const eventData  = (await event.get()).data()
 
@@ -44,14 +39,9 @@ async function exportEventData(event : firestore.DocumentReference) : Promise<Ev
 
 }
 
-async function exportDeskData(event : firestore.DocumentReference) : Promise<DeskData[]> {
-    const deskEntries = await event.collection("desk").get()
-    const docs = []
-    for (const doc of deskEntries.docs) {
-        const d = doc.data() as DeskData
-        docs.push(d);
-    }
-    return docs;
+async function dumpCollection<T>(event : firestore.DocumentReference, collectionName : string) : Promise<T[]> {
+    const entries = await event.collection(collectionName).get()
+    return entries.docs.map(e => e.data() as T)
 }
 
 export async function exportData(
@@ -75,7 +65,7 @@ export async function exportData(
         const event = new EventModel(db, eventId)
 
         if (req.body.liveboard) {
-            const exp = await exportLiveboard(event.eventRef)
+            const exp = await dumpCollection(event.eventRef, "liveboard")
             await storage.file(`${config.app.instance}/${exportName}/liveboard.json`).save(JSON.stringify(exp))
         }
 
@@ -85,8 +75,13 @@ export async function exportData(
         }
 
         if (req.body.desk) {
-            const exp = await exportDeskData(event.eventRef)
+            const exp = await dumpCollection(event.eventRef, "desk")
             await storage.file(`${config.app.instance}/${exportName}/desk.json`).save(JSON.stringify(exp))
+        }
+
+        if (req.body.program) {
+            const exp = await dumpCollection(event.eventRef, "program")
+            await storage.file(`${config.app.instance}/${exportName}/program.json`).save(JSON.stringify(exp))
         }
 
         res.status(200).end();
@@ -250,6 +245,10 @@ export async function importData(
 
     if (req.body.desk) {
         await importCollection(storage, `${importBasePath}/desk.json`, eventRef.ref.collection("desk"), req.body.clearDesk ?? false)
+    }
+
+    if (req.body.program) {
+        await importCollection(storage, `${importBasePath}/program.json`, eventRef.ref.collection("program"), req.body.clearProgram ?? false)
     }
 
     if (errors.length > 0) {
