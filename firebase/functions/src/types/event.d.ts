@@ -25,7 +25,3 @@ export interface EventData {
     checkinFactor: number,
     additionalCheckins: number,
 }
-
-export interface EventExport {
-    event: EventData
-}

@@ -3,15 +3,17 @@ import { Response, Request } from 'express'
 import { firestore } from 'firebase-admin'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { ExportRequest, ImportRequest } from '../types/impex'
-import { Liveboard, LiveboardExport } from '../types/liveboard'
+import { Liveboard } from '../types/liveboard'
 import { EventModel } from '../model/event'
-import { EventData, EventExport, FeedConfig, StyleConfig } from '../types/event'
+import { DeskData } from '../types/desk'
+import { EventData, FeedConfig, StyleConfig } from '../types/event'
 import { Bucket, File } from '@google-cloud/storage'
 import {config} from '../utils'
 import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore'
 import {TemplatedString} from '../types/templated'
 
 const log = logger('handler/impex');
+const EXPORT_FORMAT_VERSION = "1";
 
 async function exportLiveboard(event : firestore.DocumentReference) : Promise<Liveboard[]> {
     const liveboardComponents = await event.collection("liveboard").get()
@@ -42,6 +44,16 @@ async function exportEventData(event : firestore.DocumentReference) : Promise<Ev
 
 }
 
+async function exportDeskData(event : firestore.DocumentReference) : Promise<DeskData[]> {
+    const deskEntries = await event.collection("desk").get()
+    const docs = []
+    for (const doc of deskEntries.docs) {
+        const d = doc.data() as DeskData
+        docs.push(d);
+    }
+    return docs;
+}
+
 export async function exportData(
     db: firestore.Firestore,
     storage: Bucket,
@@ -57,22 +69,24 @@ export async function exportData(
         return
     }
 
+    await storage.file(`${config.app.instance}/${exportName}/_VERSION`).save(EXPORT_FORMAT_VERSION)
 
     try {
         const event = new EventModel(db, eventId)
 
         if (req.body.liveboard) {
-            const exp = {
-                liveboard: await exportLiveboard(event.eventRef),
-            }
+            const exp = await exportLiveboard(event.eventRef)
             await storage.file(`${config.app.instance}/${exportName}/liveboard.json`).save(JSON.stringify(exp))
         }
 
         if (req.body.eventData) {
-            const exp = {
-                event: await exportEventData(event.eventRef),
-            }
+            const exp = await exportEventData(event.eventRef)
             await storage.file(`${config.app.instance}/${exportName}/event.json`).save(JSON.stringify(exp))
+        }
+
+        if (req.body.desk) {
+            const exp = await exportDeskData(event.eventRef)
+            await storage.file(`${config.app.instance}/${exportName}/desk.json`).save(JSON.stringify(exp))
         }
 
         res.status(200).end();
@@ -99,7 +113,7 @@ async function importLiveboard(
 
     try {
         const f = await inFile.download()
-        const data = JSON.parse(f.toString()) as LiveboardExport
+        const data = JSON.parse(f.toString()) as Array<Liveboard>
         const liveboardColl = eventRef.ref.collection("liveboard")
 
         if (clearLiveboard) {
@@ -108,16 +122,56 @@ async function importLiveboard(
         }
 
         const promises : Array<Promise<firestore.WriteResult>> = []
-        for (const element of data.liveboard) {
+        for (const element of data) {
             promises.push(liveboardColl.doc().set(element))
         }
         await Promise.all(promises)
     } catch (e) {
         console.dir(e);
+        return [e as string]
     }
 
+    return []
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+async function importCollection<T extends Array<any>>(
+    storage: Bucket,
+    filePath: string,
+    collection: firestore.CollectionReference,
+    clearCollection: boolean,
+) {
+    const inFile = storage.file(filePath);
+
+    if (!(await inFile.exists())) {
+        return ["cant find desk import file"]
+    }
+
+    try {
+        const f = await inFile.download()
+        const data = JSON.parse(f.toString()) as T
+
+        if (!Array.isArray(data)) {
+            return ["provided data is not an array"]
+        }
+
+        if (clearCollection) {
+            const promises = (await collection.listDocuments()).map(x => x.delete())
+            await Promise.all(promises)
+        }
+
+        const promises : Array<Promise<firestore.WriteResult>> = []
+        for (const element of data) {
+            promises.push(collection.doc().set(element))
+        }
+        await Promise.all(promises)
+    } catch (e) {
+        console.dir(e);
+        return [e as string]
+    }
 
     return []
+
 }
 
 async function importEventData(
@@ -134,10 +188,11 @@ async function importEventData(
 
     try {
         const f = await inFile.download()
-        const data = JSON.parse(f.toString()) as EventExport
-        console.dir(await eventRef.ref.update(data.event))
+        const data = JSON.parse(f.toString()) as EventData
+        console.dir(await eventRef.ref.update(data))
     } catch (e) {
         console.dir(e);
+        return [e as string]
     }
 
 
@@ -176,6 +231,12 @@ export async function importData(
     }
 
 
+    const exportVersion = (await storage.file(`${importBasePath}/_VERSION`).download()).toString()
+    if (exportVersion !== EXPORT_FORMAT_VERSION) {
+        res.status(400).json({
+            "message": `specified export is in a wrong format. Accepted ${EXPORT_FORMAT_VERSION} given ${exportVersion}`,
+        }).end()
+    }
 
     const errors : Array<string> = []
 
@@ -185,6 +246,10 @@ export async function importData(
 
     if (req.body.eventData) {
         errors.push(...(await importEventData(storage, importBasePath, eventRef)))
+    }
+
+    if (req.body.desk) {
+        await importCollection(storage, `${importBasePath}/desk.json`, eventRef.ref.collection("desk"), req.body.clearDesk ?? false)
     }
 
     if (errors.length > 0) {

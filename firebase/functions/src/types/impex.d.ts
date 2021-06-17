@@ -18,7 +18,10 @@ export interface ImportRequest {
     liveboard?: boolean,
     clearLiveboard?: boolean,
     desk?: boolean,
+    clearDesk?: boolean,
     program?: boolean,
+    clearProgram?: boolean,
     feed?: boolean,
     gameboard?: boolean,
+    clearGameboard?: boolean,
 }
