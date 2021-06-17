@@ -6,6 +6,7 @@ import NodeCache from "node-cache";
 
 const checkinCache = new NodeCache( { stdTTL: 300, checkperiod: 60 } );
 const EVENTID = "eventID";
+const NO_EVENT = "-NONE-";
 
 export async function checkinStatus(
     db: firestore.Firestore,
@@ -59,8 +60,17 @@ export async function checkinStateless(
         }
 
         const currentEvent = config.currentEventPath as firestore.DocumentReference
-        eventId = currentEvent.id;
+        if (currentEvent) {
+            eventId = currentEvent.id;
+        } else {
+            eventId = NO_EVENT
+        }
+
         checkinCache.set(EVENTID, eventId)
+    }
+
+    if (eventId === NO_EVENT) {
+        return res.status(204).end()
     }
 
     const q = req.query as Record<string,string|undefined>
