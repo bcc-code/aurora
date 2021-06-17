@@ -7,13 +7,6 @@
             <Form :entity="toExport" grid :columns="2" label-root="config" class="mb-5">
                 <Field name="eventId" label="Event" :options="events" type="select" :selectLabel="label" selectKey="id" />
                 <Field name="exportName" label="Export Name" type="text" pattern="[A-Za-z]+" />
-                <Field name="eventData" label="Event config" type="boolean" />
-                <Field name="screens" label="Screen setup" type="boolean" />
-                <Field name="liveboard" label="Liveboard" type="boolean" />
-                <Field name="desk" label="Desk (unpublished)" type="boolean" />
-                <Field name="program" label="Program" type="boolean" />
-                <Field name="feed" label="Feed settings" type="boolean" />
-                <Field name="gameboard" label="Gameboard settings (no responses)" type="boolean" />
             </Form>
             <div class="mt-4 md:flex md:items-center md:justify-between">
                 <template v-if="!working">
@@ -42,8 +35,6 @@
                 <Field name="clearDesk" label="Delete desk" type="boolean" />
                 <Field name="program" label="Program" type="boolean" />
                 <Field name="clearProgram" label="Delete program" type="boolean" />
-                <Field name="feed" label="Feed settings" type="boolean" />
-                <Field name="clearFeed" label="Delete feed" type="boolean" />
                 <Field name="gameboard" label="Gameboard settings (no responses)" type="boolean" />
                 <Field name="clearGameboard" label="Delete gameboard" type="boolean" />
             </Form>
@@ -75,12 +66,6 @@ export default {
             toExport: {
                 eventId: null,
                 eventData: true,
-                screens: true,
-                liveboard: true,
-                desk: true,
-                program: true,
-                feed: true,
-                gameboard: true,
             },
             toImport: {
                 eventId: null,

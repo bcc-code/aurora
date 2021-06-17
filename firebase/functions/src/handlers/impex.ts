@@ -5,7 +5,6 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { ExportRequest, ImportRequest } from '../types/impex'
 import { Liveboard } from '../types/liveboard'
 import { EventModel } from '../model/event'
-import { DeskData } from '../types/desk'
 import { EventData, FeedConfig, StyleConfig } from '../types/event'
 import { Bucket, File } from '@google-cloud/storage'
 import {config} from '../utils'
@@ -14,6 +13,17 @@ import {TemplatedString} from '../types/templated'
 
 const log = logger('handler/impex');
 const EXPORT_FORMAT_VERSION = "1";
+
+interface value {
+    id: string
+    data: Record<string, unknown>,
+    collections: Array<collection>,
+}
+
+interface collection {
+    id: string,
+    values: Array<value>
+}
 
 async function exportEventData(event : firestore.DocumentReference) : Promise<EventData> {
     const eventData  = (await event.get()).data()
@@ -38,10 +48,28 @@ async function exportEventData(event : firestore.DocumentReference) : Promise<Ev
     }
 
 }
+async function dumpCollection(col: firestore.CollectionReference) : Promise<collection> {
+    const entries = await col.get();
+    const out = {
+        id: col.id,
+        collections: [],
+        values: [],
+    } as collection;
 
-async function dumpCollection<T>(event : firestore.DocumentReference, collectionName : string) : Promise<T[]> {
-    const entries = await event.collection(collectionName).get()
-    return entries.docs.map(e => e.data() as T)
+    const promises = entries.docs.map(async e => {
+        const val = {
+            id: e.id,
+            data: e.data()
+        } as value
+
+        const colls = await e.ref.listCollections()
+        const exportedColls = colls.map(async c => await dumpCollection(c))
+        val.collections = await Promise.all(exportedColls)
+        out.values.push(val)
+    })
+
+    await Promise.all(promises)
+    return out
 }
 
 export async function exportData(
@@ -64,25 +92,23 @@ export async function exportData(
     try {
         const event = new EventModel(db, eventId)
 
-        if (req.body.liveboard) {
-            const exp = await dumpCollection(event.eventRef, "liveboard")
-            await storage.file(`${config.app.instance}/${exportName}/liveboard.json`).save(JSON.stringify(exp))
-        }
+        const lb = await dumpCollection(event.eventRef.collection("liveboard"))
+        await storage.file(`${config.app.instance}/${exportName}/liveboard.json`).save(JSON.stringify(lb))
 
-        if (req.body.eventData) {
-            const exp = await exportEventData(event.eventRef)
-            await storage.file(`${config.app.instance}/${exportName}/event.json`).save(JSON.stringify(exp))
-        }
+        const ed = await exportEventData(event.eventRef)
+        await storage.file(`${config.app.instance}/${exportName}/event.json`).save(JSON.stringify(ed))
 
-        if (req.body.desk) {
-            const exp = await dumpCollection(event.eventRef, "desk")
-            await storage.file(`${config.app.instance}/${exportName}/desk.json`).save(JSON.stringify(exp))
-        }
+        const dd = await dumpCollection(event.eventRef.collection("desk"))
+        await storage.file(`${config.app.instance}/${exportName}/desk.json`).save(JSON.stringify(dd))
 
-        if (req.body.program) {
-            const exp = await dumpCollection(event.eventRef, "program")
-            await storage.file(`${config.app.instance}/${exportName}/program.json`).save(JSON.stringify(exp))
-        }
+        const pgm = await dumpCollection(event.eventRef.collection("program"))
+        await storage.file(`${config.app.instance}/${exportName}/program.json`).save(JSON.stringify(pgm))
+
+        const screens = await dumpCollection(event.eventRef.collection("screens"))
+        await storage.file(`${config.app.instance}/${exportName}/screens.json`).save(JSON.stringify(screens))
+
+        const questions = await dumpCollection(event.eventRef.collection("questions"))
+        await storage.file(`${config.app.instance}/${exportName}/questions.json`).save(JSON.stringify(questions))
 
         res.status(200).end();
         return
@@ -93,80 +119,29 @@ export async function exportData(
     res.status(500).end();
 }
 
-async function importLiveboard(
-    storage: Bucket,
-    basePath: string,
-    eventRef: DocumentSnapshot,
-    clearLiveboard: boolean,
-)  : Promise<string[]>{
-
-    const inFile = storage.file(`${basePath}/liveboard.json`)
-
-    if (!(await inFile.exists())) {
-        return ["cant find liveboard import file"]
-    }
-
-    try {
-        const f = await inFile.download()
-        const data = JSON.parse(f.toString()) as Array<Liveboard>
-        const liveboardColl = eventRef.ref.collection("liveboard")
-
-        if (clearLiveboard) {
-            const promises = (await liveboardColl.listDocuments()).map(x => x.delete())
-            await Promise.all(promises)
-        }
-
-        const promises : Array<Promise<firestore.WriteResult>> = []
-        for (const element of data) {
-            promises.push(liveboardColl.doc().set(element))
-        }
-        await Promise.all(promises)
-    } catch (e) {
-        console.dir(e);
-        return [e as string]
-    }
-
-    return []
-}
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-async function importCollection<T extends Array<any>>(
+async function importCollectionFromFile(
     storage: Bucket,
     filePath: string,
-    collection: firestore.CollectionReference,
+    parentDoc: firestore.DocumentReference,
     clearCollection: boolean,
+    updateExisting = false,
 ) {
     const inFile = storage.file(filePath);
-
     if (!(await inFile.exists())) {
         return ["cant find desk import file"]
     }
 
     try {
         const f = await inFile.download()
-        const data = JSON.parse(f.toString()) as T
-
-        if (!Array.isArray(data)) {
-            return ["provided data is not an array"]
-        }
-
-        if (clearCollection) {
-            const promises = (await collection.listDocuments()).map(x => x.delete())
-            await Promise.all(promises)
-        }
-
-        const promises : Array<Promise<firestore.WriteResult>> = []
-        for (const element of data) {
-            promises.push(collection.doc().set(element))
-        }
-        await Promise.all(promises)
+        const data = JSON.parse(f.toString()) as collection
+        await importIntoCollection(parentDoc, data, clearCollection, updateExisting)
     } catch (e) {
         console.dir(e);
         return [e as string]
     }
 
     return []
-
 }
 
 async function importEventData(
@@ -190,8 +165,42 @@ async function importEventData(
         return [e as string]
     }
 
-
     return []
+}
+
+async function importIntoCollection(
+    parentDoc: firestore.DocumentReference,
+    data: collection,
+    clearCollection: boolean,
+    updateExisting = false,
+) : Promise<string[]> {
+    const collection  = parentDoc.collection(data.id)
+    if (clearCollection) {
+        const promises = (await collection.listDocuments()).map(x => x.delete())
+        await Promise.all(promises)
+    }
+
+    const docsImport : Array<Promise<firestore.WriteResult>> = []
+    const collsImport : Array<Promise<string[]>> = []
+    for (const element of data.values) {
+        let doc = null;
+
+        const id = element.id;
+
+        if (updateExisting && id) {
+            doc = collection.doc(id)
+        } else {
+            doc = collection.doc()
+        }
+
+        docsImport.push(doc.set(element.data))
+
+        for (const c of element.collections) {
+            collsImport.push(importIntoCollection(doc, c, clearCollection, updateExisting))
+        }
+    }
+    await Promise.all(docsImport)
+    return (await Promise.all(collsImport)).reduce((acc, val) => acc.concat(val), []); // Flatten array
 }
 
 
@@ -236,7 +245,7 @@ export async function importData(
     const errors : Array<string> = []
 
     if (req.body.liveboard) {
-        errors.push(...(await importLiveboard(storage, importBasePath, eventRef, req.body.clearLiveboard ?? false)))
+        await importCollectionFromFile(storage, `${importBasePath}/liveboard.json`, eventRef.ref, req.body.clearLiveboard ?? false)
     }
 
     if (req.body.eventData) {
@@ -244,11 +253,19 @@ export async function importData(
     }
 
     if (req.body.desk) {
-        await importCollection(storage, `${importBasePath}/desk.json`, eventRef.ref.collection("desk"), req.body.clearDesk ?? false)
+        await importCollectionFromFile(storage, `${importBasePath}/desk.json`, eventRef.ref, req.body.clearDesk ?? false)
     }
 
     if (req.body.program) {
-        await importCollection(storage, `${importBasePath}/program.json`, eventRef.ref.collection("program"), req.body.clearProgram ?? false)
+        await importCollectionFromFile(storage, `${importBasePath}/program.json`, eventRef.ref, req.body.clearProgram ?? false)
+    }
+
+    if (req.body.screens) {
+        await importCollectionFromFile(storage, `${importBasePath}/screens.json`, eventRef.ref, false, true)
+    }
+
+    if (req.body.gameboard) {
+        await importCollectionFromFile(storage, `${importBasePath}/questions.json`, eventRef.ref, req.body.clearGameboard ?? false, true)
     }
 
     if (errors.length > 0) {
