@@ -61,6 +61,7 @@ jobs:
         app.donationsApiKey: ${{ secrets[format('{0}_DONATIONS_API_KEY', env.ENVIRONMENT)] }}
         app.donationsUrl: ${{ secrets[format('{0}_DONATIONS_URL', env.ENVIRONMENT)] }}
         app.name: ${{ format('BCC Online | {0}', env.ENVIRONMENT) }}
+        api.instance: ${{ env.ENVIRONMENT }}
         firebase.apiKey: ${{ secrets[format('{0}_FIREBASE_API_KEY', env.ENVIRONMENT)] }}
         firebase.authDomain: ${{ secrets[format('{0}_FIREBASE_AUTH_DOMAIN', env.ENVIRONMENT)] }}
         firebase.databaseURL: ${{ secrets[format('{0}_FIREBASE_DATABASE_URL', env.ENVIRONMENT)] }}
