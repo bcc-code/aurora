@@ -1,6 +1,6 @@
 # Changelog
 
-## \[1.4.12\] - Not Released
+## \[1.4.12\] - 2021-06-17
 
 ### Added 
 
