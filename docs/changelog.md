@@ -1,5 +1,15 @@
 # Changelog
 
+## \[1.4.12\] - Not Released
+
+### Added 
+
+* ImpEx functionality
+
+### Fixed
+
+* Don't crash checkin if there is no event in progress
+
 ## \[1.4.11\] - 2021-06-07
 
 ### Added

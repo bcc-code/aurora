@@ -26,7 +26,7 @@ export default {
             return context.getters.questionsRef.doc(question.id).set(question);
         }),
         updateQuestionRef: firestoreAction((context, question) => {
-            question.defaultAnswer = question.defaultAnswerId 
+            question.defaultAnswer = question.defaultAnswerId
                 ? context.getters.questionsRef.doc(question.id).collection('answers').doc(question.defaultAnswerId)
                 : null;
             return context.getters.questionsRef.doc(question.id).set(question)

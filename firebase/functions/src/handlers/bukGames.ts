@@ -6,11 +6,15 @@ import { getPersonId } from '../model/utils'
 
 const log = logger('bukGamesHandler')
 
+interface Foo {
+    lakjsd: string;
+}
+
 //bukGamesHandler.get("/rank", jwtCheck, async(req, res) => {
 export async function getRank(
     db: firestore.Firestore,
     req: Request,
-    res: Response
+    res: Response,
 ): Promise<void> {
     const bukGameModel = new BukGameModel(db, req.query.bukGameId)
     const loggedInUserPersonId = getPersonId(req)

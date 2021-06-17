@@ -10,8 +10,10 @@
     "key": "<REPLACE>"
   },
   "app": {
+	"instance": "<REPLACE>",
     "baseUrl": "http://localhost:8080",
 	"sharedApiKey": "<REPLACE>",
+	"impexBucket": "bcco-impex",
 	"donationsApiKey": "<REPLACE>",
 	"donationsUrl": "<REPLACE>"
   }
