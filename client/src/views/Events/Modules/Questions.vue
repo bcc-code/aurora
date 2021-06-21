@@ -25,7 +25,7 @@
                     <Form :entity="selectedQuestion" grid :columns="2" label-root="question" class="mb-2">
                         <Field :name="`texts.${language}`" hideLabel type="text" class="col-span-full" />
                         <Field name="type" type="select" :options="QuestionTypes" class="col-span-full sm:col-span-1" />
-                        <Field name="canChangeAnswer" v-if="isQuestion" inline type="boolean" />
+                        <Field name="canChangeAnswer" inline type="boolean" />
                     </Form>
                     <component :is="selectedQuestion.type" ref="editor" />
                     <div class="w-full flex flex-wrap mt-3 px-3">
@@ -45,7 +45,6 @@ import List from '@/components/List/List'
 import SlideOver from '@/components/Layout/SlideOver'
 import Slider from "@/components/Question/Slider"
 import MultipleChoice from "@/components/Question/MultipleChoice"
-import CustomText from "@/components/Question/CustomText"
 
 export default {
     components: {
@@ -55,7 +54,6 @@ export default {
         SlideOver,
         Slider,
         MultipleChoice,
-        CustomText
     },
     data: function(){
         return {
@@ -69,9 +67,6 @@ export default {
         ...mapGetters('questions', ['selectedQuestion']),
         ...mapGetters('gameboard', ['pollIsLive']),
         ...mapModels(['QuestionTypes']),
-        isQuestion() {
-            return this.selectedQuestion.type != 'custom-text'
-        }
     },
     async mounted(){
         await this.bindQuestionsRef();
