@@ -70,6 +70,10 @@ export default {
             return ContributionTypes;
         },
         isCompleted(){
+            if (this.editableElement.type == ContributionTypes.BIBLEVERSE && this.editableElement.author == "") {
+                return false;
+            }
+
             return this.editableElement.content && this.editableElement.content.length > 0;
 
         },
