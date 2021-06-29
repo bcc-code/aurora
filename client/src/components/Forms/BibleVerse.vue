@@ -37,9 +37,9 @@
         Loading verse text.
     </div>
     <div v-else-if="location" class="flex justify-between w-full pb-4">
-            <div>{{ resolvedLocation }}: <div v-html="verseTextHTML"></div>
+        <div>{{ resolvedLocation }}: <div v-html="verseTextHTML"></div>
             <sub>NB-1930</sub>
-            </div>
+        </div>
     </div>
 </div>
 </template>

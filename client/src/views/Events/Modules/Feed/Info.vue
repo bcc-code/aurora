@@ -68,11 +68,11 @@ export default {
             return ContributionTypesLabels;
         },
         isCompleted(){
+            if (this.newDeskEntry.type == ContributionTypes.BIBLEVERSE && !this.newDeskEntry.author) {
+                return false;
+            }
             return this.newDeskEntry.content && this.newDeskEntry.content.length > 0;
         },
-        isNotCompleted(){
-            return !this.isCompleted
-        }
     },
     async mounted(){
         await this.bindDeskRef();

@@ -34,8 +34,8 @@ export default {
         ...mapGetters('program', ['currentProgramElement']),
         text() {
             var text = this.inLanguage(this.programElement, this.language);
-            return (this.searchQuery && this.searchQuery.trim()) 
-                ? text.replace(new RegExp(`(${this.searchQuery})`, "gi"), "<span class='highlight'>\$1</span>") 
+            return (this.searchQuery && this.searchQuery.trim())
+                ? text.replace(new RegExp(`(${this.searchQuery})`, "gi"), "<span class='highlight'>\$1</span>")
                 : text;
         },
         isLive() {
@@ -52,7 +52,7 @@ export default {
             await this.removeProgramElementRef(this.programElement.id);
         },
         async setAsCurrent(){
-            await this.setAsCurrentRef(this.programElement.id);
+            await this.setAsCurrentRef(this.programElement);
         },
     }
 }

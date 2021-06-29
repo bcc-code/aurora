@@ -4,6 +4,7 @@
             <template v-if="!editMode">
                 <template v-if="element.type == ContributionTypes.BIBLEVERSE">
                     <section class="w-full">
+                        <p class="elType">{{ContributionTypesLabels[element.type]}}</p>
                         <p class="text-white text-base w-full">{{element.content}}</p>
                         <div class="text-gray-500 text-sm mb-2">{{element.author}}</div>
                         <div class="text-gray-500 text-sm mb-2">{{date(element.date)}}</div>
@@ -15,6 +16,7 @@
                 </template>
                 <template v-else >
                     <section class="w-full">
+                        <p class="elType">{{ContributionTypesLabels[element.type]}}</p>
                         <p class="text-white text-base w-full">{{element.content}}</p>
                         <div class="text-gray-500 text-sm mb-2">{{element.author}}</div>
                         <div class="text-gray-500 text-sm mb-2">{{element.source}}</div>
@@ -28,11 +30,13 @@
             </template>
             <section v-else class="w-full flex flex-wrap justify-end">
                 <template v-if="element.type == ContributionTypes.QUOTE">
+                    <p class="elType">{{ContributionTypesLabels[element.type]}}</p>
                     <textarea rows="3" class="form-input mb-2" v-model="editableElement.content" placeholder="Quote" />
                     <input type="text" class="form-input mb-2" v-model="editableElement.author" placeholder="Author" />
                     <input type="text" class="form-input mb-2" v-model="editableElement.source" placeholder="Source" />
                 </template>
                 <template v-else-if="element.type == ContributionTypes.BIBLEVERSE">
+                    <p class="elType">{{ContributionTypesLabels[element.type]}}</p>
                     <BibleVerse v-model="editableElement" />
                 </template>
                 <template v-else>
@@ -47,7 +51,7 @@
 <script>
 import { mapActions } from 'vuex'
 
-import { ContributionTypes } from '@/models/contribution.js'
+import { ContributionTypes, ContributionTypesLabels } from '@/models/contribution.js'
 import DateHelper from '@/mixins/date.js'
 import ClickOutside from 'vue-click-outside'
 import BibleVerse from '@/components/Forms/BibleVerse.vue'
@@ -69,7 +73,14 @@ export default {
         ContributionTypes(){
             return ContributionTypes;
         },
+        ContributionTypesLabels(){
+            return ContributionTypesLabels;
+        },
         isCompleted(){
+            if (this.editableElement.type == ContributionTypes.BIBLEVERSE && this.editableElement.author == "") {
+                return false;
+            }
+
             return this.editableElement.content && this.editableElement.content.length > 0;
 
         },
@@ -103,3 +114,11 @@ export default {
     }
 }
 </script>
+<style scoped>
+.elType {
+   color: rgba(107, 114, 128);
+   font-style: italic;
+   font-size: 13px;
+   text-align: right;
+}
+</style>

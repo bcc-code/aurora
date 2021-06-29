@@ -17,7 +17,6 @@ export const ScreenFQuestionViews = {
 export const QuestionTypes = {
     MULTIPLECHOICE: "multiple-choice",
     SLIDER: "slider",
-    CUSTOMTEXT: "custom-text"
 }
 
 export const AnswerColors = ["pink", "green", "yellow", "blue"]

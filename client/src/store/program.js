@@ -19,9 +19,17 @@ export default {
         updateProgramElementRef: firestoreAction((context, programElement) => {
             return context.getters.programRef.doc(programElement.id).set({ ...programElement })
         }),
-        setAsCurrentRef: firestoreAction((context, programElementId) => {
-            return context.rootGetters['events/selectedEventRef'].update({ 
-                currentProgramElement: programElementId == null ? null : context.getters.programRef.doc(programElementId)
+        setAsCurrentRef: firestoreAction(async (context, nextProgramElementRef) => {
+            let ts = new Date();
+
+            console.dir(nextProgramElementRef);
+            (await context.rootGetters['events/selectedEventRef'].get()).data().currentProgramElement.update({end: ts})
+            if (nextProgramElementRef && nextProgramElementRef.id) {
+                await context.getters.programRef.doc(nextProgramElementRef.id).update({start: ts})
+            }
+
+            return context.rootGetters['events/selectedEventRef'].update({
+                currentProgramElement: nextProgramElementRef == null ? null : context.getters.programRef.doc(nextProgramElementRef.id)
             });
         }),
         updateBatchProgramElementsRef: firestoreAction((context, elements) => {
