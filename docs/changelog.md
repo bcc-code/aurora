@@ -1,5 +1,21 @@
 # Changelog
 
+## \[1.5.0\] - Not released
+
+### Fixed
+
+* Background video from templates is now applied
+
+### Added
+
+* Don't allow empty author on verses
+* Show element type on desk
+* Record start and end time of program elements
+
+### Removed
+
+* Remove "URL" question
+
 ## \[1.4.12\] - 2021-06-17
 
 ### Added 
