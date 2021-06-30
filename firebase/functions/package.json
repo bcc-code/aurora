@@ -23,15 +23,17 @@
     "engines": {
         "node": "12"
     },
-	"ava": {
-		"extensions": [
-			"ts"
-		],
-		"require": [
-			"ts-node/register"
-		],
-		"files": ["test/*"]
-	},
+    "ava": {
+        "extensions": [
+            "ts"
+        ],
+        "require": [
+            "ts-node/register"
+        ],
+        "files": [
+            "test/*"
+        ]
+    },
     "prettier": {
         "trailingComma": "es5",
         "tabWidth": 4,
