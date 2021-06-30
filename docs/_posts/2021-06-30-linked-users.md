@@ -21,7 +21,8 @@ This endpoint accepts no params
 ```Status: 200 OK```
 ```{
 	linkedUsers: []
-}```
+}
+```
 
 ```Status: 200 OK```
 ```{
@@ -60,3 +61,4 @@ This endpoint accepts no params
 		}
 	]
 }
+```
