@@ -2,6 +2,7 @@ import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { EventModel } from '../model/event'
 import { getPersonId } from '../model/utils'
+import { ParamsDictionary } from 'express-serve-static-core'
 import NodeCache from "node-cache";
 
 const checkinCache = new NodeCache( { stdTTL: 300, checkperiod: 60 } );
@@ -13,7 +14,7 @@ export async function checkinStatus(
     req: Request,
     res: Response
 ): Promise<void> {
-    const eventModel = new EventModel(db, req.query.eventId)
+    const eventModel = new EventModel(db, req.query.eventId as string)
     const result = await eventModel.checkin.getCheckinStatus(getPersonId(req))
     res.json(result).end()
 }
@@ -24,18 +25,18 @@ export async function userCount(
     res: Response
 ): Promise<void> {
     const { eventId } = req.query
-    const eventModel = new EventModel(db, eventId)
+    const eventModel = new EventModel(db, eventId as string)
     const result = await eventModel.checkin.updateCheckinCount()
     res.status(200).send(result).end()
 }
 
 export async function checkin(
     db: firestore.Firestore,
-    req: Request,
+    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, qs.ParsedQs>,
     res: Response
 ): Promise<void> {
     const personId = getPersonId(req)
-    const eventId = req.query.eventId as string || req.body.eventId as string
+    const eventId = req.query.eventId as string || req.body.eventId
     const eventModel = new EventModel(db, eventId)
     await eventModel.checkin.checkin(personId, [personId])
     const updatedStatus = await eventModel.checkin.getCheckinStatus(personId)

@@ -7,11 +7,12 @@ import { isNumber } from 'lodash'
 import { Module } from './module'
 import { logger } from '../../log'
 import { firestore } from 'firebase-admin'
-import { QueryDocumentSnapshot } from 'firebase-functions/lib/providers/firestore'
+import { DocumentSnapshot, QueryDocumentSnapshot } from 'firebase-functions/lib/providers/firestore'
 
 const log = logger('model/modules/poll')
 
 type Answers = { [i: string]: QueryDocumentSnapshot[] }
+type ShardData = { total: number }
 
 export class PollModule extends Module {
     db: firestore.Firestore
@@ -138,14 +139,21 @@ export class PollModule extends Module {
     }
 
     async setPollResponse(
-        userDoc: firestore.DocumentData,
+        userDoc: firestore.DocumentSnapshot,
         questionId: string,
         selectedAnswers: string[]
     ): Promise<firestore.DocumentReference<firestore.DocumentData>> {
         if (!userDoc.exists) {
             throw new Error('User not provided')
         }
-        const personId = userDoc.data().personId
+        const userData = userDoc.data()
+
+        if (!userData) {
+            throw new Error('User not provided')
+        }
+
+        const personId = userData.personId as string;
+
         // make sure we don't already have a response for this personId + qustionId
         const responseDoc = await this.response(personId, questionId).get()
         const questionDoc = await this.question(questionId).get()
@@ -155,18 +163,18 @@ export class PollModule extends Module {
         }
 
         const previousAnswers = responseDoc.exists
-            ? responseDoc.data()?.selected
+            ? responseDoc.data()?.selected as Array<string>
             : []
         const configDoc = await this.pollConfig.get()
         const bucketNames = configDoc.exists
-            ? configDoc.data()?.bucketNames
+            ? configDoc.data()?.bucketNames as Array<string>
             : []
 
         // no existing response
         const batch = this.db.batch()
 
         const response = {
-            personId: personId as string,
+            personId: personId,
             question: questionId,
             selected: selectedAnswers,
         }
@@ -174,7 +182,7 @@ export class PollModule extends Module {
         const responseDocRef = this.response(personId, questionId)
 
         // Select a shard of the counter based on personid
-        const shardId = Math.floor(personId % 10)
+        const shardId = Math.floor(parseInt(personId) % 10)
 
         batch.set(responseDocRef, response)
 
@@ -187,7 +195,7 @@ export class PollModule extends Module {
             )
 
             bucketNames.forEach((bucketName: string) => {
-                let bucketValue = _get(userDoc.data(), bucketName)
+                let bucketValue = _get(userData, bucketName) as string
                 if (bucketValue === null || bucketValue === '') {
                     bucketValue = 'Unknown'
                 }
@@ -213,7 +221,7 @@ export class PollModule extends Module {
             )
 
             bucketNames.forEach((bucketName: string) => {
-                let bucketValue = _get(userDoc.data(), bucketName)
+                let bucketValue = _get(userData, bucketName) as string
                 if (bucketValue === null || bucketValue === '') {
                     bucketValue = 'Unknown'
                 }
@@ -238,7 +246,7 @@ export class PollModule extends Module {
 
     async pickRandomWinner(questionId: string): Promise<boolean> {
         const question = (await this.question(questionId).get()).data()
-        let candidates = []
+        let candidates : Array<string> = []
         let correctResponsesList
 
         try {
@@ -252,7 +260,13 @@ export class PollModule extends Module {
                         .where('correct', '==', true)
                         .get()
                     const correctAnswers = correctAnswersList.docs.map(
-                        (doc) => doc.data().id
+                        (doc : DocumentSnapshot) => {
+                            const d = doc.data()
+                            if (!d) {
+                                return ""
+                            }
+                            return d.id as string
+                        }
                     )
                     if (!correctAnswers || correctAnswers.length <= 0) {
                         break
@@ -262,21 +276,34 @@ export class PollModule extends Module {
                         .where('selected', 'array-contains-any', correctAnswers)
                         .get()
                     candidates = correctResponsesList.docs.map(
-                        (doc) => doc.data().personId
+                        (doc) => {
+                            const d = doc.data()
+                            if (!d) {
+                                return ""
+                            }
+                            return d.personId as string
+                        }
                     )
                     break
                 case 'slider':
+                    const slider = question.slider as { correct: number } || { correct: 0 }
                     correctResponsesList = await this.responses
                         .where('question', '==', questionId)
                         .where(
                             'selected',
                             'array-contains',
-                            question.slider.correct || 0
+                            slider.correct || 0
                         )
                         .get()
                     if (correctResponsesList.docs.length !== 0) {
                         candidates = correctResponsesList.docs.map(
-                            (doc) => doc.data().personId
+                            (doc) => {
+                                const d = doc.data()
+                                if (!d) {
+                                    return ""
+                                }
+                                return d.personId as string
+                            }
                         )
                         break
                     }
@@ -284,7 +311,13 @@ export class PollModule extends Module {
                         await this.responses
                         .where('question', '==', questionId)
                         .get()
-                    ).docs.map((doc) => doc.data().personId)
+                    ).docs.map((doc) => {
+                        const d = doc.data()
+                        if (!d) {
+                            return ""
+                        }
+                        return d.personId as string
+                    })
                     break
                 default:
                     break
@@ -295,9 +328,9 @@ export class PollModule extends Module {
             }
 
             const i = Math.floor(Math.random() * candidates.length)
-            const winnerPersonId = candidates[i] as number
-            const winner = this.userModel.userRef(winnerPersonId.toString())
-            await this.question(questionId).update({ winner }) // TODO: What's going on here?
+            const winnerPersonId = candidates[i];
+            const winner = this.userModel.userRef(winnerPersonId)
+            await this.question(questionId).update({ winner })
         } catch (e) {
             log.error(e)
             return false;
@@ -305,7 +338,7 @@ export class PollModule extends Module {
         return true
     }
 
-    async updatePollStats(currentQuestionId: string): Promise<any> {
+    async updatePollStats(currentQuestionId: string): Promise<Record<string, unknown>> {
         const { answers } = await this.loadPollData()
 
         const allQaShards = await this.pollStats.get()
@@ -317,12 +350,12 @@ export class PollModule extends Module {
 
         let intTotal = 0;
         let intTotalCorrect = 0
-        const current = {}
+        const current : { [i: string]: number } = {}
         let intCurrentTotal = 0
-        let shardData = {}
+        let shardData : ShardData = { total: 0 }
 
         for (let i = 0; i < shards.length; i++) {
-            shardData = shards[i].data()
+            shardData = shards[i].data() as ShardData
             const [questionId, answerId] = shards[i].id.split('_')
             if (questionId === null || answerId === null) {
                 log.error(`Shard '${shards[i].id}' has an error, skipping.`)
@@ -340,7 +373,7 @@ export class PollModule extends Module {
             }
 
             const answer = answersForQuestion.find((a) => a.id === answerId)
-            if (answer === null) {
+            if (!answer) {
                 log.error(`Shard '${shards[i].id}' has an error, skipping.`)
                 continue
             }
@@ -449,18 +482,18 @@ export class PollModule extends Module {
                             const userBucketValue = _get(
                                 responseUser.data(),
                                 bucketPath
-                            )
+                            ) as number
                             if (
-                                userBucketValue != null &&
-                                userBucketValue != ''
+                                Boolean(userBucketValue)
                             ) {
-                                response.selected.forEach(
+                                const sel = response.selected as Array<string>
+                                sel.forEach(
                                     (selectedAnswer: string) => {
                                         const path = `questions.${response.question}.answers.${selectedAnswer}.dimensions.${index}.buckets.${userBucketValue}`
                                         const currentBucketValue = _get(
                                             result,
                                             path
-                                        )
+                                        ) as number
                                         _set(
                                             result,
                                             path,

@@ -59,6 +59,10 @@
 	"emulators": {
 		"functions": {
 			"host": "0.0.0.0"
+		},
+		"firestore": {
+			"host": "127.0.0.1",
+			"port": "8083"
 		}
 	}
 }

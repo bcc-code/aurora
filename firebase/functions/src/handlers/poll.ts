@@ -1,16 +1,29 @@
-import { n } from '../model/constants'
 import { EventModel } from '../model/event'
 import { UserModel } from '../model/user'
 import { logger } from '../log'
+import { ParamsDictionary } from 'express-serve-static-core'
 import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
+import {QueryDocumentSnapshot} from 'firebase-functions/lib/providers/firestore'
 
 const log = logger('pollHandler')
 
+interface generatePollReq {
+    eventId: string,
+    startAfter: string,
+    limit: string,
+}
+
+interface submitPollResponseReq {
+    eventId: string,
+    startAfter: string,
+    limit: string,
+}
+
 export async function generatePoll(
     db: firestore.Firestore,
-    req: Request,
+    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, generatePollReq>,
     res: Response
 ): Promise<void> {
     const eventModel = new EventModel(db, req.query.eventId)
@@ -20,22 +33,23 @@ export async function generatePoll(
     const { questions, answers } = await eventModel.poll.loadPollData(true)
     const userDocs = await userModel.getUserDocs(limit, startAfter)
 
+    const questionsList = questions.docs as Array<Record<string, unknown>>
     await Promise.all(
-        userDocs.map(async (userDoc) => {
+        userDocs.map(async (userDoc: QueryDocumentSnapshot) => {
             log.info(
                 `Generating poll responses for personId: ${
                     userDoc.data().personId
                 }`
             )
-
             await Promise.all(
-                questions.docs.map(async (questionDoc) => {
-                    const personId = userDoc.data().personId
+                questionsList.map(async (questionDoc) => {
+                    const personId = userDoc.data().personId as string
+                    const questionId = questionDoc.id as string
                     const responseDoc = await eventModel.poll
-                        .response(personId, questionDoc.id)
+                        .response(personId, questionId)
                         .get()
                     if (!responseDoc.exists) {
-                        const answersForQuestion = answers[questionDoc.id]
+                        const answersForQuestion = answers[questionId]
                         if (
                             Array.isArray(answersForQuestion) &&
                             answersForQuestion.length > 0
@@ -51,7 +65,7 @@ export async function generatePoll(
                                 `generate poll response - personId: ${personId}: question '${questionDoc.id}' - answer '${randomAnswerDoc.id}'`
                             )
                             await eventModel.poll
-                                .setPollResponse(userDoc, questionDoc.id, [
+                                .setPollResponse(userDoc, questionId, [
                                     randomAnswerDoc.id,
                                 ])
                                 .catch((err) => {
@@ -69,7 +83,7 @@ export async function generatePoll(
 
 export async function submitPollResponse(
     db: firestore.Firestore,
-    req: Request,
+    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, submitPollResponseReq>,
     res: Response
 ): Promise<void> {
     const eventModel = new EventModel(db, req.query.eventId)
