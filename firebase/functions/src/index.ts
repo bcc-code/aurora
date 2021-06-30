@@ -31,7 +31,7 @@ import {
 import { logger } from './log'
 import { submitCompetitionEntry } from './handlers/competition'
 import { deleteEvent, deleteQuestion } from './handlers/delete'
-import { getProfileImage, updateProfileImage } from './handlers/user'
+import { getLinkedUsers, getProfileImage, updateProfileImage } from './handlers/user'
 import {
     getToken,
     login,
@@ -142,6 +142,7 @@ bukGamesHandler.post('/bukGames/entry', withDB(firestore, addEntry))
 const userHandler = handlerWithPrefix('user')
 userHandler.post('/user/profileImage', withDB(firestore, updateProfileImage));
 userHandler.get('/user/profileImage', withDB(firestore, getProfileImage));
+userHandler.get('/user/linked', withDB(firestore, getLinkedUsers));
 
 const utilsHandler = handlerWithPrefix('utils')
 utilsHandler.get('/utils/signedDonationURL', getDonationURL);
