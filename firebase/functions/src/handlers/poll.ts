@@ -6,6 +6,7 @@ import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
 import {QueryDocumentSnapshot} from 'firebase-functions/lib/providers/firestore'
+import {IUser} from '../types/user'
 
 const log = logger('pollHandler')
 
@@ -19,6 +20,7 @@ interface submitPollResponseReq {
     eventId: string,
     startAfter: string,
     limit: string,
+    answeringPersonId?: string,
 }
 
 export async function generatePoll(
@@ -88,7 +90,37 @@ export async function submitPollResponse(
 ): Promise<void> {
     const eventModel = new EventModel(db, req.query.eventId)
     const userModel = new UserModel(db)
-    const userDoc = await userModel.userRef(getPersonId(req)).get()
+
+    const authPersonId = getPersonId(req)
+    if (!authPersonId) {
+        return res.status(401).end()
+    }
+
+    let answeringPersonId = authPersonId;
+    if (req.query.answeringPersonId) {
+        answeringPersonId = req.query.answeringPersonId
+    }
+
+    const userDoc = await userModel.userRef(answeringPersonId).get()
+    const userData = userDoc.data() as IUser|null
+
+    if (!userData) {
+        return res.status(404).json({"message": "user not found"}).end()
+    }
+
+    // Is Person answering ofr themselves?
+    if (answeringPersonId !== authPersonId) {
+        // Check if the person has permisson to answer on behalf of the other person
+        const g1 = (userData.guardian1Id ?? -1).toFixed();
+        const g2 = (userData.guardian2Id ?? -1).toFixed();
+
+        // Neither of the guardians is the authenticated person
+        if (g1 !== authPersonId && g2 !== authPersonId) {
+            return res.status(403).end()
+        }
+    }
+
+
     try {
         await eventModel.poll.setPollResponse(
             userDoc,

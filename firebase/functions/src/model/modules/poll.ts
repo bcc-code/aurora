@@ -140,9 +140,10 @@ export class PollModule extends Module {
 
     async setPollResponse(
         userDoc: firestore.DocumentSnapshot,
-        questionId: string,
+        selectedQuestionId: number,
         selectedAnswers: string[]
     ): Promise<firestore.DocumentReference<firestore.DocumentData>> {
+        const questionId = selectedQuestionId.toFixed()
         if (!userDoc.exists) {
             throw new Error('User not provided')
         }
@@ -152,8 +153,8 @@ export class PollModule extends Module {
             throw new Error('User not provided')
         }
 
-        const personId = userData.personId as string;
-
+        const personId = (userData.personId as number).toFixed();
+        console.log(personId, typeof questionId);
         // make sure we don't already have a response for this personId + qustionId
         const responseDoc = await this.response(personId, questionId).get()
         const questionDoc = await this.question(questionId).get()
