@@ -11,6 +11,7 @@
 * Don't allow empty author on verses
 * Show element type on desk
 * Record start and end time of program elements
+* Started with Unit tests
 
 ### Removed
 
