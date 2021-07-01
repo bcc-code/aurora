@@ -12,6 +12,8 @@
 * Show element type on desk
 * Record start and end time of program elements
 * Started with Unit tests
+* Allow getting of linked users
+* Allow voting on behalf of linked users
 
 ### Removed
 
