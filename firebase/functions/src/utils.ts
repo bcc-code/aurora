@@ -1,8 +1,6 @@
 import { calculateAge } from './model/utils'
 import * as googleServiceKey from '../firebase-key.json'
 import configRaw from './configs/config.json'
-import { firestore } from 'firebase-admin'
-
 
 interface Config {
     firebaseServiceAccount: {
@@ -40,11 +38,4 @@ export const firebaseServiceAccount = {
 export const config : Config = configRaw as Config;
 config.firebaseServiceAccount = firebaseServiceAccount;
 
-export async function exportCollection(db: firestore.Firestore, path : string) : Promise<void> {
-  const snapshot = await db.collection(path).get();
-  const coll : {[key: string]: string|number|Record<string, unknown>} = {}
-  snapshot.docs.map(x => coll[String(x.id)] = x.data())
-    return coll;
-}
-
-export { config, calculateAge }
+export { calculateAge }
