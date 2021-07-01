@@ -10,77 +10,11 @@ import {IUser} from '../types/user'
 
 const log = logger('pollHandler')
 
-interface generatePollReq {
-    eventId: string,
-    startAfter: string,
-    limit: string,
-}
-
 interface submitPollResponseReq {
     eventId: string,
     startAfter: string,
     limit: string,
     answeringPersonId?: string,
-}
-
-export async function generatePoll(
-    db: firestore.Firestore,
-    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, generatePollReq>,
-    res: Response
-): Promise<void> {
-    const eventModel = new EventModel(db, req.query.eventId)
-    const userModel = new UserModel(db)
-    const startAfter = parseInt(req.query.startAfter) || 0
-    const limit = parseInt(req.query.limit) || 100
-    const { questions, answers } = await eventModel.poll.loadPollData(true)
-    const userDocs = await userModel.getUserDocs(limit, startAfter)
-
-    const questionsList = questions.docs as Array<Record<string, unknown>>
-    await Promise.all(
-        userDocs.map(async (userDoc: QueryDocumentSnapshot) => {
-            log.info(
-                `Generating poll responses for personId: ${
-                    userDoc.data().personId
-                }`
-            )
-            await Promise.all(
-                questionsList.map(async (questionDoc) => {
-                    const personId = userDoc.data().personId as string
-                    const questionId = questionDoc.id as string
-                    const responseDoc = await eventModel.poll
-                        .response(personId, questionId)
-                        .get()
-                    if (!responseDoc.exists) {
-                        const answersForQuestion = answers[questionId]
-                        if (
-                            Array.isArray(answersForQuestion) &&
-                            answersForQuestion.length > 0
-                        ) {
-                            // if not, submit answer
-                            const randomAnswerIndex = Math.floor(
-                                Math.random() * (answersForQuestion.length - 1)
-                            )
-                            const randomAnswerDoc =
-                                answersForQuestion[randomAnswerIndex]
-
-                            log.info(
-                                `generate poll response - personId: ${personId}: question '${questionDoc.id}' - answer '${randomAnswerDoc.id}'`
-                            )
-                            await eventModel.poll
-                                .setPollResponse(userDoc, questionId, [
-                                    randomAnswerDoc.id,
-                                ])
-                                .catch((err) => {
-                                    log.error(err)
-                                })
-                        }
-                    }
-                })
-            )
-        })
-    )
-
-    return res.sendStatus(200).end()
 }
 
 export async function submitPollResponse(
