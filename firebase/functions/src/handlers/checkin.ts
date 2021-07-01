@@ -47,6 +47,7 @@ export async function checkinStateless(
     db: firestore.Firestore,
     req: Request,
     res: Response,
+    disableCache = false, // This is needed for testing
 ) : Promise<void> {
     const personId = getPersonId(req)
     if (!personId) {
@@ -54,7 +55,7 @@ export async function checkinStateless(
     }
 
     let eventId : string | undefined = checkinCache.get(EVENTID)
-    if (!eventId) {
+    if (!eventId || disableCache) {
         const config = (await db.collection('/configs').doc('brunstadtv-app').get()).data()
         if (!config) {
             return res.status(500).end()
