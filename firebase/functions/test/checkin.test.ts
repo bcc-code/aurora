@@ -6,8 +6,9 @@ import { randomBytes } from "crypto";
 import { generateConfig, generateEvent, generateUser, setEventInProgress } from "./utils"
 
 function getAuthedFirestore() {
-    const id = randomBytes(20).toString('hex')
-    const app = initializeApp({}, id)
+    const appId = randomBytes(20).toString('hex')
+    const projectId = randomBytes(20).toString('hex')
+    const app = initializeApp({projectId}, appId)
     return firestore(app)
 }
 
@@ -96,4 +97,43 @@ test("Stateless checkin, event", async t => {
     }
 
     t.is(data.checkedInUsers, 1)
+});
+
+test("Stateless checkin, event, custom agent", async t => {
+    const db = getAuthedFirestore()
+    await generateConfig(db);
+    const userId = await generateUser(db);
+    const eventId = await generateEvent(db);
+    await setEventInProgress(db, eventId)
+
+    const req = createRequest(
+        {
+            user: { 'https://login.bcc.no/claims/personId': parseInt(userId) },
+            query: {
+                "platform": "TESTING",
+            },
+        },
+    )
+    const res = createResponse()
+    await checkinStateless(db, req, res, true)
+
+    t.true(res._isEndCalled())
+    t.is(res.statusCode, 200)
+
+    const data = (await db.collection("events").doc(eventId).get()).data()
+    if (!data) {
+        t.fail("Could not get event data")
+        return;
+    }
+
+    t.is(data.checkedInUsers, 1)
+
+
+    const ciData = (await db.collection(`events/${eventId}/checkins`).doc(userId).get()).data()
+     if (!ciData) {
+        t.fail("Could not get checkin data")
+        return;
+    }
+
+    t.is(ciData.platform, "TESTING");
 });

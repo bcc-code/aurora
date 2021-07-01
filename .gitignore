@@ -12,3 +12,6 @@ firebase-key*
 
 *.log
 firestore-coverage.html
+
+.nyc_output
+coverage

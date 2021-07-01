@@ -10,7 +10,7 @@
 		"serve": "firebase emulators:start --only functions --inspect-functions",
 		"predeploy": "npm run build",
 		"deploy": "firebase deploy --only functions",
-		"test": "firebase emulators:exec --only firestore \"npx ava\""
+		"test": "firebase emulators:exec --only firestore \"npx nyc --reporter=lcov --reporter=text-summary ava\""
 	},
 	"targets": {
 		"default": {
@@ -89,6 +89,7 @@
 		"eslint-plugin-promise": "^4.3.1",
 		"firebase-functions-test": "^0.1.6",
 		"node-mocks-http": "^1.10.1",
+		"nyc": "^15.1.0",
 		"prettier": "2.2.1",
 		"ts-node": "^10.0.0",
 		"typescript": "^3.9.10"
