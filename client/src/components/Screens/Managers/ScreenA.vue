@@ -12,6 +12,7 @@
         <Donation v-if="screenOptions.component === ScreenAComponents.DONATION" option="donation" />
         <template v-if="screenOptions.squeezeBackSize == 'normal'">
             <Field name="showDonationSide" inline type="boolean" />
+            <field name="hideSidebar" inline type="boolean" />
             <Field name="karaokeMode" inline type="boolean" />
         </template>
         <Actions :canSave="hasChanged" @apply="apply" />
@@ -46,6 +47,7 @@ export default {
                 showBackground: null,
                 squeezeBackSize: null,
                 showDonationSide: null,
+                hideSidebar: false,
                 karaokeMode: null,
                 defaultText: {
                     defaultText: null,

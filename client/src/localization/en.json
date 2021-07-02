@@ -128,6 +128,7 @@
 		"showRunningStatus": "Show running competition status",
 		"showDonationBottom": "Donations (bottom)",
 		"showDonationSide": "Donations (side)",
+		"hideSidebar": "Hide Sidebar",
 		"showResults": "Show results",
 		"no-screen": "No screen has been selected"
 	},

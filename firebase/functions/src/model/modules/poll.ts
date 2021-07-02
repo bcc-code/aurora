@@ -152,10 +152,10 @@ export class PollModule extends Module {
             throw new Error('User not provided')
         }
 
-        const personId = (userData.personId as number).toFixed();
+        const personId = userData.personId as number
         console.log(personId, typeof questionId);
         // make sure we don't already have a response for this personId + qustionId
-        const responseDoc = await this.response(personId, questionId).get()
+        const responseDoc = await this.response(personId.toFixed(), questionId).get()
         const questionDoc = await this.question(questionId).get()
 
         if (responseDoc.exists && !questionDoc.data()?.canChangeAnswer) {
@@ -179,10 +179,10 @@ export class PollModule extends Module {
             selected: selectedAnswers,
         }
 
-        const responseDocRef = this.response(personId, questionId)
+        const responseDocRef = this.response(personId.toFixed(), questionId)
 
         // Select a shard of the counter based on personid
-        const shardId = Math.floor(parseInt(personId) % 10)
+        const shardId = Math.floor(personId % 10)
 
         batch.set(responseDocRef, response)
 
@@ -246,7 +246,7 @@ export class PollModule extends Module {
 
     async pickRandomWinner(questionId: string): Promise<boolean> {
         const question = (await this.question(questionId).get()).data()
-        let candidates : Array<string> = []
+        let candidates : Array<number> = []
         let correctResponsesList
 
         try {
@@ -279,9 +279,9 @@ export class PollModule extends Module {
                         (doc) => {
                             const d = doc.data()
                             if (!d) {
-                                return ""
+                                return -1
                             }
-                            return d.personId as string
+                            return d.personId as number
                         }
                     )
                     break
@@ -300,9 +300,9 @@ export class PollModule extends Module {
                             (doc) => {
                                 const d = doc.data()
                                 if (!d) {
-                                    return ""
+                                    return -1
                                 }
-                                return d.personId as string
+                                return d.personId as number
                             }
                         )
                         break
@@ -314,14 +314,16 @@ export class PollModule extends Module {
                     ).docs.map((doc) => {
                         const d = doc.data()
                         if (!d) {
-                            return ""
+                            return -1
                         }
-                        return d.personId as string
+                        return d.personId as number
                     })
                     break
                 default:
                     break
             }
+
+            candidates = candidates.filter(x => x > 0)
 
             if (candidates.length === 0) {
                 return false
@@ -329,7 +331,7 @@ export class PollModule extends Module {
 
             const i = Math.floor(Math.random() * candidates.length)
             const winnerPersonId = candidates[i];
-            const winner = this.userModel.userRef(winnerPersonId)
+            const winner = this.userModel.userRef(winnerPersonId.toFixed())
             await this.question(questionId).update({ winner })
         } catch (e) {
             log.error(e)
