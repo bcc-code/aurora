@@ -55,6 +55,7 @@ import DonationSide from '@/components/LiveScreens/TV/ScreenA/DonationSide';
 import DonationBar from '@/components/LiveScreens/TV/ScreenA/Donation';
 import DistanceTracker from '@/components/LiveScreens/TV/ScreenA/WWR/DistanceTracker'
 import QuestionWinner from '@/components/LiveScreens/TV/Question/QuestionWinner';
+import Empty from '@/components/Feed/Empty';
 import { mapModels } from '@/mixins/mapModels'
 import { mapGetters } from 'vuex'
 import keys from '@/utils/keys'
@@ -71,6 +72,7 @@ export default {
         QuestionWinner,
         DistanceTracker,
         DefaultText,
+        Empty,
     },
     data: () => ({
         dummyVideo: false, // Quickfix because it was showing up in production
@@ -91,7 +93,11 @@ export default {
                 && this.screen.options.information.information != ''
         },
         sideComponent() {
-            return this.screen.options.showDonationSide && this.isNormal ? DonationSide : Feed
+            let comp = this.screen.options.showDonationSide && this.isNormal ? DonationSide : Feed
+            if (this.screen.options.hideSidebar) {
+                comp = Empty;
+            }
+            return comp
         },
         karaokeMode() {
             return this.isNormal && this.screen.options.karaokeMode
