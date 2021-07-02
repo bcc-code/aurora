@@ -1,21 +1,21 @@
 <template>
-    <JustifiedLayout id="grid" ref="grid" class="mx-10"
+    <SquareLayout id="grid" ref="grid" class="mx-10"
         :options="gridOptions"
         :layoutOptions="layoutOptions">
         <div class="item" v-for="picture in pictures" :id="`picture${picture.id}-${Math.random().toString(36).substring(7)}`" :key="picture.id + Math.random().toString(36).substring(7)">
             <img class="rounded-md" :src="picture.imageUrl" />
         </div>
-    </JustifiedLayout>
+    </SquareLayout>
 </template>
 
 <script>
 import Vue from 'vue'
-import { JustifiedLayout } from "@egjs/vue-infinitegrid";
+import { JustifiedLayout, SquareLayout } from "@egjs/vue-infinitegrid";
 import { mapState, mapActions, mapGetters } from 'vuex'
 import { crono } from 'vue-crono'
 export default {
     components: {
-        JustifiedLayout
+       SquareLayout
     },
     props: ['options'],
     data: function(){
@@ -46,8 +46,8 @@ export default {
         },
         layoutOptions(){
             return {
-                margin: 10,
-                column: [this.numberOfColumns, this.numberOfColumns],
+                margin: 20,
+                column: this.numberOfColumns,
             }
         }
     },
@@ -107,6 +107,15 @@ export default {
 .grid-animate {
   animation: moveUp linear infinite;
   --height: -1080px;
+}
+
+#grid>div{
+    overflow: hidden;
+}
+
+#grid>div>img {
+    max-width: 300%;
+    max-height: 100%;
 }
 
 @keyframes moveUp {
