@@ -12,6 +12,8 @@
                         <div class="w-full lg:w-1/3 px-3 mb-6 md:mb-0">
                             <label class="form-label">{{$t('queue.frequency')}}</label>
                             <input class="form-input" type="number" :readonly="selectedEvent.feed.autoPush" v-model="selectedEvent.feed.frequency">
+                            <label class="form-label">Randomize order?</label>
+                            <input type="checkbox" :readonly="selectedEvent.feed.autoPush" v-model="selectedEvent.feed.shuffle" />
                         </div>
                         <div class="w-full lg:w-2/3 px-3 mb-6 md:mb-0 text-right self-end">
                             <button class="btn" :class="selectedEvent.feed.autoPush ? 'btn-red': 'btn-green'" @click="toggleAutoPush">{{selectedEvent.feed.autoPush ? $t('queue.stop-auto-push') : $t('queue.start-auto-push')}}</button>
@@ -51,6 +53,7 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
 import List from '@/components/List/List'
+import Field from '@/components/Forms/Field'
 import Tabs from '@/components/Tabs'
 import Contribution from '@/components/List/Elements/Contribution/Contribution'
 import { crono } from 'vue-crono'
@@ -68,6 +71,7 @@ export default {
     },
     components: {
         List,
+        Field,
         Contribution,
         Tabs
     },
@@ -134,9 +138,14 @@ export default {
         },
         async autoPush() {
             if (this.filteredQueue && this.filteredQueue.length > 0) {
-                var elementToPush = this.filteredQueue.sort((a,b) => a.approvedDate - b.approvedDate)[0];
+                let elementToPush = this.filteredQueue.sort((a,b) => a.approvedDate - b.approvedDate)[0];
+
+                if (this.selectedEvent.feed.shuffle) {
+                    elementToPush = this.filteredQueue[Math.floor(Math.random()*this.filteredQueue.length)];
+                }
+
                 /* Calculate time to display the element */
-                var textLength = (elementToPush.text && elementToPush.text.length) || 0;
+                const textLength = (elementToPush.text && elementToPush.text.length) || 0;
                 this.autoPushCounter = 0;
                 this.autoPushGoal = Math.max((textLength / 1000) * 60, this.selectedEvent.feed.frequency)
                 this.updateContribsCount(1);
