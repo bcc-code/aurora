@@ -1,5 +1,8 @@
 {
   "dependencies": {
+    "lorem-ipsum": "^2.0.3",
+    "random-name": "^0.1.2",
+    "random-picture": "^4.0.4",
     "ts-node": "^9.1.1",
     "typescript": "^4.2.4"
   },

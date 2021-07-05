@@ -77,7 +77,11 @@ export default {
                 height = nextAppearance.offsetTop - firstElement.offsetTop;
                 grid.style.setProperty('--height', `-${height}px`);
                 grid.classList.add('grid-animate');
-                grid.style.animationDuration = `${this.pictures.length-this.SIZE}s`;
+
+                const rowDuration = 20;
+                const d = (this.pictures.length * rowDuration * 1920) /  (this.numberOfColumns * this.numberOfColumns * 1080)
+                grid.style.animationDuration = `${Math.floor(d).toFixed()}s`;
+                //grid.style.animationDuration = `${this.pictures.length-this.SIZE}s`;
                 this.$cron.stop('checkLoaded');
             }
         }
@@ -115,6 +119,7 @@ export default {
 
 #grid>div>img {
     max-width: 300%;
+    min-width: 100%;
     max-height: 100%;
 }
 
