@@ -126,12 +126,11 @@ export default {
 		},
 		drawPoint(point){
 			this.ctx.beginPath();
-			var coordinates = this.projection([point.coords.d_, point.coords.f_]);
+			const coordinates = this.projection([point.coords._long, point.coords._lat]);
 			this.ctx.arc(coordinates[0], coordinates[1], this.SIZE, 0, 2 * Math.PI, false);
-			point.color=`${this.markersColor}85`
-			this.ctx.shadowColor= point.color;
+			this.ctx.shadowColor= this.markersColor
 			this.ctx.shadowBlur= 5;
-			this.ctx.fillStyle = point.color
+			this.ctx.fillStyle = this.markersColor
 			this.ctx.fill();
 		},
 		resetAnimations(){
@@ -166,8 +165,9 @@ export default {
 		filterPoints(list){
 			var result = []
 			list.forEach((point) => {
-				if ((point.coords.f_ != 0 || point.coords.d_ != 0) && !result.some((el) => this.pointsAreNear(el, point)))
+				if (point.coords._lat != 0 || point.coords._long != 0){
 					result.push(point);
+                }
 			})
 			return result
 		},

@@ -104,8 +104,27 @@ export class CheckinModule extends Module {
         }
     }
 
+    async getCoordsByPersonId(personId: string) : Promise<firestore.GeoPoint> {
+        const personData = (await this.userModel.userRef(personId).get()).data()
+        if (!personData || !personData.churchId) {
+            return new firebaseadmin.firestore.GeoPoint(0,0);
+        }
+
+        const churchData = (await this.db.collection("churches").doc((personData.churchId as number).toFixed()).get()).data()
+        if (!churchData || !churchData.coordinates) {
+            return new firebaseadmin.firestore.GeoPoint(0,0);
+        }
+        return churchData.coordinates as firestore.GeoPoint;
+    }
+
     async checkin(currentPersonId: string, userIds: string[], platform = "NONE"): Promise<void> {
-        const coords = new firebaseadmin.firestore.GeoPoint(0, 0) // We keep this in case anything expects it
+        let coords = new firebaseadmin.firestore.GeoPoint(0, 0) // Fallback value, we will replace it
+        try {
+            coords = await this.getCoordsByPersonId(currentPersonId)
+        } catch(e) {
+            log.error(e)
+        /* Fallback to 0:0 coords in case we fail */
+        }
         const currentUser = await this.userModel.userRef(currentPersonId).get()
 
         const batch = this.db.batch()
