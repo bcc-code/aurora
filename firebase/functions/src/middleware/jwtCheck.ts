@@ -1,7 +1,7 @@
 import jwt from 'express-jwt'
 import jwks from 'jwks-rsa'
 import { NextFunction, Request, Response } from 'express'
-import config from '../configs/config.json'
+import { getConfig } from '../utils'
 import { logger } from '../log'
 import firebase from 'firebase-admin'
 
@@ -25,7 +25,9 @@ export const jwtCheckFull = async (admin: firebase.app.App,req: Request, res: Re
     return next();
 }
 
-export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void => {
+export async function jwtCheck(req: Request, res: Response, next: NextFunction) : Promise<void> {
+    const config = await getConfig();
+
     // get audience header
     let audience = req.headers.audience
     if (!audience) {
@@ -47,7 +49,7 @@ export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void
         audience: audience,
         issuer: `https://${config.auth0.domain}/`,
         algorithm: 'RS256',
-    })(req, res, (err) => {
+    })(req, res, (err : string) => {
         if (err) {
             log.error(`Error in jwtCheck: ${err}`)
             res.status(401)

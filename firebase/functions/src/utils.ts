@@ -1,14 +1,7 @@
 import { calculateAge } from './model/utils'
-import * as googleServiceKey from '../firebase-key.json'
-import configRaw from './configs/config.json'
+import { SecretManagerServiceClient } from '@google-cloud/secret-manager'
 
 interface Config {
-    firebaseServiceAccount: {
-        projectId: string,
-        clientEmail: string,
-        privateKey: string,
-    };
-
     auth0: {
         clientId: string,
         clientSecret: string,
@@ -18,6 +11,7 @@ interface Config {
 
     api: {
         baseUrl: string,
+        key: string,
     };
 
     app: {
@@ -26,16 +20,26 @@ interface Config {
         name: string,
         id: string,
         impexBucket: string,
+        donationsUrl: string,
+        donationsApiKey: string,
     }
 }
 
-export const firebaseServiceAccount = {
-    projectId: googleServiceKey.project_id,
-    clientEmail: googleServiceKey.client_email,
-    privateKey: googleServiceKey.private_key.replace(/\\n/g, '\n'),
+let config : Config|null = null;
+
+export async function getConfig() : Promise<Config> {
+    if (!config) {
+        const secretClient = new SecretManagerServiceClient();
+        const [configSecret] = await secretClient.accessSecretVersion({ name: `projects/${process.env.GCLOUD_PROJECT}/secrets/firebase-config/versions/latest` })
+        if (!configSecret.payload || !configSecret.payload.data) {
+            throw new Error(`Unable to get secret: ${configSecret.name}`)
+        }
+
+        config = JSON.parse(configSecret.payload.data.toString()) as Config;
+    }
+
+    return config;
 }
 
-export const config : Config = configRaw as Config;
-config.firebaseServiceAccount = firebaseServiceAccount;
 
 export { calculateAge }

@@ -2,14 +2,15 @@ import { Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
 import * as gaxios from 'gaxios'
 import { logger } from '../log'
-import { config } from '../utils'
+import { getConfig } from '../utils'
 
 const log = logger('utilsHandler')
 
 export async function getDonationURL(req: Request, res: Response) : Promise<void> {
     const personId: string | null = getPersonId(req);
+    const config = await getConfig();
 
-    const url = config.app.donationsUrl as string
+    const url = config.app.donationsUrl
     const token = Buffer.from(`${config.app.donationsApiKey}:${personId}`).toString('base64')
 
     let outUrl = "https://donation.bcc.no/"

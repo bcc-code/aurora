@@ -1,5 +1,5 @@
 import * as firebaseAdmin from 'firebase-admin'
-import { config } from '../utils'
+import { getConfig } from '../utils'
 import passport from 'passport'
 import { AuthenticateOptions } from 'passport-auth0'
 import { syncUserAndClaims } from '../middleware/syncUserAndClaims'
@@ -42,6 +42,7 @@ export async function getToken(req: Request, res: Response) : Promise<void> {
 }
 
 export async function login(req: Request, res: Response, next: NextFunction) : Promise<void> {
+    const config = await getConfig();
     const authOptions: AuthenticateOptions = {
         scope: 'openid email profile church country',
 
@@ -51,12 +52,13 @@ export async function login(req: Request, res: Response, next: NextFunction) : P
     return passport.authenticate('auth0', authOptions)(req, res, next)
 }
 
-export function processLoginCallback(
+export async function processLoginCallback(
     req: Request,
     res: Response,
     next: NextFunction
-)  : void{
+)  : Promise<void> {
     try {
+        const config = await getConfig();
         passport.authenticate('auth0', (err, user) => {
             if (err) return next(err)
             if (!user) return res.redirect('./login')
@@ -89,6 +91,7 @@ export function processLoginCallback(
 
 export async function getIdToken(req: Request, res: Response) : Promise<void> {
     try {
+        const config = await getConfig();
         const result = await gaxios.request({
             method: 'POST',
             url: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${config.api.key}`,

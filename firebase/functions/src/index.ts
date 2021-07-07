@@ -11,7 +11,7 @@ import { syncUserAndClaims } from './middleware/syncUserAndClaims'
 import { checkin, checkinStateless, checkinStatus, userCount } from './handlers/checkin'
 import { getDonationURL } from './handlers/utils'
 import { exportData, importData, listExports } from './handlers/impex'
-import { config } from './utils'
+import { getConfig } from './utils'
 import { eventList, getEventData } from './handlers/event'
 import {
     generatePoll,
@@ -40,17 +40,17 @@ import {
 } from './handlers/firebaseToken'
 import { newFeedPost } from './handlers/feed'
 import { newInquiry } from './handlers/inquiry'
-import { passport, sessionSettings } from './middleware/passport'
+import { configurePassport, sessionSettings } from './middleware/passport'
 import { Bucket } from '@google-cloud/storage'
 
 
 type HandlerWithDB = (db: firebaseAdmin.firestore.Firestore, req: Request, res: Response) => Promise<void>
-type HandlerWithBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket , req: Request, res: Response) => Promise<void>
-type Handler = (req: Request, res: Response) => void
+    type HandlerWithBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket , req: Request, res: Response) => Promise<void>
+    type Handler = (req: Request, res: Response) => void
 
-const withDB = (db: firebaseAdmin.firestore.Firestore, f : HandlerWithDB) : Handler  =>  {
-    return (req: Request, res: Response) => f(db, req, res)
-}
+    const withDB = (db: firebaseAdmin.firestore.Firestore, f : HandlerWithDB) : Handler  =>  {
+        return (req: Request, res: Response) => f(db, req, res)
+    }
 
 const withBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket, f : HandlerWithBucket) : Handler  =>  {
     return (req: Request, res: Response) => f(db, bucket, req, res)
@@ -58,11 +58,9 @@ const withBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket, f : H
 
 const log = logger('index')
 
-const firebaseApp = firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert(config.firebaseServiceAccount),
-    databaseURL: `https://${config.firebaseServiceAccount.projectId}.firebaseio.com`,
-})
+const config = getConfig()
 
+const firebaseApp = firebaseAdmin.initializeApp({projectId: "7"})
 const impExBucket = firebaseApp.storage().bucket(config.app.impexBucket);
 
 log.info('Cloud functions initializing...')
@@ -105,6 +103,7 @@ const deleteHandler = adminHandlerWithPrefix('delete')
 deleteHandler.post('/delete/event/:event/question/:questionId', deleteQuestion)
 deleteHandler.post('/delete/event/:event', deleteEvent)
 
+const passport = await configurePassport()
 const tokenHandler = insecureHandlerWithPrefix('firebase')
 tokenHandler.use(cookieSession(sessionSettings))
 tokenHandler.use(passport.initialize())
@@ -166,9 +165,7 @@ module.exports = {
     app: functions.region('europe-west1').https.onRequest(appHandler),
     bukGames: functions.region('europe-west1').https.onRequest(bukGamesHandler),
     checkin: functions.region('europe-west1').https.onRequest(checkinHandler),
-    competition: functions
-        .region('europe-west1')
-        .https.onRequest(competitionHandler),
+    competition: functions.region('europe-west1').https.onRequest(competitionHandler),
     delete: functions.region('europe-west1').https.onRequest(deleteHandler),
     feed: functions.region('europe-west1').https.onRequest(feedHandler),
     firebase: functions.region('europe-west1').https.onRequest(tokenHandler),
@@ -179,9 +176,11 @@ module.exports = {
     impex: functions.region('europe-west1').https.onRequest(impexHandler),
     events: functions.region('europe-west1').https.onRequest(eventHandler),
     thumbnail: functions
-        .region('europe-west1', 'us-central1')
-        .storage.object()
-        .onFinalize((object) =>
-            generateResizedImage(object, firebaseApp.firestore())
-        ),
+    .region('europe-west1', 'us-central1')
+    .storage.object()
+    .onFinalize((object) =>
+        generateResizedImage(object, firebaseApp.firestore())
+    ),
 }
+
+void run();

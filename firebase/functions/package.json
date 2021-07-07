@@ -47,6 +47,7 @@
 		"@babel/preset-typescript": "^7.13.0",
 		"@firebase/app": "^0.6.21",
 		"@google-cloud/logging-bunyan": "^3.0.2",
+		"@google-cloud/secret-manager": "^3.7.3",
 		"@google-cloud/storage": "^5.8.5",
 		"@parcel/transformer-typescript-tsc": "^2.0.0-alpha.3",
 		"@types/child-process-promise": "^2.2.1",

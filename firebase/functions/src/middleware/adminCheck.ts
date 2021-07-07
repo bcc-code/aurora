@@ -10,7 +10,7 @@ export const adminCheck = async (
     req: Request,
     res: Response,
     next: NextFunction
-) => {
+) : Promise<void> => {
     const userModel = new UserModel(firebaseAdmin.firestore())
     const personId = getPersonId(req)
 
@@ -19,7 +19,7 @@ export const adminCheck = async (
     }
 
     try {
-        if (!(await userModel.isAdmin(personId))) return res.status(403)
+        if (!(await userModel.isAdmin(personId))) return res.status(403).end()
     } catch (error) {
         const msg = `Error occurred while checkin admin role for: ${personId}.`
         log.error(msg, error.message)

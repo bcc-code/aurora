@@ -6,9 +6,10 @@ import { ExportRequest, ImportRequest } from '../types/impex'
 import { EventModel } from '../model/event'
 import { EventData, FeedConfig, StyleConfig } from '../types/event'
 import { Bucket, File } from '@google-cloud/storage'
-import {config} from '../utils'
+import { getConfig } from '../utils'
 import { DocumentSnapshot } from 'firebase-functions/lib/providers/firestore'
 import {TemplatedString} from '../types/templated'
+import {get} from 'lodash'
 
 const log = logger('handler/impex');
 const EXPORT_FORMAT_VERSION = "1";
@@ -85,6 +86,8 @@ export async function exportData(
         }).end()
         return
     }
+
+    const config = await getConfig();
 
     await storage.file(`${config.app.instance}/${exportName}/_VERSION`).save(EXPORT_FORMAT_VERSION)
 

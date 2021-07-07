@@ -1,6 +1,7 @@
 {
   "projects": {
     "dev": "brunstadtv-online-dev",
-    "staging": "staging-bcc-online"
+    "staging": "staging-bcc-online",
+    "develop": "brunstadtv-online-dev"
   }
 }
