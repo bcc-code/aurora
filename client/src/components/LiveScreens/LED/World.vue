@@ -67,7 +67,8 @@ export default {
 			animations: [],
 			timer: d3.timer(() => {}),
 			loaded: false,
-			markersRate: 3000
+			markersRate: 3000,
+            cachedElements: [],
 		}
 	},
 	async created(){
