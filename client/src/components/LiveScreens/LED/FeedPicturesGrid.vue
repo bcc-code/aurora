@@ -69,19 +69,21 @@ export default {
             this.pictures = this.pictures.concat(...first)
         },
         checkLoaded(){
-            var grid = this.$refs.grid.$el;
-            var height = grid.style.height;
-            if (height != null && height.length > 0 && height != '0px'){
-                var firstElement = grid.children[0];
-                var nextAppearance = document.querySelectorAll(`[id^=${firstElement.id.split('-')[0]}]`)[1]
-                height = nextAppearance.offsetTop - firstElement.offsetTop;
-                grid.style.setProperty('--height', `-${height}px`);
+            const grid = this.$refs.grid.$el;
+            const gridHeight = grid.style.height;
+            if (gridHeight != null && gridHeight.length > 0 && gridHeight != '0px'){
+                const firstElement = grid.children[0];
+                if (grid.children.length > this.numberOfColumns){
+                    const nextAppearance = grid.children[this.numberOfColumns];
+                    const height = nextAppearance.offsetTop - firstElement.offsetTop;
+                    grid.style.setProperty('--height', `-${height}px`);
+                }
                 grid.classList.add('grid-animate');
 
-                const rowDuration = 20;
-                const d = (this.pictures.length * rowDuration * 1920) /  (this.numberOfColumns * this.numberOfColumns * 1080)
+                const rowDuration = 30;
+                const screenHeight = parseInt(grid.parentNode.style.height.substr(0, grid.parentNode.style.height.length-1));
+                const d = Math.ceil(gridHeight.substr(0, gridHeight.length-2) / screenHeight) * rowDuration
                 grid.style.animationDuration = `${Math.floor(d).toFixed()}s`;
-                //grid.style.animationDuration = `${this.pictures.length-this.SIZE}s`;
                 this.$cron.stop('checkLoaded');
             }
         }
