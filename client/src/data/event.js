@@ -63,6 +63,7 @@ export const NewScreen = (id, order) => {
             newScreen.options.profilePictures = { frequency: null }
             newScreen.options.question = { question: null, view: null, viewType: null }
             newScreen.options.component = Components.PROFILEPICTURES;
+            newScreen.options.worldMap = { showCheckinsNumber: true }
             break;
         case 'M':
             newScreen.size = {  width: 3840, height: 1097 }

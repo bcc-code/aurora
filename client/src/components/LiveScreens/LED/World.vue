@@ -24,7 +24,7 @@ export default {
 		...mapGetters('checkins', ['getCheckins']),
 		ctx(){
 			return document.getElementById("pointsCanvas").getContext("2d");
-		},	
+		},
 		pathGenerator(){
 			return d3.geoPath(this.projection, this.ctx);
 		},
@@ -139,7 +139,7 @@ export default {
 		},
 		drawAnimations(){
 			this.animCtx.clearRect(0, 0, this.width, this.height)
-			
+
 			this.animations.forEach((animation, index) => {
 				this.animCtx.beginPath();
 				var coordinates = this.projection([animation.coords.d_, animation.coords.f_]);
@@ -211,7 +211,7 @@ canvas {
 	left: var(--leftOffset);
 }
 
-.fade-slide-enter-active, 
+.fade-slide-enter-active,
 .fade-slide-leave-active {
   transition: opacity 1s, transform 1s;
   position: absolute;
