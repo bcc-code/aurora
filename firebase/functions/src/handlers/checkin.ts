@@ -45,11 +45,23 @@ export async function checkin(
 
 export async function checkinStateless(
     db: firestore.Firestore,
-    req: Request,
+    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, qs.ParsedQs>,
     res: Response,
     disableCache = false, // This is needed for testing
 ) : Promise<void> {
-    const personId = getPersonId(req)
+    let personId : string|null = null
+
+    if (req.header('x-api-token')) {
+        personId = req.body.personId ?? null;
+    } else  {
+        try {
+            personId = getPersonId(req)
+        } catch(e) {
+            // Person ID is null so we will return 401
+            console.warn(e)
+        }
+    }
+
     if (!personId) {
         return res.status(401).end()
     }
