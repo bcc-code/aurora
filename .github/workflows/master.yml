@@ -76,6 +76,7 @@ jobs:
         firebase.appId: ${{ secrets[format('{0}_FIREBASE_APP_ID', env.ENVIRONMENT)] }}
         firebase.measurementId: ${{ secrets[format('{0}_FIREBASE_MEASUREMENT_ID', env.ENVIRONMENT)] }}
         firebase.storageBaseUrl: ${{ secrets[format('{0}_FIREBASE_STORAGE_BASE_URL', env.ENVIRONMENT)] }}
+        members.apiKey: ${{ secrets[format('{0}_MEMBERS_API_KEY', env.ENVIRONMENT)] }}
     - name: Replace firebase key
       uses: microsoft/variable-substitution@v1
       with:

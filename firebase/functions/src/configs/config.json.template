@@ -17,4 +17,7 @@
 	"donationsApiKey": "<REPLACE>",
 	"donationsUrl": "<REPLACE>"
   }
+	"members": {
+		"apiKey": "<REPLACE>"
+	}
 }
