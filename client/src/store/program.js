@@ -23,7 +23,12 @@ export default {
             let ts = new Date();
 
             console.dir(nextProgramElementRef);
-            (await context.rootGetters['events/selectedEventRef'].get()).data().currentProgramElement.update({end: ts})
+
+            const eventData = (await context.rootGetters['events/selectedEventRef'].get()).data()
+            if (eventData && eventData.currentProgramElement) {
+                await eventData.currentProgramElement.update({end: ts})
+            }
+
             if (nextProgramElementRef && nextProgramElementRef.id) {
                 await context.getters.programRef.doc(nextProgramElementRef.id).update({start: ts})
             }
@@ -46,9 +51,9 @@ export default {
         },
         currentProgramElement: (state, getters, rootState, rootGetters) => {
             var event = rootGetters['events/selectedEvent'];
-			if (event == null) {
-				event = rootGetters['events/currentEvent'];
-			}
+            if (event == null) {
+                event = rootGetters['events/currentEvent'];
+            }
             return (event == null) ? null : event['currentProgramElement'];
         },
         upcoming: (state, getters) => {
