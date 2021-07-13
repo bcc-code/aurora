@@ -16,11 +16,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: Run tests
-      working-directory: ./firebase/functions
-      run: |
-        npm i
-        npm test
     - name: Set ENV to DEV
       if: endsWith(github.ref, '/develop')
       run: |
@@ -104,6 +99,10 @@ jobs:
       run: |
         npm ci
         npm run build
+    - name: Run tests
+      working-directory: ./firebase/functions
+      run: |
+        npm test
     - name: deploy to firebase
       uses: w9jds/firebase-action@master
       with:
