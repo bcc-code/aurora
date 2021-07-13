@@ -3,7 +3,7 @@ import * as googleServiceKey from '../firebase-key.json'
 import configRaw from './configs/config.json'
 
 interface Config {
-    firebaseServiceAccount: {
+    firebaseServiceAccount?: {
         projectId: string,
         clientEmail: string,
         privateKey: string,
