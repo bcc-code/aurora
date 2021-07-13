@@ -1,23 +1,23 @@
 {
-  "auth0": {
-    "clientId": "1J2g4gsQX11e5WD7kgjlbeQj0qx14kfz",
-    "clientSecret": "<REPLACE>",
-    "domain": "login.bcc.no",
-    "apiAudience": "https://widgets.brunstad.org"
-  },
-  "api": {
-    "baseUrl": "http://localhost:5001/brunstadtv-online-dev/europe-west1/",
-    "key": "<REPLACE>"
-  },
-  "app": {
-	"instance": "<REPLACE>",
-    "baseUrl": "http://localhost:8080",
-	"sharedApiKey": "<REPLACE>",
-	"impexBucket": "bcco-impex",
-	"donationsApiKey": "<REPLACE>",
-	"donationsUrl": "<REPLACE>"
-  }
-	"members": {
-		"apiKey": "<REPLACE>"
-	}
+	"auth0": {
+		"clientId": "1J2g4gsQX11e5WD7kgjlbeQj0qx14kfz",
+			"clientSecret": "<REPLACE>",
+			"domain": "login.bcc.no",
+			"apiAudience": "https://widgets.brunstad.org"
+	},
+		"api": {
+			"baseUrl": "http://localhost:5001/brunstadtv-online-dev/europe-west1/",
+			"key": "<REPLACE>"
+		},
+		"app": {
+			"instance": "<REPLACE>",
+			"baseUrl": "http://localhost:8080",
+			"sharedApiKey": "<REPLACE>",
+			"impexBucket": "bcco-impex",
+			"donationsApiKey": "<REPLACE>",
+			"donationsUrl": "<REPLACE>"
+		},
+		"members": {
+			"apiKey": "<REPLACE>"
+		}
 }
