@@ -10,6 +10,7 @@ import {
     QueryDocumentSnapshot,
 } from 'firebase-functions/lib/providers/firestore'
 import { UserRecord } from 'firebase-functions/lib/providers/auth'
+import { config } from '../utils'
 
 const log = logger('model/user')
 
@@ -143,7 +144,7 @@ export class UserModel {
             return data as IUser;
         }
 
-        const mApi = new MembersAPI() //TODO: Get key from config
+        const mApi = new MembersAPI(config.members.apiKey)
         const membersData = await mApi.getPerson(personId)
         if (!membersData) {
             log.error("Unable to find member in members DB")
