@@ -1,7 +1,7 @@
 <template>
     <section class="text-white flex w-full h-full overflow-hidden">
         <div class="h-full relative transition-all" :class="{ 'w-8/12': isNormal, 'w-5/12': isDobbel }">
-            <div class="faded-bg absolute inset-0 h-full pl-24 pr-6 flex flex-col justify-start" :class="{ 'py-12' : isNormal, 'py-16' : isDobbel }">
+            <div class="absolute inset-0 h-full pl-24 pr-6 flex flex-col justify-start" :class="{ 'py-12' : isNormal, 'py-16' : isDobbel }">
                 <div class="flex justify-center items-center mb-8" style="min-height: 194px; max-height:194px;" v-if="isDobbel">
                     <Logo class="w-auto" :style="logoStyle.split(';').filter((el) => el.includes('transform')).join(';')"/>
                 </div>
