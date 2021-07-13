@@ -75,6 +75,9 @@ export default class MembersAPI {
 		}
 
 		const res = await fetch(`${this.baseUrl}/${url}`, params)
+        if (!res.ok) {
+            console.log(res.body.read())
+        }
 		return (await res.json()) as T
 	}
 }
