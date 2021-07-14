@@ -6,11 +6,11 @@
                 v-for="(user, index) in top10(game)" :key="user.id">
                 <span class="w-1/12 pl-1 font-bold">#{{index + 1}}</span>
                 <span class="w-2/12 pl-4" :class="index == 0 ? '-mt-4': '-mt-2'">
-                    <div class="bg-cover bg-center rounded-full" 
-                        :style="{ 
-                            height: index == 0 ? '55px' : '45px', 
-                            width: index == 0 ? '55px': '45px', 
-                            backgroundImage: `url(${user.profilePictureThumb ? user.profilePictureThumb : '/images/buk/Nerd.png'})` 
+                    <div class="bg-cover bg-center rounded-full"
+                        :style="{
+                            height: index == 0 ? '55px' : '45px',
+                            width: index == 0 ? '55px': '45px',
+                            backgroundImage: `url(${user.profilePictureThumb ? user.profilePictureThumb : '/images/buk/Nerd.png'})`
                         }"></div>
                 </span>
                 <span class="w-7/12 mr-1 overflow-hidden">{{user.displayName}}</span>
