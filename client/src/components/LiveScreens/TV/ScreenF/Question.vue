@@ -7,15 +7,15 @@
 			</div>
             		<div class="absolute w-full h-full opacity-75 bg-primary"></div>
 			<div v-if="options.view == ScreenFQuestionViews.QUESTION" class="relative flex flex-wrap flex-1 w-full px-12 py-5">
-				<div v-for="(answer, sI) in parsedAnswers" :key="answer.id" class="flex w-1/2 items-center p-4" 
+				<div v-for="(answer, sI) in parsedAnswers" :key="answer.id" class="flex w-1/2 items-center p-4"
 					:class="hasLongAnswers ? 'w-1/2': `w-1/${parsedAnswers.length}`">
-					<div class="border-2 rounded-md h-full w-full flex items-center transition-all duration-500" 
+					<div class="border-2 rounded-md h-full w-full flex items-center transition-all duration-500"
 						:class="{'opacity-50': !answer.correct && options.finished}"
 						:style="{
 							backgroundColor: answer.correct && options.finished ? hexColors[answer.color] : '',
 							borderColor: !options.finished || answer.correct ? hexColors[answer.color] : '#fff'
 						}">
-						<div class="pl-3 text-5xl font-bold transition-all duration-500" :class="hasLongAnswers ? 'w-1/12' : 'w-1/6'" 
+						<div class="pl-3 text-5xl font-bold transition-all duration-500" :class="hasLongAnswers ? 'w-1/12' : 'w-1/6'"
 							:style="{color: options.finished ? '#fff': hexColors[answer.color]}">
 							{{ String.fromCharCode(sI + 65) }}
 						</div>
@@ -126,7 +126,7 @@ export default {
                 perc: this.totalResponses > 0 ? (total / this.totalResponses * 100).toFixed(1) : 0,
             }
         }
-		
+
     },
     watch: {
         async options(){

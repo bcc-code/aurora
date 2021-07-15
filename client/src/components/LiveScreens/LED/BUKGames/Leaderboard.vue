@@ -16,7 +16,7 @@
 				</transition>
 			</div>
 		</div>
-	</section>	
+	</section>
 </template>
 <script>
 import { crono } from 'vue-crono'
@@ -43,7 +43,7 @@ export default {
 	},
 	async created() {
 		await this.bindTop50SuperPixel();
-		await this.bindTop50BukRace();	
+		await this.bindTop50BukRace();
 		this.loaded = true;
 	},
 	mixins: [crono],
