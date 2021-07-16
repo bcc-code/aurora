@@ -6,6 +6,7 @@ export default {
     state: {
         selectedEventId: null,
         events: [],
+        screenEvent: null,
     },
     mutations: {
         setSelectedEventId: (state, value) => state.selectedEventId = value,
@@ -13,6 +14,9 @@ export default {
     actions: {
         bindEvents: firestoreAction(context => {
             return context.bindFirestoreRef('events', context.getters.eventsRef.orderBy('order'))
+        }),
+        bindScreenEvent: firestoreAction(async context => {
+            return context.bindFirestoreRef('screenEvent', await context.getters.screenEventRef)
         }),
         addEvent: firestoreAction(async (context, event) => {
             const eventId = `${context.getters.nextId()}`;
@@ -82,15 +86,29 @@ export default {
             return getters.eventsRef.doc(state.selectedEventId || getters.currentEvent.id)
         },
 
+        screenEventRef: async () => {
+            const config = (await db.doc("configs/screens").get()).data()
+            if (!config || !config.eventId) {
+                return null
+            }
+
+            return db.doc(`events/${config.eventId}`)
+        },
+
+        screenEvent: (state) => {
+            return state.screenEvent;
+        },
+
         selectedEvent: (state) => {
             return state.events.find(event => event.id == state.selectedEventId)
         },
 
-        currentEventRef: (state, getters, rootState, rootGetters) => {
+        currentEventRef: (_s, getters, _r, _g) => {
             if (getters.currentEvent == null || getters.currentEvent.id == null)
                 return null
             return db.collection('events').doc(getters.currentEvent.id)
         },
+
         currentEvent: (_s, _g, rootState) => {
             return rootState.configs.config.currentEventPath
         },

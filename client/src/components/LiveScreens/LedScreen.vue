@@ -1,6 +1,6 @@
 <template>
     <transition name="zoom">
-        <component v-if="optionsAreComplete" :is="component" class="absolute inset-0 flex justify-center" :options="options" :size="screen.size" />
+        <component v-if="optionsAreComplete" :is="component" class="absolute inset-0 flex justify-center" :options="options" :size="screen.size" :event="event" />
     </transition>
 </template>
 <script>
@@ -30,7 +30,7 @@ export default {
             loaded: false
         }
     },
-    props: ['screen'],
+    props: ['screen', 'event'],
     computed: {
         optionsAreComplete() {
             switch (this.screen.options.component) {
@@ -72,7 +72,7 @@ export default {
 </script>
 
 <style scoped>
-.zoom-enter-active, 
+.zoom-enter-active,
 .zoom-leave-active {
   transition: opacity 1s, transform 1s;
   position: absolute;

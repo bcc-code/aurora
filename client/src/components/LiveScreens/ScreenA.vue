@@ -15,22 +15,22 @@
                 </div>
                 <transition name="fade-karaoke">
                     <section v-if="!karaokeMode" class="w-full flex flex-1 items-center" :class="{'pl-8' : isNormal }">
-                        <DistanceTracker class="mt-3" v-if="screen.options.component === ScreenAComponents.WWR" />
+                        <DistanceTracker class="mt-3" v-if="screen.options.component === ScreenAComponents.WWR" :event="event" />
                         <template v-else>
                             <div class="h-48" style="width: 300px; min-width: 300px" v-if="isNormal">
-                                <Logo class="w-auto" :style="logoStyle"/>
+                                <Logo class="w-auto" :style="logoStyle" :event="event"/>
                             </div>
                             <div class="w-full flex pb-3">
-                                <Information class="self-end flex pb-3" v-if="screen.options.component === ScreenAComponents.INFORMATION && hasInformation" size="big" showTitle :information="screen.options.information.information" />
-                                <DefaultText class="self-end flex pb-3" v-if="screen.options.component === ScreenAComponents.DEFAULTTEXT" size="big" showTitle :textContent="screen.options" />
+                                <Information class="self-end flex pb-3" v-if="screen.options.component === ScreenAComponents.INFORMATION && hasInformation" size="big" showTitle :information="screen.options.information.information" :event="event" />
+                                <DefaultText class="self-end flex pb-3" v-if="screen.options.component === ScreenAComponents.DEFAULTTEXT" size="big" showTitle :textContent="screen.options" :event="event" />
                                 <template v-if="screen.options.component === ScreenAComponents.QUESTION && screen.options.question.question != null" class="w-full flex flex-col items-end" :class="{ 'pt-2': isNormal }">
                                     <div v-if="screen.options.question.view === ScreenAQuestionViews.WINNER" class="w-full flex flex-col items-end" :class="{ 'pt-2': isNormal }">
                                         <div class="w-full" :class="isDobbel ? 'mt-8' : ''">
-                                            <QuestionWinner :isDobbel="isDobbel" :question="screen.options.question.question" :options="screen.options.question" />
+                                            <QuestionWinner :isDobbel="isDobbel" :question="screen.options.question.question" :options="screen.options.question" :event="event" />
                                         </div>
                                     </div>
                                 </template>
-                                <DonationBar v-if="screen.options.component === ScreenAComponents.DONATION" :size="isNormal ? 'normal': 'small'" :showResults="screen.options.donation.showResults" />
+                                <DonationBar v-if="screen.options.component === ScreenAComponents.DONATION" :size="isNormal ? 'normal': 'small'" :showResults="screen.options.donation.showResults" :event="event" />
                             </div>
                         </template>
                     </section>
@@ -39,7 +39,7 @@
         </div>
         <div class="h-full overflow-y-auto pl-2 pr-20" :class="{'w-2/6': isNormal, 'w-7/12 flex shadow-over-bottom': isDobbel }">
             <transition name="fade" mode="out-in" duration="500">
-                <component v-bind:is="sideComponent" :columns="isDobbel ? 2: 1" />
+                <component v-bind:is="sideComponent" :columns="isDobbel ? 2: 1" :event="event" />
             </transition>
         </div>
     </section>
@@ -74,13 +74,9 @@ export default {
         DefaultText,
         Empty,
     },
-    data: () => ({
-        dummyVideo: false, // Quickfix because it was showing up in production
-    }),
-    props: ['screen', 'logoStyle'],
+    props: ['screen', 'logoStyle', 'event'],
     computed: {
         ...mapModels(['ScreenAComponents', 'ScreenAQuestionViews']),
-        ...mapGetters('events', ['currentEvent']),
         isNormal() {
             return this.screen.options.squeezeBackSize == 'normal'
         },

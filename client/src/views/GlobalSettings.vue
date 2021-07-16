@@ -6,6 +6,7 @@
                 <Field name="btv.canCheckin" label="Show live event in APP" type="boolean" inline />
                 <p>Note: If the user is already checked in this has no effect before app v3.6.3</p>
                 <Field v-if="screenEventEnabled" name="screen.eventId" label="Event for screens" :options="filteredEvents" type="select" :selectLabel="label" selectKey="id" />
+                <Field name="screen.debug" label="Show debug info on screens" type="boolean" inline />
             </Form>
             <button class="btn btn-green" type="button" @click="saveSettings">
                 {{$t('actions.save')}}
@@ -27,7 +28,7 @@ export default {
                 screen: {},
             },
             remoteConfig: null,
-            screenEventEnabled: false,
+            screenEventEnabled: true,
         }
     },
     methods: {

@@ -70,7 +70,7 @@ import { crono } from 'vue-crono'
 import EventBus from '@/utils/eventBus.js'
 import _ from 'lodash'
 export default {
-    props: ['options'],
+    props: ['options', 'event'],
     data: function(){
         return {
             loaded: false,
@@ -87,7 +87,6 @@ export default {
     },
     mixins: [Translation, crono],
     computed: {
-        ...mapGetters('events', ['currentEvent']),
         ...mapGetters('questions', ['answersByQuestionId']),
         ...mapModels(['LEDQuestionViews']),
         pre() {
@@ -130,7 +129,7 @@ export default {
             this.answers = await this.answersByQuestionId(this.options.question.id);
         },
         async updateStats() {
-            await Api.updateResponsesStats(this.currentEvent.id, this.options.question.id)
+            await Api.updateResponsesStats(this.event.id, this.options.question.id)
                 .then((result) => {
                     this.stats = result.data;
                 });

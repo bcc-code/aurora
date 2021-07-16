@@ -11,8 +11,14 @@
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex'
 export default {
+    props: ['event'],
     computed: {
-        ...mapGetters('inquiries', ['currentInquiry'])
+        currentInquiry: function() {
+            if (!this.event.currentInquiry) {
+                return null
+            }
+            return this.event.currentInquiry
+        },
     },
 }
 </script>

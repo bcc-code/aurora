@@ -17,7 +17,7 @@ export default {
     components: {
        SquareLayout
     },
-    props: ['options'],
+    props: ['options', 'event'],
     data: function(){
         return {
             pictures:[],
@@ -31,13 +31,13 @@ export default {
                 horizontal: false,
                 align: 'center',
             },
-
+            feed: [],
+            queue: [],
+            additionalFeed: [],
         }
     },
     computed: {
-        ...mapState('contributions', ['queue']),
-        ...mapGetters('contributions', ['feed']),
-        ...mapGetters('events', ['currentEvent']),
+        ...mapGetters('contributions', [ 'queueByEventIdRef', 'feedByEventIdRef']),
         numberOfColumns(){
             return parseInt(this.options.columns)
         },
@@ -52,11 +52,10 @@ export default {
         }
     },
     methods: {
-        ...mapActions('contributions', ['bindFeedRef', 'bindQueueRef']),
         filterPictures(list) {
             return list == null ? [] : list.filter(el => el.imageUrl != null && el.imageUrl.length > 0);
         },
-        loadPictures(){
+        async loadPictures(){
             this.pictures= [];
             var allPictures = this.filterPictures(this.feed).concat(...this.filterPictures(this.queue));
             var first = allPictures.slice(0,this.SIZE);
@@ -89,10 +88,15 @@ export default {
         }
     },
     async mounted(){
-        if (this.currentEvent != null) {
-            await this.bindFeedRef(this.currentEvent.additionalFeed);
-            await this.bindQueueRef();
-            this.loadPictures();
+        if (this.event != null) {
+            this.feed = (await this.feedByEventIdRef(this.event.id).get()).docs.map(x => x.data());
+            this.queue = (await this.queueByEventIdRef(this.event.id).get()).docs.map(x => x.data());
+
+            if (this.event.additionalFeed && this.event.additionalFeed.length > 0 && this.event.additionalFeed > 0 ) {
+                this.additionalFeed = (await this.feedByEventIdRef(this.event.additionalFeed).get()).docs.map(x => x.data());
+            }
+
+            await this.loadPictures();
             this.$cron.start('checkLoaded');
         }
     },
@@ -123,6 +127,7 @@ export default {
     max-width: 300%;
     min-width: 100%;
     max-height: 100%;
+    min-height: 100%;
 }
 
 @keyframes moveUp {

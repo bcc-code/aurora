@@ -12,6 +12,9 @@ export default {
         bindConfigRef: firestoreAction(context => {
             return context.bindFirestoreRef('config', context.getters.configRef)
         }),
+        bindScreenConfigRef: firestoreAction(context => {
+            return context.bindFirestoreRef('screenConfig', context.getters.screenConfigRef)
+        }),
     },
     getters: {
         configRef: () => {

@@ -1,10 +1,12 @@
 import { firestoreAction  } from 'vuexfire'
+import { db } from '@/data/db.js'
 
 export default {
     namespaced: true,
     state: {
         screens: [],
         currentScreens: [],
+        activeScreens: [],
         screenPreviewOptions: {},
     },
     mutations: {
@@ -16,6 +18,11 @@ export default {
         }),
         bindCurrentScreens: firestoreAction(context => {
             return context.bindFirestoreRef('currentScreens', context.getters.currentScreensRef)
+        }),
+        bindActiveScreens: firestoreAction(async context => {
+            const config = (await context.rootGetters['configs/screenConfigRef'].get()).data()
+            const screens = db.collection(`events/${config.eventId}/screens`)
+            return context.bindFirestoreRef('activeScreens', screens);
         }),
         createScreen: firestoreAction((context, newScreen) => {
             return context.rootGetters['events/eventsRef'].doc(newScreen.eventId)
@@ -42,7 +49,7 @@ export default {
             return state.screens.find((el) => el.id == id);
         },
         currentScreenFromId: (state) => (id) => {
-            return state.currentScreens.find((el) => el.id == id);
+            return state.activeScreens.find((el) => el.id == id);
         },
         currentScreensRef: (state, getters, rootState, rootGetters) => {
             if (rootGetters['events/eventRef'] == null)

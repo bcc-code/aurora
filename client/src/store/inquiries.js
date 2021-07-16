@@ -15,7 +15,7 @@ export default {
             return context.bindFirestoreRef('queue', context.getters.inquiriesQueueRef.orderBy('order'))
         }),
         toggleSendInquiriesFlag: firestoreAction(async (context, flagValue) => {
-            return context.rootGetters['events/selectedEventRef'].update({ 
+            return context.rootGetters['events/selectedEventRef'].update({
                 canSendInquiries: flagValue
             });
         }),
@@ -24,7 +24,7 @@ export default {
             return context.getters.inquiriesRef.doc(inquiry.id).delete()
         }),
         showInquiry: firestoreAction((context, inquiry) => {
-            return context.rootGetters['events/selectedEventRef'].update({ 
+            return context.rootGetters['events/selectedEventRef'].update({
                 currentInquiry: inquiry == null ? null : context.getters.inquiriesQueueRef.doc(inquiry.id)
             });
         }),

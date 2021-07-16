@@ -7,7 +7,7 @@
                 <div class="relative">
                     <transition-group name="fade">
                         <ChurchDetails class="absolute top-0 h-full w-full px-12" key="detail"
-                            v-if="focusedChurch != null"  
+                            v-if="focusedChurch != null"
                             @close="selectedChurch = null"
                             :church="focusedChurch" />
                         <Leaderboard class="absolute top-0 h-full w-full px-12" key="top"
