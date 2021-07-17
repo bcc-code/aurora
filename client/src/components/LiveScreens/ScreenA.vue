@@ -21,7 +21,7 @@
                                 <Logo class="w-auto" :style="logoStyle"/>
                             </div>
                             <div class="w-full flex pb-3">
-                                <Information class="self-end flex pb-3" v-if="screen.options.component === ScreenAComponents.INFORMATION && hasInformation" size="big" showTitle :information="screen.options.information.information" />
+                                <Information class="self-end flex pb-3" v-if="screen.options.component === ScreenAComponents.INFORMATION && hasInformation" size="big" showTitle :showBackground="false" :information="screen.options.information.information" />
                                 <DefaultText class="self-end flex pb-3" v-if="screen.options.component === ScreenAComponents.DEFAULTTEXT" size="big" showTitle :textContent="screen.options" />
                                 <template v-if="screen.options.component === ScreenAComponents.QUESTION && screen.options.question.question != null" class="w-full flex flex-col items-end" :class="{ 'pt-2': isNormal }">
                                     <div v-if="screen.options.question.view === ScreenAQuestionViews.WINNER" class="w-full flex flex-col items-end" :class="{ 'pt-2': isNormal }">

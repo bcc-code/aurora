@@ -1,5 +1,11 @@
 # Changelog
 
+## \[1.6.2\] - 17.07.2021
+
+### Changed
+
+* Info-box now has prop to hide background when used as a component on screen A.
+
 ## \[1.6.1\] - 17.07.2021
 
 ### Changed
