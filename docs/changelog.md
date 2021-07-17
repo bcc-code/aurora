@@ -1,5 +1,11 @@
 # Changelog
 
+## \[1.6.1\] - 17.07.2021
+
+### Changed
+
+* Design on feed info-box, because text was white against white bg.
+
 ## \[1.6.0\] - 14.07.2021
 
 ### Fixed
