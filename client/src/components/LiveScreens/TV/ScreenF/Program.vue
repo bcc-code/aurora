@@ -1,15 +1,15 @@
 <template>
-	<div
+	<div 
     v-if="upcoming.length > 0"
     style="margin-bottom: 103px; margin-left: 200px; width: 1720px; height:155px;"
     class="program text-left absolute bottom-0 pl-20 flex w-full justify-start bg-primary-dark rounded-l-xl overflow-hidden">
-        <transition-group
+        <transition-group 
         tag="div"
         name="slide-up"
         class="text-4xl flex flex-no-wrap whitespace-no-wrap items-center text-white">
                 <div class="program-item mr-2 flex-shrink-0"
                     :class="{ 'program-item-current font-semibold': isCurrent(programElement)}"
-                    v-for="programElement in upcoming"
+                    v-for="programElement in upcoming" 
                     :key="programElement.id">
                     <img class="h-11 inline-block mr-1 -mt-3 max-w-full"
                         :src="`/images/timeline/${ProgramElementTypeLabel[programElement.type].toLowerCase().trim()}.svg`"

@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-	</section>
+	</section>	
 </template>
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
