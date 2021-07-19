@@ -5,8 +5,7 @@ import keys from '@/utils/keys'
 export default {
     namespaced: true,
     state: {
-        config: {},
-        screenConfig: {},
+        config: {}
     },
     actions: {
         bindConfigRef: firestoreAction(context => {
@@ -25,12 +24,6 @@ export default {
         },
         btvConfig: (state) => {
             return state.config
-        },
-        screenConfigRef: () => {
-            return db.collection('configs').doc('screens')
-        },
-        screenConfig: (state) => {
-            return state.screenConfig
         },
     }
 }

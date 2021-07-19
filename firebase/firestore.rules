@@ -4,51 +4,58 @@ service cloud.firestore {
     function isServiceAccount() {
       return request.auth.token.email == "screens@bcc.online";
     }
+
     function isAdmin() {
       return exists(/databases/$(database)/documents/permissions/$(request.auth.token.personId));
     }
 
-    function isGuardianOf() {
-      return
-        (
-        "guardian1Id" in get(/databases/$(database)/documents/users/$(resource.data.personId)).data &&
-        get(/databases/$(database)/documents/users/$(resource.data.personId)).data.guardian1Id == request.auth.token.personId
-        ) || (
-        "guardian2Id" in get(/databases/$(database)/documents/users/$(resource.data.personId)).data &&
-        get(/databases/$(database)/documents/users/$(resource.data.personId)).data.guardian2Id == request.auth.token.personId
-        )
-    }
     function isPerson(personId) {
       return request.auth.token.personId == personId;
     }
+
     function isLoggedIn() {
       return request.auth != null;
     }
-	match /users/{userId} {
-		allow read: if isServiceAccount() || isPerson(resource.data.personId) || isAdmin();
-		allow update: if isAdmin() || isPerson(resource.data.personId);
-		allow write: if false;
-	}
+
+    match /user-groups/bcc {
+      allow read: if true;
+      allow write: if false;
+
+      match /users/{userId} {
+        allow read: if isServiceAccount();
+        allow read, update: if isAdmin() || isPerson(userId);
+        allow write: if false;
+      }
+    }
+
     match /{documentId=**} {
       allow read, write: if isAdmin();
     }
+
     match /churches/{churchId} {
       allow read: if isServiceAccount();
     }
+
     match /competitions/{competitionId=**} {
       allow read: if isLoggedIn();
     }
+
     match /buk-games/{bukGameId=**} {
       allow read: if isServiceAccount();
     }
+
     match /configs/{configId=**} {
       allow read: if isLoggedIn();
     }
+
     match /templates/{templateId=**} {
       allow read: if isServiceAccount();
     }
+
     match /events/{eventId} {
+
       allow get: if isLoggedIn();
+
       match /checkins/{checkinId} {
         allow get: if isPerson(checkinId) || isPerson(resource.data.checkedInBy) || resource == null;
         allow list: if isServiceAccount();
@@ -63,32 +70,33 @@ service cloud.firestore {
       match /counters/{counter=**} {
        allow read: if isLoggedIn();
       }
+
       match /program/{programId=**} {
         allow read: if isLoggedIn();
       }
       match /questions/{questionId=**} {
         allow read: if isLoggedIn();
       }
+
       match /inquiries-queue/{feedItemId=**} {
         allow read: if isServiceAccount();
       }
       match /feed-approved/{feedItemId=**} {
         allow read: if isServiceAccount();
       }
+
       match /feed-outgoing/{feedItemId} {
         match /private/{doc} {
             // There is techincally no reason for the person to read back their own id either
             // we just need to keep it as a reference
             allow read: if false;
         }
+
         allow read: if isServiceAccount() || isLoggedIn();
         allow list: if isServiceAccount() || isLoggedIn();
       }
       match /responses/{responseId=**} {
-        allow read: if isServiceAccount()
-                    || isPerson(resource.data.personId)
-                    || isGuardianOf()
-                    || resource == null;
+        allow read: if isServiceAccount() || isPerson(resource.data.personId) || resource == null;
       }
       match /screens/{screenId=**} {
         allow read, write: if isServiceAccount();
