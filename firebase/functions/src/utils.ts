@@ -26,6 +26,8 @@ interface Config {
         name: string,
         id: string,
         impexBucket: string,
+        donationsUrl: string,
+        donationsApiKey: string,
     },
     members: {
         apiKey: string,

@@ -9,7 +9,7 @@ const log = logger('utilsHandler')
 export async function getDonationURL(req: Request, res: Response) : Promise<void> {
     const personId: string | null = getPersonId(req);
 
-    const url = config.app.donationsUrl as string
+    const url = config.app.donationsUrl
     const token = Buffer.from(`${config.app.donationsApiKey}:${personId}`).toString('base64')
 
     let outUrl = "https://donation.bcc.no/"
