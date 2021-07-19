@@ -34,22 +34,27 @@ beforeEach(async () => {
     await perms.doc("1").set({"role": "administrator"}, {})
 
     let user = adminApp.firestore().collection("users")
-    await user.doc("1").set({"personId": "1"}, {})
-    await user.doc("2").set({"personId": "2"}, {})
+    await user.doc("1").set({"personId": 1}, {})
+    await user.doc("2").set({"personId": 2}, {})
+    await user.doc("3").set({"personId": 3, "guardianId1": 2}, {})
 
-    await adminApp.firestore().collection("/events/34/responses").doc("23").set({personId: "2"});
-    await adminApp.firestore().collection("/events/34/responses").doc("24").set({personId: "3"});
-    await adminApp.firestore().collection("/events/34/checkins").doc("1").set({personId: "1", checkedInBy: "1"});
-    await adminApp.firestore().collection("/events/34/checkins").doc("2").set({personId: "2", checkedInBy: "2"});
-    await adminApp.firestore().collection("/events/34/checkins").doc("3").set({personId: "3", checkedInBy: "3"});
+    await adminApp.firestore().collection("/events/34/responses").doc("23").set({personId: 2});
+    await adminApp.firestore().collection("/events/34/responses").doc("24").set({personId: 3});
+    await adminApp.firestore().collection("/events/34/checkins").doc("1").set({personId: 1, checkedInBy: 1});
+    await adminApp.firestore().collection("/events/34/checkins").doc("2").set({personId: 2, checkedInBy: 2});
+    await adminApp.firestore().collection("/events/34/checkins").doc("3").set({personId: 3, checkedInBy: 3});
 
     await adminApp.firestore().collection("/events/34/feed-outgoing").doc("1").set({"name": "John Smith"});
-    await adminApp.firestore().collection("/events/34/feed-outgoing/1/privte").doc("1").set({personId: "1"});
+    await adminApp.firestore().collection("/events/34/feed-outgoing/1/privte").doc("1").set({personId: 1});
 
     await adminApp.firestore().collection("/events/34/feed-outgoing").doc("2").set({"name": "Jane Doe"});
-    await adminApp.firestore().collection("/events/34/feed-outgoing/2/private").doc("person").set({personId: "2"});
+    await adminApp.firestore().collection("/events/34/feed-outgoing/2/private").doc("person").set({personId: 2});
 
     await adminApp.firestore().collection("/events/34/counters/").doc("contributionsCount").set({count: 17});
+
+    await adminApp.firestore().collection("/events/34/responses/").doc("1").set({personId: 1})
+    await adminApp.firestore().collection("/events/34/responses/").doc("2").set({personId: 2})
+    await adminApp.firestore().collection("/events/34/responses/").doc("3").set({personId: 3})
 });
 
 before(async () => {
@@ -77,8 +82,8 @@ after(async () => {
     console.log(`View firestore rule coverage information at ${coverageFile}\n`);
 });
 
-const user = { uid: "2@person.id", personId: "2", email: "user@example.com" };
-const adminUser = { uid: "1@person.id", personId: "1", email: "admin@example.com" };
+const user = { uid: "2@person.id", personId: 2, email: "user@example.com" };
+const adminUser = { uid: "1@person.id", personId: 1, email: "admin@example.com" };
 
 describe("BCC.online", () => {
     it("new collections permitted only for admins", async () => {
@@ -93,10 +98,10 @@ describe("BCC.online", () => {
 
     it("User should be able to read only their user doc", async () => {
         let db = getAuthedFirestore(user);
-        var notMine = db.collection("/user-groups/bcc/users").doc("1");
+        var notMine = db.collection("users").doc("1");
         await firebase.assertFails(notMine.get());
 
-        var mine = db.collection("/user-groups/bcc/users").doc("2");
+        var mine = db.collection("users").doc("2");
         await firebase.assertSucceeds(mine.get());
     });
 
@@ -130,7 +135,13 @@ describe("BCC.online", () => {
         await firebase.assertSucceeds(db.collection("/events/34/checkins").doc("2").get());
         await firebase.assertSucceeds(db.collection("/events/34/feed-outgoing").doc("1").get());
         await firebase.assertSucceeds(db.collection("/events/34/feed-outgoing").doc("2").get());
+    });
 
+    it("should allow a guardian access to childrens poll answers", async () => {
+        let db = getAuthedFirestore(user);
+        await firebase.assertSucceeds(db.collection("/events/34/responses").doc("2").get());
+        await firebase.assertFails(db.collection("/events/34/responses").doc("1").get());
+//        await firebase.assertSucceeds(db.collection("/events/34/responses").doc("3").get());
     });
 
     it("should allow logged in users to read counters", async () => {
@@ -145,7 +156,6 @@ describe("BCC.online", () => {
         await firebase.assertFails(db.collection("/events/34/responses").doc("24").get());
         await firebase.assertFails(db.collection("/event-groups/").doc("bcc").get());
         await firebase.assertFails(db.collection("/event-groups/bcc/users/").doc("123").get());
-        await firebase.assertFails(db.collection("/users").doc("2").get());
         await firebase.assertFails(db.collection("/users").doc("3").get());
         await firebase.assertFails(db.collection("/permissions").doc("2").get());
         await firebase.assertFails(db.collection("/permissions").doc("3").get());
@@ -154,6 +164,9 @@ describe("BCC.online", () => {
         await firebase.assertFails(db.collection("/events/34/checkins").doc("3").get());
         await firebase.assertFails(db.collection("/events/34/feed-outgoing/1/private").doc("person").get());
         await firebase.assertFails(db.collection("/events/34/feed-outgoing/2/private").doc("person").get());
+
+        // Accessing own user:
+        await firebase.assertSucceeds(db.collection("/users").doc("2").get());
     });
 
     it("should be not be able to create a response directly", async () => {
