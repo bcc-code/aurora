@@ -1,5 +1,27 @@
 # Changelog
 
+## \[1.6.0\] - 14.07.2021
+
+### Fixed
+
+* Don't crash if there is no program element
+* 
+### Changed
+
+* Remove faded BG #25249229
+* Adjust scroll speed of image grid
+* Made images in grid all square
+
+### Added
+
+* Members Sync
+  * Every week sync data of the user (on action)
+  * Sync children data automatically
+* Allow API requests to stateless checkin (web)
+* Add World map to L&R screens
+* Allow shuffling of auto-pushed elements
+* Fake checkin coordinates based on the church location
+
 ## \[1.5.0\] - 01.07.2021
 
 ### Fixed
