@@ -85,7 +85,6 @@ export default {
                 this.newDeskEntry.date = Date.now();
                 await this.addToDeskRef(this.newDeskEntry).then((result) => {
                     this.$toasted.success(this.$t('queue.element-added'));
-                    this.newDeskEntry = { type: 1 };
                 });
             }
         }
