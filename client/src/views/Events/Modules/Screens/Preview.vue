@@ -14,7 +14,7 @@
         </section>
         <section class="col-span-full lg:col-span-3 relative" v-if="previewScreen != null" ref="preview" :style="{ paddingTop: paddingTop }">
             <PreviewScreen :screen="previewScreen"
-                :defaultBackground="selectedEvent.background.computedValue"
+                :overrideEvent="selectedEvent"
                 :style="{ transform: `scale(${scale})` }"
                 style="transform-origin: top left;" />
         </section>

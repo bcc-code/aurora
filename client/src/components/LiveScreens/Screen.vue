@@ -1,17 +1,17 @@
 <template>
     <section v-if="loaded" class="absolute inset-0 overflow-hidden outline-red flex justify-center items-center flex-column text-center" :style="{ height: `${screen.size.height}px`, width: `${screen.size.width}px` }">
         <Overscan />
-        <LedScreen v-if="'LRME'.includes(screen.id[0])" :screen="screen" :event="screenEvent" />
-        <ScreenF v-else-if="screen.id == 'F'" :screen="screen" :event="screenEvent" />
-        <ScreenA v-else-if="screen.id == 'A'" :screen="screen" :logoStyle="customStyle.logo" :event="screenEvent" />
+        <LedScreen v-if="'LRME'.includes(screen.id[0])" :screen="screen" :event="selectedEvent" />
+        <ScreenF v-else-if="screen.id == 'F'" :screen="screen" :event="selectedEvent" />
+        <ScreenA v-else-if="screen.id == 'A'" :screen="screen" :logoStyle="customStyle.logo" :event="selectedEvent" />
         <div v-if="screen.options.showBackground" class="absolute inset-0 bg-cover object-cover -z-1" :style="backgroundStyle">
             <video v-if="backgroundVideo != ''"  class="absolute inset-0 bg-cover object-cover -z-1" autoplay muted loop>
                 <source :src="backgroundVideo" type="video/mp4">
             </video>
         </div>
         <div class="debug" v-if="screenConfig.debug">
-            {{screenEvent.id}}: {{screenEvent.name}}<br />
-            {{screenConfig}}
+            Showing: {{selectedEvent.id}} - {{selectedEvent.name}}<br />
+            Global config: {{screenConfig}}
         </div>
     </section>
 </template>
@@ -73,6 +73,7 @@ export default {
     },
     props: {
         screen: { type: Object, required: true },
+        overrideEvent: { type: Object, default: null }
     },
     methods: {
         ...mapActions('events', ['bindScreenEvent']),
@@ -83,10 +84,17 @@ export default {
     },
     data: () => ({
         loaded: false,
+        selectedEvent: null,
     }),
     async mounted() {
-        await this.bindScreenEvent()
-        await this.bindScreenConfigRef()
+        if (this.overrideEvent != null) {
+            this.selectedEvent = this.overrideEvent
+        } else {
+            await this.bindScreenEvent()
+            await this.bindScreenConfigRef()
+            this.selectedEvent = this.screenEvent
+        }
+
         this.loaded = true
     },
     watch: {
