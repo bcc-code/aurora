@@ -62,13 +62,13 @@ export default {
                 }
             }
             return {
-                primaryColor: this.screenEvent.style.primaryColor.computedValue || "",
-                primaryColorDark: this.screenEvent.style.primaryColorDark.computedValue || "",
-                logo: this.screenEvent.style.logo.computedValue || "",
+                primaryColor: this.selectedEvent.style.primaryColor.computedValue || "",
+                primaryColorDark: this.selectedEvent.style.primaryColorDark.computedValue || "",
+                logo: this.selectedEvent.style.logo.computedValue || "",
             }
         },
         defaultBackground() {
-            return this.screenEvent.background.computedValue
+            return this.selectedEvent.background.computedValue
         },
     },
     props: {
