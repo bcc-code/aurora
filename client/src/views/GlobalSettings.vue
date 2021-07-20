@@ -15,7 +15,7 @@
 	</section>
 </template>
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 export default {
     data: function() {
         return {
@@ -29,15 +29,28 @@ export default {
     },
     methods: {
         ...mapActions('configs', ['bindConfigRef']),
+        ...mapActions('events', ['bindEvents']),
         async saveSettings() {
             await this.btvConfigRef.set(this.data);
-        }
+        },
+        label(x) {
+            return x.name;
+        },
+
+        id(x) {
+            return x.id;
+        },
     },
     computed: {
         ...mapGetters('configs', ['btvConfigRef', 'btvConfig']),
+        ...mapState('events', ['events']),
+        filteredEvents() {
+            return this.events.filter((event) => event.archived == (this.selectedTab == 'archive'))
+        },
     },
     async mounted(){
         await this.bindConfigRef();
+        await this.bindEvents();
         this.data = (await this.btvConfigRef.get()).data();
         this.loaded = true;
     },
