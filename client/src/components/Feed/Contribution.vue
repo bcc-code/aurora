@@ -1,5 +1,6 @@
 <template>
-    <div class="rounded-xl m-2 mb-8" :class="theme == 'tv' ? 'bg-primary': 'bg-slate'" v-if="loaded">
+    <div class="rounded-xl m-2 mb-8" :class="theme == 'tv' ? 'bg-primary': 'bg-slate'">
+        <div v-if="loaded">
         <div class="text-white leading-tight py-6 px-8 text-left">
             <p class="font-semibold" :class="isBig ? 'text-4xl' : 'text-xl'">{{ displayName }}</p>
             <p class="opacity-50" :class="isBig ? 'text-3xl' : 'text-lg'">{{ churchAndCountry }}</p>
@@ -7,6 +8,7 @@
         <p v-if="contribution.text" class="py-6 px-8 shadow-top" :class="[isBig ? 'text-3xl' : 'text-xl', {'rounded-b-xl': !hasPicture }, theme == 'tv' ? 'bg-primary-dark': 'bg-slate-dark']">{{contribution.text}}</p>
         <div v-if="hasPicture" :class="{'shadow-over': !contribution.text}">
             <img :src="contribution.imageUrl" class="w-full rounded-b-xl" />
+        </div>
         </div>
     </div>
 </template>
