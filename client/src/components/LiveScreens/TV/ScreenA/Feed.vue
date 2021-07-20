@@ -45,7 +45,6 @@ export default {
         if (this.event != null) {
             await this.bindFeedRefByEvent(this.event);
             this.loaded = true;
-            console.dir(this.latestScreenFeed);
         }
     },
     methods: {
