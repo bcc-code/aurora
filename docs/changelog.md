@@ -1,5 +1,12 @@
 # Changelog
 
+## \[1.6.3\] - 18.07.2021
+
+### Changed
+
+* Reverted security rules revert
+* Do not reset "Desk" form after submit
+
 ## \[1.6.2\] - 17.07.2021
 
 ### Changed
