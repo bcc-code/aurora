@@ -86,6 +86,9 @@ export default {
                 await this.addToDeskRef(this.newDeskEntry).then((result) => {
                     this.$toasted.success(this.$t('queue.element-added'));
                     this.newDeskEntry = { type: 1 };
+                    for (const p in this.newDeskEntry) {
+                        newDeskEntry[p] = this.newDeskEntry[p]
+                    }
                 });
             }
         }
