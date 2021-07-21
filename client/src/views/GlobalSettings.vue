@@ -31,7 +31,8 @@ export default {
         ...mapActions('configs', ['bindConfigRef']),
         ...mapActions('events', ['bindEvents']),
         async saveSettings() {
-            await this.btvConfigRef.set(this.data);
+            await this.btvConfigRef.set(this.data.btv);
+            await this.screenConfigRef.set(this.data.screen);
         },
         label(x) {
             return x.name;
@@ -42,7 +43,7 @@ export default {
         },
     },
     computed: {
-        ...mapGetters('configs', ['btvConfigRef', 'btvConfig']),
+        ...mapGetters('configs', ['btvConfigRef', 'btvConfig', 'screenConfig', 'screenConfigRef']),
         ...mapState('events', ['events']),
         filteredEvents() {
             return this.events.filter((event) => event.archived == (this.selectedTab == 'archive'))
@@ -51,7 +52,8 @@ export default {
     async mounted(){
         await this.bindConfigRef();
         await this.bindEvents();
-        this.data = (await this.btvConfigRef.get()).data();
+        this.data.btv = (await this.btvConfigRef.get()).data();
+        this.data.screen = (await this.screenConfigRef.get()).data();
         this.loaded = true;
     },
 }
