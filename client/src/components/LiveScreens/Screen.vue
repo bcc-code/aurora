@@ -91,10 +91,10 @@ export default {
             this.selectedEvent = this.overrideEvent
         } else {
             await this.bindScreenEvent()
-            await this.bindScreenConfigRef()
             this.selectedEvent = this.screenEvent
         }
 
+        await this.bindScreenConfigRef()
         this.loaded = true
     },
     watch: {
