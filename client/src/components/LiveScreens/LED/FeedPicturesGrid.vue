@@ -57,7 +57,9 @@ export default {
         },
         async loadPictures(){
             this.pictures= [];
-            var allPictures = this.filterPictures(this.feed).concat(...this.filterPictures(this.queue));
+            var allPictures = this.filterPictures(this.feed).
+                concat(...this.filterPictures(this.queue)).
+                concat(...this.filterPictures(this.additionalFeed));
             var first = allPictures.slice(0,this.SIZE);
             var next = [...first];
             var i = 1
@@ -91,7 +93,6 @@ export default {
         if (this.event != null) {
             this.feed = (await this.feedByEventIdRef(this.event.id).get()).docs.map(x => x.data());
             this.queue = (await this.queueByEventIdRef(this.event.id).get()).docs.map(x => x.data());
-
             if (this.event.additionalFeed && this.event.additionalFeed.length > 0 && this.event.additionalFeed > 0 ) {
                 this.additionalFeed = (await this.feedByEventIdRef(this.event.additionalFeed).get()).docs.map(x => x.data());
             }

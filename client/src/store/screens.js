@@ -31,14 +31,14 @@ export default {
         updateScreen: firestoreAction((context, screen) => {
             return context.getters.screensRef.doc(screen.id).set({ ...screen});
         }),
-        refreshScreen: firestoreAction((context, screenId) => {
-            return context.getters.screensRef.doc(screenId).update({ refresh: true });
+        refreshScreen: firestoreAction((context, eventId, screenId) => {
+            return db.doc(`events/${eventId}/screens/${screenId}`).update({ refresh: true });
         }),
-        refreshedScreen: firestoreAction((context, screenId) => {
-            return context.getters.currentScreensRef.doc(screenId).update({ refresh: false, needRefresh: false });
+        refreshedScreen: firestoreAction((context, eventId, screenId) => {
+            return db.doc(`events/${eventId}/screens/${screenId}`).update({ refresh: false, needRefresh: false });
         }),
-        needRefreshScreen: firestoreAction((context, screenId) => {
-            return context.getters.currentScreensRef.doc(screenId).update({ needRefresh: true });
+        needRefreshScreen: firestoreAction((context, eventId, screenId) => {
+            return db.doc(`events/${eventId}/screens/${screenId}`).update({ needRefresh: true });
         })
     },
     getters: {
@@ -50,6 +50,9 @@ export default {
         },
         currentScreenFromId: (state) => (id) => {
             return state.activeScreens.find((el) => el.id == id);
+        },
+        screenRefFromId: () => (eventId, screenId) => {
+            return db.doc(`events/${eventId}/screens/${screenId}`)
         },
         currentScreensRef: (state, getters, rootState, rootGetters) => {
             if (rootGetters['events/eventRef'] == null)

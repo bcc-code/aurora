@@ -54,7 +54,7 @@ export default {
             return ""
         },
         customStyle() {
-            if (this.screenEvent == null) {
+            if (this.selectedEvent == null) {
                 return {
                    primaryColor: "",
                    primaryColorDark: "",
