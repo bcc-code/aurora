@@ -73,17 +73,13 @@ export default {
             const grid = this.$refs.grid.$el;
             const gridHeight = grid.style.height;
             if (gridHeight != null && gridHeight.length > 0 && gridHeight != '0px'){
-                const firstElement = grid.children[0];
-                if (grid.children.length > this.numberOfColumns){
-                    const nextAppearance = grid.children[this.numberOfColumns];
-                    const height = nextAppearance.offsetTop - firstElement.offsetTop;
-                    grid.style.setProperty('--height', `-${height}px`);
-                }
+                const screenHeight = parseInt(grid.parentNode.style.height.substr(0, grid.parentNode.style.height.length-1));
+                const gridHeightNum = gridHeight.substr(0, gridHeight.length-2);
+                grid.style.setProperty('--height', '-' + (gridHeightNum - screenHeight) + 'px');
                 grid.classList.add('grid-animate');
 
                 const rowDuration = 30;
-                const screenHeight = parseInt(grid.parentNode.style.height.substr(0, grid.parentNode.style.height.length-1));
-                const d = Math.ceil(gridHeight.substr(0, gridHeight.length-2) / screenHeight) * rowDuration
+                const d = Math.ceil(gridHeight.substr(0, gridHeight.length-2) / (screenHeight - 1)) * rowDuration
                 grid.style.animationDuration = `${Math.floor(d).toFixed()}s`;
                 this.$cron.stop('checkLoaded');
             }
@@ -117,7 +113,6 @@ export default {
 <style scoped>
 .grid-animate {
   animation: moveUp linear infinite;
-  --height: -1080px;
 }
 
 #grid>div{
