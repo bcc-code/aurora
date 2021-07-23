@@ -16,8 +16,6 @@
         <template v-if="!loaded" />
         <OneColumn v-else>
             <Form :entity="data" grid :columns="2" label-root="config" class="mb-5">
-                <Field name="btv.canCheckin" label="Show live event in APP" type="boolean" inline />
-                <p>Note: If the user is already checked in this has no effect before app v3.6.3</p>
                 <Field name="screen.eventId" label="Event for screens" :options="filteredEvents" type="select" :selectLabel="label" selectKey="id" />
                 <Field name="screen.debug" label="Show debug info on screens" type="boolean" inline />
             </Form>
@@ -34,7 +32,6 @@ export default {
         return {
             loaded: false,
             data: {
-                btv: {},
                 screen: {},
             },
             remoteConfig: null,
@@ -45,7 +42,6 @@ export default {
         ...mapActions('configs', ['bindConfigRef']),
         ...mapActions('events', ['bindEvents']),
         async saveSettings() {
-            await this.btvConfigRef.set(this.data.btv);
             await this.screenConfigRef.set(this.data.screen);
         },
         label(x) {
@@ -57,7 +53,7 @@ export default {
         },
     },
     computed: {
-        ...mapGetters('configs', ['btvConfigRef', 'btvConfig', 'screenConfig', 'screenConfigRef']),
+        ...mapGetters('configs', ['screenConfig', 'screenConfigRef']),
         ...mapState('events', ['events']),
         filteredEvents() {
             return this.events.filter((event) => event.archived == (this.selectedTab == 'archive'))
@@ -66,7 +62,6 @@ export default {
     async mounted(){
         await this.bindConfigRef();
         await this.bindEvents();
-        this.data.btv = (await this.btvConfigRef.get()).data();
         this.data.screen = (await this.screenConfigRef.get()).data();
         this.loaded = true;
     },
