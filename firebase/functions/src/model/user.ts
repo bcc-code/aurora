@@ -129,7 +129,7 @@ export class UserModel {
     }
 
     async updateFromMembers(personId: string, uid: string|null = null) : Promise<IUser> {
-        console.log("Runnign update for ", personId);
+        log.debug("Runnign update for ", personId);
         const uRef = this.userRef(personId)
         const data = (await uRef.get()).data() ?? {}
 

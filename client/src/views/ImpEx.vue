@@ -117,7 +117,7 @@ export default {
                 await api.exportData(this.toExport);
                 this.exportsList = (await api.listExports()).data.exportNames;
             } catch (e) {
-                console.log(e);
+                console.error(e);
                 this.errror = e;
             } finally {
                 this.working = false;
@@ -130,7 +130,7 @@ export default {
             try {
                 console.log(await api.importData(this.toImport));
             } catch (e) {
-                console.log(e);
+                console.error(e);
                 this.errror = e;
             } finally {
                 this.working = false;

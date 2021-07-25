@@ -154,7 +154,6 @@ export class PollModule extends Module {
         }
 
         const personId = userData.personId as number
-        console.log(personId, typeof questionId);
         // make sure we don't already have a response for this personId + qustionId
         const responseDoc = await this.response(personId.toFixed(), questionId).get()
         const questionDoc = await this.question(questionId).get()
