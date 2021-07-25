@@ -21,7 +21,7 @@ export default {
 	components: {
 		ProfilePicture
 	},
-	props: ['options'],
+	props: ['options', 'event'],
 	data: function(){
 		return {
 			layer0: [],
@@ -59,7 +59,7 @@ export default {
 				indexes.push(this.pattern[this.progress++]);
 				if (this.progress == this.pattern.length)
 					break;
-			}	
+			}
 			if (this.activeLayerIndex == 2 || this.activeLayerIndex == 0)
 				indexes.forEach((index) => { if (this.layer0[index] != null) this.layer0[index].visible = !this.layer0[index].visible })
 			if (this.activeLayerIndex == 1 || this.activeLayerIndex == 0)

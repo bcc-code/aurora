@@ -1,18 +1,13 @@
 <template>
     <div class="leading-tight checkins-counter">
         <div class="checkins-intro">You are watching with</div>
-        <div class="checkins-count">{{userCount}}</div>
+        <div class="checkins-count" v-if="event.checkedInUsers > 0">{{event.checkedInUsers}}</div>
         <div class="checkins-users">friends</div>
     </div>
 </template>
 <script>
-import { mapGetters } from 'vuex'
-
 export default {
-    computed: {
-        ...mapGetters('events', ['currentEvent']),
-        ...mapGetters('checkins', ['userCount']),
-    },
+    props: ['event']
 }
 </script>
 <style lang="scss" scoped>

@@ -6,7 +6,7 @@
         v-for="columnIndex in Array.from(Array(columns).keys())"
         :key="columnIndex">
             <transition-group name="list" class="animate-height" tag="div">
-                <FeedEntry v-for="(element) in latestFeed.filter((el, i) => i%columns == (columnIndex + columnOffset)%columns)"
+                <FeedEntry v-for="(element) in latestScreenFeed.filter((el, i) => i%columns == (columnIndex + columnOffset)%columns)"
                     :key="element.id"
                     :entry="element"
                     size="big"
@@ -19,6 +19,7 @@
 <script>
 import { mapGetters, mapActions } from 'vuex';
 import FeedEntry from '@/components/Feed/Base.vue'
+import { firestoreAction  } from 'vuexfire'
 
 export default {
     components: {
@@ -34,28 +35,23 @@ export default {
         columns: {
             type: Number,
             default: 1
-        }
+        },
+        event: {},
     },
     computed: {
-        ...mapGetters('events', ['event']),
-        ...mapGetters('contributions', ['latestFeed']),
+        ...mapGetters('contributions', ['latestScreenFeed']),
     },
-    async mounted(){
+    async mounted() {
         if (this.event != null) {
-            await this.bindFeedRef(this.event.additionalFeed);
+            await this.bindFeedRefByEvent(this.event);
             this.loaded = true;
         }
     },
     methods: {
-        ...mapActions('contributions', ['bindFeedRef']),
+        ...mapActions('contributions', ['bindFeedRefByEvent']),
     },
     watch: {
-        async 'event.additionalFeed'(value) {
-            this.loaded = false;
-            await this.bindFeedRef(value);
-            this.loaded = true;
-        },
-        latestFeed() {
+        latestScreenFeed() {
             if (this.columns == 2)
                 this.columnOffset = (this.columnOffset + 1)%2
         }

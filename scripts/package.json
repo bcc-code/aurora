@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@google-cloud/bigquery": "^5.6.0",
     "lorem-ipsum": "^2.0.3",
     "random-name": "^0.1.2",
     "random-picture": "^4.0.4",

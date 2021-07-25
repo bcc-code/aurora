@@ -10,7 +10,9 @@ export default {
         queue: [],
         desk: [],
         feed: [],
-        additionalFeed: []
+        additionalFeed: [],
+        screenFeed: [],
+        feedByEvent: [],
     },
     actions: {
         bindContributionsRef: firestoreAction(context => {
@@ -26,6 +28,18 @@ export default {
                 context.state.additionalFeed = [];
 
             return context.bindFirestoreRef('feed', context.getters.feedRef.orderBy('publishedDate', 'desc'))
+        }),
+        bindFeedRefByEvent: firestoreAction( async (context, screenEvent) => {
+            if (!screenEvent) {
+                return null
+            }
+
+            if (screenEvent.additionalFeed && screenEvent.additionalFeed.length > 0 && screenEvent.additionalFeed > 0)
+                await context.bindFirestoreRef('additionalFeed', context.getters.feedByEventIdRef(screenEvent.additionalFeed).orderBy('publishedDate', 'desc'))
+            else
+                context.state.additionalFeed = [];
+
+            return context.bindFirestoreRef('feedByEvent', db.collection(`events/${screenEvent.id}/feed-outgoing`));
         }),
         bindDeskRef: firestoreAction(context => {
             return context.bindFirestoreRef('desk', context.getters.deskRef.orderBy('date', 'desc'))
@@ -64,17 +78,20 @@ export default {
         }),
     },
     getters: {
-        contributionsRef: (state, getters, rootState, rootGetters) => {
+        contributionsRef: (_s, _g, _r, rootGetters) => {
             return rootGetters['events/selectedEventRef'].collection('feed-incoming')
         },
-        queueRef: (state, getters, rootState, rootGetters) => {
+        queueRef: (_s, _g, _r, rootGetters) => {
             return rootGetters['events/selectedEventRef'].collection('feed-approved')
         },
-        feedRef: (state, getters, rootState, rootGetters) => {
+        feedRef: (_s, _g, _r, rootGetters) => {
             return rootGetters['events/selectedEventRef'].collection('feed-outgoing')
         },
-        deskRef: (state, getters, rootState, rootGetters) => {
+        deskRef: (_s, _g, _r, rootGetters) => {
             return rootGetters['events/selectedEventRef'].collection('desk')
+        },
+        latestScreenFeed: (state) => {
+            return state.feedByEvent.concat(state.additionalFeed).sort((a,b) => b.publishedDate - a.publishedDate).slice(0,20);
         },
         informations: (state) => {
             const infCheck = (el) => el.type == 1;
@@ -92,6 +109,9 @@ export default {
         },
         feedByEventIdRef: (state, getters, rootState, rootGetters) => (eventId) => {
             return db.collection('events').doc(eventId).collection('feed-outgoing')
+        },
+        queueByEventIdRef: (state, getters, rootState, rootGetters) => (eventId) => {
+            return db.collection('events').doc(eventId).collection('feed-approved')
         },
     }
 }

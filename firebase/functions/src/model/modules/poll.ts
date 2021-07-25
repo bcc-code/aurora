@@ -141,7 +141,8 @@ export class PollModule extends Module {
     async setPollResponse(
         userDoc: firestore.DocumentSnapshot,
         questionId: string,
-        selectedAnswers: string[]
+        selectedAnswers: string[],
+        submittedBy: string | null = null,
     ): Promise<firestore.DocumentReference<firestore.DocumentData>> {
         if (!userDoc.exists) {
             throw new Error('User not provided')
@@ -177,6 +178,7 @@ export class PollModule extends Module {
             personId: personId,
             question: questionId,
             selected: selectedAnswers,
+            submittedBy
         }
 
         const responseDocRef = this.response(personId.toFixed(), questionId)

@@ -1,6 +1,6 @@
 <template>
     <transition name="zoom">
-        <component v-if="optionsAreComplete" :is="component" class="absolute inset-0 flex justify-center" :options="options" :size="screen.size" />
+        <component v-if="optionsAreComplete" :is="component" class="absolute inset-0 flex justify-center" :options="options" :size="screen.size" :event="event" />
     </transition>
 </template>
 <script>
@@ -12,7 +12,7 @@ import Question from '@/components/LiveScreens/LED/Question'
 import Inquiry from '@/components/LiveScreens/LED/Inquiry'
 import BukGames from '@/components/LiveScreens/LED/BUKGames/Leaderboard'
 import Wwr from '@/components/LiveScreens/LED/WWR'
-import { mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import EventBus from '@/utils/eventBus.js'
 export default {
     components: {
@@ -30,8 +30,9 @@ export default {
             loaded: false
         }
     },
-    props: ['screen'],
+    props: ['screen', 'event'],
     computed: {
+        ...mapGetters('screens', ['screenRefFromId']),
         optionsAreComplete() {
             switch (this.screen.options.component) {
                 case 'feed-pictures':
@@ -57,8 +58,10 @@ export default {
         ...mapActions('screens', ['refreshedScreen', 'needRefreshScreen']),
     },
     async mounted(){
-        await this.refreshedScreen(this.screen.id);
-        EventBus.$on('TOKEN_EXPIRED', async () => { await this.needRefreshScreen(this.screen.id) });
+        const screenRef = this.screenRefFromId(this.event.id, this.screen.id)
+        console.dir(screenRef);
+        await screenRef.update({ refresh: false, needRefresh: false })
+        EventBus.$on('TOKEN_EXPIRED', async () => { await screenRef(this.event.id, this.screen.id).update({ needRefresh: true }) });
         this.loaded = true
     },
     watch: {
@@ -72,7 +75,7 @@ export default {
 </script>
 
 <style scoped>
-.zoom-enter-active, 
+.zoom-enter-active,
 .zoom-leave-active {
   transition: opacity 1s, transform 1s;
   position: absolute;

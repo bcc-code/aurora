@@ -14,8 +14,7 @@
         </section>
         <section class="col-span-full lg:col-span-3 relative" v-if="previewScreen != null" ref="preview" :style="{ paddingTop: paddingTop }">
             <PreviewScreen :screen="previewScreen"
-                :defaultBackground="selectedEvent.background.computedValue" 
-                :customStyle="customStyle"
+                :overrideEvent="selectedEvent"
                 :style="{ transform: `scale(${scale})` }"
                 style="transform-origin: top left;" />
         </section>
@@ -74,13 +73,6 @@ export default {
                 return 0;
             return this.width / this.selectedScreen.size.width;
         },
-        customStyle() {
-            return {
-                primaryColor: this.selectedEvent.style.primaryColor.computedValue,
-                primaryColorDark: this.selectedEvent.style.primaryColorDark.computedValue,
-                logo: this.selectedEvent.style.logo.computedValue
-            }
-        }
     },
     watch: {
         'selectedScreen.id': {

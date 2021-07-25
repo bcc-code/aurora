@@ -5,16 +5,23 @@ import keys from '@/utils/keys'
 export default {
     namespaced: true,
     state: {
-        config: {}
+        config: {},
+        screenConfig: {},
     },
     actions: {
         bindConfigRef: firestoreAction(context => {
             return context.bindFirestoreRef('config', context.getters.configRef)
         }),
+        bindScreenConfigRef: firestoreAction(context => {
+            return context.bindFirestoreRef('screenConfig', context.getters.screenConfigRef)
+        }),
     },
     getters: {
         configRef: () => {
             return db.collection('configs').doc(keys.APP.ID)
+        },
+        screenConfigRef: () => {
+            return db.collection('configs').doc("screens")
         },
         btvConfigRef: () => {
             return db.collection('configs').doc('brunstadtv-app')
@@ -22,5 +29,8 @@ export default {
         btvConfig: (state) => {
             return state.config
         },
+        screenConfig: (state) => {
+            return state.screenConfig
+        }
     }
 }

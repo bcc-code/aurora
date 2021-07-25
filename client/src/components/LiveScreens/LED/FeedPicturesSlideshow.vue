@@ -11,13 +11,15 @@ import { crono } from 'vue-crono'
 export default {
     data: function(){
         return {
-            index: 0
+            index: 0,
+            feed: [],
+            queue: [],
+            additionalFeed: [],
         }
     },
+    props: ['event'],
     computed: {
-        ...mapState('contributions', ['queue']),
-        ...mapGetters('contributions', ['feed']),
-        ...mapGetters('events', ['currentEvent']),
+        ...mapGetters('contributions', ['feedByEventIdRef', 'queueByEventIdRef']),
         allPictures() {
             return this.filterPictures(this.feed).concat(...this.filterPictures(this.queue));
         },
@@ -27,7 +29,6 @@ export default {
         }
     },
     methods: {
-        ...mapActions('contributions', ['bindFeedRef', 'bindQueueRef']),
         filterPictures(list) {
             return list == null ? [] : list.filter(el => el.imageUrl != null && el.imageUrl.length > 0);
         },
@@ -36,14 +37,18 @@ export default {
         },
     },
     async mounted(){
-        if (this.currentEvent != null) {
-            await this.bindFeedRef(this.currentEvent.additionalFeed);
-            await this.bindQueueRef();
+        if (this.event != null) {
+            this.feed = (await this.feedByEventIdRef(this.event.id).get()).docs.map(x => x.data());
+            this.queue = (await this.queueByEventIdRef(this.event.id).get()).docs.map(x => x.data());
+
+            if (this.event.additionalFeed && this.event.additionalFeed.length > 0 && this.event.additionalFeed > 0 ) {
+                this.additionalFeed = (await this.feedByEventIdRef(this.event.additionalFeed).get()).docs.map(x => x.data());
+            }
         }
     },
     mixins: [crono],
     cron: {
-        time: 10000,
+        time: 10*1000,
         method: 'switchPicture'
     },
 }

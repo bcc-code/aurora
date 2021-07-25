@@ -17,7 +17,7 @@ export default {
     components: {
        SquareLayout
     },
-    props: ['options'],
+    props: ['options', 'event'],
     data: function(){
         return {
             pictures:[],
@@ -31,13 +31,13 @@ export default {
                 horizontal: false,
                 align: 'center',
             },
-
+            feed: [],
+            queue: [],
+            additionalFeed: [],
         }
     },
     computed: {
-        ...mapState('contributions', ['queue']),
-        ...mapGetters('contributions', ['feed']),
-        ...mapGetters('events', ['currentEvent']),
+        ...mapGetters('contributions', [ 'queueByEventIdRef', 'feedByEventIdRef']),
         numberOfColumns(){
             return parseInt(this.options.columns)
         },
@@ -52,13 +52,14 @@ export default {
         }
     },
     methods: {
-        ...mapActions('contributions', ['bindFeedRef', 'bindQueueRef']),
         filterPictures(list) {
             return list == null ? [] : list.filter(el => el.imageUrl != null && el.imageUrl.length > 0);
         },
-        loadPictures(){
+        async loadPictures(){
             this.pictures= [];
-            var allPictures = this.filterPictures(this.feed).concat(...this.filterPictures(this.queue));
+            var allPictures = this.filterPictures(this.feed).
+                concat(...this.filterPictures(this.queue)).
+                concat(...this.filterPictures(this.additionalFeed));
             var first = allPictures.slice(0,this.SIZE);
             var next = [...first];
             var i = 1
@@ -72,27 +73,27 @@ export default {
             const grid = this.$refs.grid.$el;
             const gridHeight = grid.style.height;
             if (gridHeight != null && gridHeight.length > 0 && gridHeight != '0px'){
-                const firstElement = grid.children[0];
-                if (grid.children.length > this.numberOfColumns){
-                    const nextAppearance = grid.children[this.numberOfColumns];
-                    const height = nextAppearance.offsetTop - firstElement.offsetTop;
-                    grid.style.setProperty('--height', `-${height}px`);
-                }
+                const screenHeight = parseInt(grid.parentNode.style.height.substr(0, grid.parentNode.style.height.length-1));
+                const gridHeightNum = gridHeight.substr(0, gridHeight.length-2);
+                grid.style.setProperty('--height', '-' + (gridHeightNum - screenHeight) + 'px');
                 grid.classList.add('grid-animate');
 
                 const rowDuration = 30;
-                const screenHeight = parseInt(grid.parentNode.style.height.substr(0, grid.parentNode.style.height.length-1));
-                const d = Math.ceil(gridHeight.substr(0, gridHeight.length-2) / screenHeight) * rowDuration
+                const d = Math.ceil(gridHeight.substr(0, gridHeight.length-2) / (screenHeight - 1)) * rowDuration
                 grid.style.animationDuration = `${Math.floor(d).toFixed()}s`;
                 this.$cron.stop('checkLoaded');
             }
         }
     },
     async mounted(){
-        if (this.currentEvent != null) {
-            await this.bindFeedRef(this.currentEvent.additionalFeed);
-            await this.bindQueueRef();
-            this.loadPictures();
+        if (this.event != null) {
+            this.feed = (await this.feedByEventIdRef(this.event.id).get()).docs.map(x => x.data());
+            this.queue = (await this.queueByEventIdRef(this.event.id).get()).docs.map(x => x.data());
+            if (this.event.additionalFeed && this.event.additionalFeed.length > 0 && this.event.additionalFeed > 0 ) {
+                this.additionalFeed = (await this.feedByEventIdRef(this.event.additionalFeed).get()).docs.map(x => x.data());
+            }
+
+            await this.loadPictures();
             this.$cron.start('checkLoaded');
         }
     },
@@ -112,7 +113,6 @@ export default {
 <style scoped>
 .grid-animate {
   animation: moveUp linear infinite;
-  --height: -1080px;
 }
 
 #grid>div{
@@ -123,6 +123,7 @@ export default {
     max-width: 300%;
     min-width: 100%;
     max-height: 100%;
+    min-height: 100%;
 }
 
 @keyframes moveUp {

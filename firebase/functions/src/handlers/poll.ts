@@ -125,7 +125,7 @@ export async function submitPollResponse(
         await eventModel.poll.setPollResponse(
             userDoc,
             req.body.questionId,
-            req.body.selectedAnswers
+            req.body.selectedAnswers,
         )
     } catch (err) {
         log.error(err)

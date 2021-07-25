@@ -1,7 +1,7 @@
 <template>
 	<section ref="container" class="world-container bg-contain bg-center bg-no-repeat" :style="{ backgroundImage: `url(${backgroundImageUrl})` }">
 		<transition name="fade-slide">
-			<CheckinsCount class="world-map" v-if="options.showCheckinsNumber"/>
+			<CheckinsCount class="world-map" v-if="options.showCheckinsNumber" :event="event" />
 		</transition>
 		<canvas id="worldCanvas" :width="`${width}px`" :height="`${height}px`" class="world-canvas"></canvas>
 		<canvas id="pointsCanvas" :width="`${width}px`" :height="`${height}px`"></canvas>
@@ -19,9 +19,9 @@ export default {
 	components: {
 		CheckinsCount
 	},
-	props: ['options', 'size'],
+	props: ['options', 'size', 'event'],
 	computed: {
-		...mapGetters('checkins', ['getCheckins']),
+		...mapGetters('checkins', ['getScreenCheckins']),
 		ctx(){
 			return document.getElementById("pointsCanvas").getContext("2d");
 		},
@@ -82,7 +82,7 @@ export default {
 			this.resetElements();
 			this.resetAnimations();
 			this.drawWorld();
-			this.initialElements = (await this.getCheckins()).filter((el) => el.coords.f_ != 0 && el.coords.d_ != 0);
+			this.initialElements = (await this.getScreenCheckins(this.event)).filter((el) => el.coords.f_ != 0 && el.coords.d_ != 0);
 			this.drawInitialElements();
 			this.timer = d3.timer(this.drawAnimations);
 			this.timer.stop();
@@ -90,7 +90,7 @@ export default {
 		},
 		async updateCheckins() {
 			if (this.loaded) {
-				var newCheckins = await this.getCheckins(new Date().getTime() - this.markersRate * 1.5);
+				var newCheckins = await this.getScreenCheckins(this.event, new Date().getTime() - this.markersRate * 1.5);
 				newCheckins.forEach((checkin) => {
 					if (checkin.coords.f_ != 0 && checkin.coords.d_ != 0) {
 						var exists = this.cachedElements.some((el) => el.personId == checkin.personId);
