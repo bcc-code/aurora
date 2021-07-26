@@ -1,5 +1,11 @@
 # Changelog
 
+## \[1.6.6\] - Not released
+
+### Fixed
+
+* Don't break screen if more than one picture is pushed
+
 ## \[1.6.5\] - 26.07.2021
 
 ### Changed

@@ -9,6 +9,7 @@
             <img :src="contribution.imageUrl" class="w-full rounded-b-xl" />
         </div>
     </div>
+    <div v-else></div>
 </template>
 <script>
 import DateHelper from '@/mixins/date.js'
