@@ -175,3 +175,55 @@ test("Stateless checkin, event, validate Status", async t => {
 
     t.is(data.checkedInUsers, 1)
 });
+
+test("Stateless checkin, event, API call", async t => {
+    const db = getAuthedFirestore()
+    await generateConfig(db);
+    const userId = await generateUser(db);
+    const eventId = await generateEvent(db);
+    await setEventInProgress(db, eventId)
+
+    const req = createRequest({
+        headers: { 'x-api-token': "BLAH" },
+        body: {
+            personId: userId,
+        }
+    })
+    const res = createResponse()
+    await checkinStateless(db, req, res, true)
+
+    t.true(res._isEndCalled())
+    t.is(res.statusCode, 200)
+
+    const data = (await db.collection("events").doc(eventId).get()).data()
+    if (!data) {
+        t.fail("Could not get event data")
+        return;
+    }
+
+    t.is(data.checkedInUsers, 1)
+});
+
+test("Stateless checkin, event, API call, no user", async t => {
+    const db = getAuthedFirestore()
+    await generateConfig(db);
+    const eventId = await generateEvent(db);
+    await setEventInProgress(db, eventId)
+
+    const req = createRequest({
+            headers: { 'x-api-token': "BLAH" },
+    })
+    const res = createResponse()
+    await checkinStateless(db, req, res, true)
+
+    t.true(res._isEndCalled())
+    t.is(res.statusCode, 401)
+
+    const data = (await db.collection("events").doc(eventId).get()).data()
+    if (!data) {
+        t.fail("Could not get event data")
+        return;
+    }
+
+    t.is(data.checkedInUsers, 0)
+});

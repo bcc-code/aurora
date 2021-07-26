@@ -6,10 +6,6 @@ import { getPersonId } from '../model/utils'
 
 const log = logger('bukGamesHandler')
 
-interface Foo {
-    lakjsd: string;
-}
-
 //bukGamesHandler.get("/rank", jwtCheck, async(req, res) => {
 export async function getRank(
     db: firestore.Firestore,
