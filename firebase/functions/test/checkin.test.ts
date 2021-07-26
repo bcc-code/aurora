@@ -137,3 +137,41 @@ test("Stateless checkin, event, custom agent", async t => {
 
     t.is(ciData.platform, "TESTING");
 });
+
+test("Stateless checkin, event, validate Status", async t => {
+    const db = getAuthedFirestore()
+    await generateConfig(db);
+    const userId = await generateUser(db);
+    const eventId = await generateEvent(db);
+    await setEventInProgress(db, eventId)
+
+    const req = createRequest(
+        {
+            user: { 'https://login.bcc.no/claims/personId': parseInt(userId) }
+        }
+    )
+    const res = createResponse()
+    await checkinStateless(db, req, res, true)
+
+    t.true(res._isEndCalled())
+    t.is(res.statusCode, 200)
+
+    t.deepEqual(res._getJSONData(), {
+      canCheckin: true,
+      checkedIn: true,
+      personId: parseInt(userId),
+      firstName: 'Alient',
+      lastName: 'Alieno',
+      profilePicture: null,
+      age: 61,
+      linkedUsers: [],
+    })
+
+    const data = (await db.collection("events").doc(eventId).get()).data()
+    if (!data) {
+        t.fail("Could not get event data")
+        return;
+    }
+
+    t.is(data.checkedInUsers, 1)
+});
