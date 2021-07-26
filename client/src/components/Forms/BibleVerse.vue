@@ -27,7 +27,7 @@
 
             <select class="form-input" v-model="verse_to">
                 <option value=""></option>
-                <option v-if="book < 0 || chapter < 0 | !bible[book].chapters[chapter]" disabled="disabled"></option>
+                <option v-if="book < 0 || chapter < 0 | !bible[book].chapters[chapter]" disabled="disabled" value=""></option>
                 <option v-else v-for="index in bible[book].chapters[chapter].verses" :value="index">
                     {{ index }}
                 </option>
@@ -165,14 +165,16 @@ export default {
                 this.resolvedLocation += " " + (this.chapter + 1);
                 this.incoming_value.verse.chapter = this.chapter + 1;
 
-                if (this.verse_from < 0) {
+                if (this.verse_from < 0 || this.bible[this.book].chapters[this.chapter].verses < this.verse_from) {
+                    this.verse_from = -1
                     return this.resolvedLocation;
                 }
 
                 this.resolvedLocation += ":" + this.verse_from;
                 this.incoming_value.verse.verse_from = this.verse_from;
 
-                if (this.verse_to < 0 || this.verse_to <= this.verse_from) {
+                if (this.verse_to < 0 || this.verse_to <= this.verse_from || this.bible[this.book].chapters[this.chapter].verses < this.verse_to) {
+                    this.verse_to = -1
                     await this.getVerseData();
                     this.incoming_value.content = this.verseTextOutgoing;
                     return this.resolvedLocation;
