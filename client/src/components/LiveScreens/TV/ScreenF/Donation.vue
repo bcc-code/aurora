@@ -2,18 +2,20 @@
     <div class="DonateLower p-1 flex text-center">
         <div class="w-full shadow-text  leading-snug px-4 flex justify-center gap-5">
             <transition name="fade" mode="out-in">
-                <div key="qrcode" class="relative bg-primary-dark bg-opacity-25 rounded-xl text-3xl leading-tight text-left" v-if="donationView == 'qrcode'">
+            <div class="grid grid-cols-2 gap-6 justify-items-start">
+                <div key="qrcode" class="relative bg-primary-dark bg-opacity-25 rounded-xl text-3xl leading-tight text-left" v-if="donationView == 'qrcode' || donationView == 'qrresults'">
                     <div class="flex flex-wrap items-center justify-center">
                         <p class="py-5 px-2 leading-snug text-4xl text-center">Bidra via <strong class="italic">BrunstadTV-appen</strong><br>eller<br>på <strong class="italic">donation.bcc.no</strong></p>
                     </div>
                 </div>
-                <div key="results" class="relative bg-primary-dark bg-opacity-25 rounded-xl text-3xl leading-tight text-left"  v-if="donationView == 'results'">
+                <div key="results" class="relative bg-primary-dark bg-opacity-25 rounded-xl text-3xl leading-tight text-left"  v-if="donationView == 'results' || donationView == 'qrresults'">
                     <div class="w-full p-10 text-2xl text-center">
                         <p class="uppercase font-semibold">Status</p>
                         <p class="text-4xl font-semibold">{{collected.toLocaleString('nb-NO')}}</p>
                         <p>NOK</p>
                     </div>
                 </div>
+            </div>
             </transition>
         </div>
     </div>

@@ -12,7 +12,8 @@ export default {
         return {
             views: [
                 { id: "qrcode", label: "QR Code" },
-                { id: "results", label: "Results" }
+                { id: "results", label: "Results" },
+                { id: "qrresults", label: "Results & QR Code" },
             ]
         }
     }
