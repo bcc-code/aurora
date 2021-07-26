@@ -1,5 +1,16 @@
 # Changelog
 
+## \[1.6.5\] - 26.07.2021
+
+### Changed
+
+* Screens are now stand alone and not bound to an active event
+* Updated grid speed calculation
+
+### Removed
+
+* Removed the switch for enabling the event in the app. Replaced by decpupled screens
+
 ## \[1.6.3\] - 18.07.2021
 
 ### Changed
