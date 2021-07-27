@@ -2,14 +2,12 @@
     <img :src="logoUrl" />
 </template>
 <script>
-import { mapGetters } from 'vuex'
 export default {
+    props: ['event'],
     computed: {
-        ...mapGetters('events', ['selectedEvent', 'currentEvent']),
         logoUrl() {
-            const event = this.selectedEvent || this.currentEvent;
-            if (this.notNullOrEmpty(event.logo.computedValue))
-                return event.logo.computedValue;
+            if (this.notNullOrEmpty(this.event?.logo?.computedValue))
+                return this.event.logo.computedValue;
             return '/images/bcco_logo.svg'
         },
     },

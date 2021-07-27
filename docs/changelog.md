@@ -1,6 +1,12 @@
 # Changelog
 
-## \[1.6.6\] - Not released
+## \[1.6.7\] - 27.07.2021
+
+### Fixed
+
+* Hotfix: event logo was based on currentEvent instead of the event prop
+
+## \[1.6.6\] - 27.07.2021
 
 ### Fixed
 
