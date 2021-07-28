@@ -3,7 +3,10 @@ import { Request, Response } from 'express'
 import { EventModel } from '../model/event'
 import { getPersonId } from '../model/utils'
 import { ParamsDictionary } from 'express-serve-static-core'
+import { logger } from '../log'
 import NodeCache from "node-cache";
+
+const log = logger('checkinHandler')
 
 const checkinCache = new NodeCache( { stdTTL: 300, checkperiod: 60 } );
 const EVENTID = "eventID";
@@ -58,7 +61,7 @@ export async function checkinStateless(
             personId = getPersonId(req)
         } catch(e) {
             // Person ID is null so we will return 401
-            console.warn(e)
+            log.warn("checkinStateless", e)
         }
     }
 

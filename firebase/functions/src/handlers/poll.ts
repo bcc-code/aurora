@@ -28,6 +28,7 @@ export async function generatePoll(
     req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, generatePollReq>,
     res: Response
 ): Promise<void> {
+    log.debug("generatePoll")
     const eventModel = new EventModel(db, req.query.eventId)
     const userModel = new UserModel(db)
     const startAfter = parseInt(req.query.startAfter) || 0
@@ -88,6 +89,7 @@ export async function submitPollResponse(
     req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, submitPollResponseReq>,
     res: Response
 ): Promise<void> {
+    log.debug("submitPollResponse")
     const eventModel = new EventModel(db, req.query.eventId)
     const userModel = new UserModel(db)
 
@@ -140,6 +142,7 @@ export async function pickWinner(
     req: Request,
     res: Response
 ): Promise<void> {
+    log.debug("pickWinner")
     const eventModel = new EventModel(db, req.query.eventId)
     const result = await eventModel.poll.pickRandomWinner(req.query.questionId)
     return res.json(result).end()
@@ -150,6 +153,7 @@ export async function updatePollStats(
     req: Request,
     res: Response
 ): Promise<void> {
+    log.debug("updatePollStats")
     if (req.query.questionId == null) {
         return res
             .status(400)
@@ -158,6 +162,7 @@ export async function updatePollStats(
     }
 
     const eventModel = new EventModel(db, req.query.eventId)
+    console.log(eventModel.eventRef.id);
     const result = await eventModel.poll.updatePollStats(req.query.questionId)
     return res.json(result).end()
 }
@@ -167,6 +172,7 @@ export async function startPoll(
     req: Request,
     res: Response
 ): Promise<void> {
+    log.debug("startPoll")
     if (req.body.questionIds == null) {
         return res
             .status(400)
@@ -185,6 +191,7 @@ export async function pollClearAll(
     req: Request,
     res: Response
 ): Promise<void> {
+    log.debug("pollClearAll")
     const eventModel = new EventModel(db, req.query.eventId)
     const result = await eventModel.poll.pollClearAll()
     return res.json(result).end()
