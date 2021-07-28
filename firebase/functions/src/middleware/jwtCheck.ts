@@ -4,10 +4,13 @@ import { NextFunction, Request, Response } from 'express'
 import config from '../configs/config.json'
 import { logger } from '../log'
 import firebase from 'firebase-admin'
+import {get} from '@google-cloud/trace-agent'
+const tracer = get();
 
 const log = logger('jwtCheck')
 
 export const jwtCheckFull = async (admin: firebase.app.App,req: Request, res: Response, next: NextFunction) : Promise<void> => {
+    const t = tracer.createChildSpan({name: "jwtCheck"});
     const fbToken = req.header('x-api-token')
     if (!fbToken) {
         // Check for BCC token
@@ -22,6 +25,7 @@ export const jwtCheckFull = async (admin: firebase.app.App,req: Request, res: Re
         return res.status(401).end()
     }
 
+    t.endSpan()
     return next();
 }
 

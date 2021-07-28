@@ -42,7 +42,8 @@ import { newFeedPost } from './handlers/feed'
 import { newInquiry } from './handlers/inquiry'
 import { passport, sessionSettings } from './middleware/passport'
 import { Bucket } from '@google-cloud/storage'
-
+import {start} from '@google-cloud/trace-agent'
+const tracer = start();
 
 type HandlerWithDB = (db: firebaseAdmin.firestore.Firestore, req: Request, res: Response) => Promise<void>
 type HandlerWithBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket , req: Request, res: Response) => Promise<void>

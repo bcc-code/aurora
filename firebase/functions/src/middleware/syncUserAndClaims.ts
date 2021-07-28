@@ -3,13 +3,15 @@ import { UserModel } from '../model/user'
 import { logger } from '../log'
 import { NextFunction, Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
+import {get} from '@google-cloud/trace-agent'
+const tracer = get();
 
 const log = logger('syncUserAndClaims')
 
 export const syncUserAndClaims = async (
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
 ) : Promise<void> => {
     if (req.user === null) {
         log.error('syncUserAndClaims - req.user is null!')
@@ -32,6 +34,7 @@ export const syncUserAndClaims = async (
             .end()
     }
 
+    const syncSpan = tracer.createChildSpan({ name: "syncUserAndClaims" })
     try {
         // make sure we have a user in user-groups
         const userModel = new UserModel(firebaseAdmin.firestore())
@@ -42,6 +45,7 @@ export const syncUserAndClaims = async (
         log.error(msg, error.message)
         return res.status(500).send({ message: msg, error: error }).end()
     }
+    syncSpan.endSpan()
 
     if (typeof next === 'function') {
         return next()
