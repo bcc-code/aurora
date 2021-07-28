@@ -159,6 +159,7 @@ export class PollModule extends Module {
         const questionDoc = await this.question(questionId).get()
 
         if (responseDoc.exists && !questionDoc.data()?.canChangeAnswer) {
+            log.error(`Multiple responses attempted for ${personId}, Q: ${questionId}, R: ${responseDoc.ref.path}`)
             throw new Error('Multiple poll responses are not permitted.')
         }
 
