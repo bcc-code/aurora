@@ -43,6 +43,21 @@ import { newInquiry } from './handlers/inquiry'
 import { passport, sessionSettings } from './middleware/passport'
 import { Bucket } from '@google-cloud/storage'
 
+import { registerInstrumentations } from '@opentelemetry/instrumentation';
+import { NodeTracerProvider } from '@opentelemetry/node';
+import { ExpressInstrumentation } from '@opentelemetry/instrumentation-express';
+
+const provider = new NodeTracerProvider();
+provider.register();
+
+// register and load instrumentation and old plugins - old plugins will be loaded automatically as previously
+// but instrumentations needs to be added
+registerInstrumentations({
+  instrumentations: [
+    new ExpressInstrumentation(),
+  ],
+});
+
 
 type HandlerWithDB = (db: firebaseAdmin.firestore.Firestore, req: Request, res: Response) => Promise<void>
 type HandlerWithBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket , req: Request, res: Response) => Promise<void>
