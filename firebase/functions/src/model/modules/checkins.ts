@@ -129,7 +129,7 @@ export class CheckinModule extends Module {
 
         const currentStatus = await this.getCheckinStatus(currentPersonId)
         if (!currentStatus.canCheckin || currentStatus.checkedIn === true) {
-            //return
+            return
         }
 
         const newCheckin: CheckinDoc = {

@@ -4,6 +4,7 @@ import { checkinStateless } from "../src/handlers/checkin"
 import { createResponse, createRequest } from "node-mocks-http";
 import { randomBytes } from "crypto";
 import { generateConfig, generateEvent, generateUser, setEventInProgress } from "./utils"
+import { delay } from "../src/utils"
 
 function getAuthedFirestore() {
     const appId = randomBytes(20).toString('hex')
@@ -86,6 +87,7 @@ test("Stateless checkin, event", async t => {
     )
     const res = createResponse()
     await checkinStateless(db, req, res, true)
+    await delay(500)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 200)
@@ -116,6 +118,7 @@ test("Stateless checkin, event, custom agent", async t => {
     )
     const res = createResponse()
     await checkinStateless(db, req, res, true)
+    await delay(500)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 200)
@@ -152,6 +155,7 @@ test("Stateless checkin, event, validate Status", async t => {
     )
     const res = createResponse()
     await checkinStateless(db, req, res, true)
+    await delay(500)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 200)
@@ -191,6 +195,7 @@ test("Stateless checkin, event, API call", async t => {
     })
     const res = createResponse()
     await checkinStateless(db, req, res, true)
+    await delay(500)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 200)
@@ -215,6 +220,7 @@ test("Stateless checkin, event, API call, no user", async t => {
     })
     const res = createResponse()
     await checkinStateless(db, req, res, true)
+    await delay(500)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 401)

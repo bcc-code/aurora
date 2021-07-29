@@ -41,7 +41,7 @@ export async function checkin(
     const personId = getPersonId(req)
     const eventId = req.query.eventId as string || req.body.eventId
     const eventModel = new EventModel(db, eventId)
-    await eventModel.checkin.checkin(personId, [personId])
+    await eventModel.checkin.checkin(personId)
     const updatedStatus = await eventModel.checkin.getCheckinStatus(personId)
     return res.json(updatedStatus).end()
 }
@@ -94,7 +94,7 @@ export async function checkinStateless(
     const platform = q["platform"] ?? "NONE"
 
     const eventModel = new EventModel(db, eventId);
-    await eventModel.checkin.checkin(personId, [personId], platform)
+    await eventModel.checkin.checkin(personId, platform)
     const updatedStatus = await eventModel.checkin.getCheckinStatus(personId)
     return res.json(updatedStatus).end()
 }
