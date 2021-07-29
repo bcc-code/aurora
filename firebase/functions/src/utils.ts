@@ -1,4 +1,3 @@
-import { calculateAge } from './model/utils'
 import * as googleServiceKey from '../firebase-key.json'
 import configRaw from './configs/config.json'
 
@@ -46,5 +45,3 @@ config.firebaseServiceAccount = firebaseServiceAccount;
 export function delay(ms: number) : Promise<void> {
     return new Promise( resolve => setTimeout(resolve, ms) );
 }
-
-export { calculateAge }

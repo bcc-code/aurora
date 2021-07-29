@@ -5,83 +5,15 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
-import {QueryDocumentSnapshot} from 'firebase-functions/lib/providers/firestore'
 import {IUser} from '../types/user'
 
 const log = logger('pollHandler')
-
-interface generatePollReq {
-    eventId: string,
-    startAfter: string,
-    limit: string,
-}
 
 interface submitPollResponseReq {
     eventId: string,
     startAfter: string,
     limit: string,
     answeringPersonId?: string,
-}
-
-export async function generatePoll(
-    db: firestore.Firestore,
-    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, generatePollReq>,
-    res: Response
-): Promise<void> {
-    log.debug("generatePoll")
-    const eventModel = new EventModel(db, req.query.eventId)
-    const userModel = new UserModel(db)
-    const startAfter = parseInt(req.query.startAfter) || 0
-    const limit = parseInt(req.query.limit) || 100
-    const { questions, answers } = await eventModel.poll.loadPollData(true)
-    const userDocs = await userModel.getUserDocs(limit, startAfter)
-
-    const questionsList = questions.docs as Array<Record<string, unknown>>
-    await Promise.all(
-        userDocs.map(async (userDoc: QueryDocumentSnapshot) => {
-            log.info(
-                `Generating poll responses for personId: ${
-                    userDoc.data().personId
-                }`
-            )
-            await Promise.all(
-                questionsList.map(async (questionDoc) => {
-                    const personId = userDoc.data().personId as string
-                    const questionId = questionDoc.id as string
-                    const responseDoc = await eventModel.poll
-                        .response(personId, questionId)
-                        .get()
-                    if (!responseDoc.exists) {
-                        const answersForQuestion = answers[questionId]
-                        if (
-                            Array.isArray(answersForQuestion) &&
-                            answersForQuestion.length > 0
-                        ) {
-                            // if not, submit answer
-                            const randomAnswerIndex = Math.floor(
-                                Math.random() * (answersForQuestion.length - 1)
-                            )
-                            const randomAnswerDoc =
-                                answersForQuestion[randomAnswerIndex]
-
-                            log.info(
-                                `generate poll response - personId: ${personId}: question '${questionDoc.id}' - answer '${randomAnswerDoc.id}'`
-                            )
-                            await eventModel.poll
-                                .setPollResponse(userDoc, questionId, [
-                                    randomAnswerDoc.id,
-                                ])
-                                .catch((err) => {
-                                    log.error(err)
-                                })
-                        }
-                    }
-                })
-            )
-        })
-    )
-
-    return res.sendStatus(200).end()
 }
 
 export async function submitPollResponse(
@@ -127,7 +59,7 @@ export async function submitPollResponse(
         await eventModel.poll.setPollResponse(
             userDoc,
             req.body.questionId,
-            req.body.selectedAnswers,
+            req.body.selectedAnswers as unknown as string[],
         )
     } catch (err) {
         log.error(err)
@@ -139,12 +71,12 @@ export async function submitPollResponse(
 
 export async function pickWinner(
     db: firestore.Firestore,
-    req: Request,
+    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, qs.ParsedQs>,
     res: Response
 ): Promise<void> {
     log.debug("pickWinner")
-    const eventModel = new EventModel(db, req.query.eventId)
-    const result = await eventModel.poll.pickRandomWinner(req.query.questionId)
+    const eventModel = new EventModel(db, req.query.eventId as string)
+    const result = await eventModel.poll.pickRandomWinner(req.query.questionId as string)
     return res.json(result).end()
 }
 
@@ -154,26 +86,26 @@ export async function updatePollStats(
     res: Response
 ): Promise<void> {
     log.debug("updatePollStats")
-    if (req.query.questionId == null) {
+    if (req.query.questionId === null) {
         return res
             .status(400)
             .send({ message: "Required parameter 'questionId' not specified." })
             .end()
     }
 
-    const eventModel = new EventModel(db, req.query.eventId)
+    const eventModel = new EventModel(db, req.query.eventId as string)
     console.log(eventModel.eventRef.id);
-    const result = await eventModel.poll.updatePollStats(req.query.questionId)
+    const result = await eventModel.poll.updatePollStats(req.query.questionId as string)
     return res.json(result).end()
 }
 
 export async function startPoll(
     db: firestore.Firestore,
-    req: Request,
+    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, qs.ParsedQs>,
     res: Response
 ): Promise<void> {
     log.debug("startPoll")
-    if (req.body.questionIds == null) {
+    if (req.body.questionIds === null) {
         return res
             .status(400)
             .send({
@@ -181,8 +113,8 @@ export async function startPoll(
             })
             .end()
     }
-    const eventModel = new EventModel(db, req.query.eventId)
-    const result = await eventModel.poll.startPolls(req.body.questionIds)
+    const eventModel = new EventModel(db, req.query.eventId as string)
+    const result = await eventModel.poll.startPolls(req.body.questionIds as unknown as string[])
     return res.json(result).end()
 }
 
@@ -192,7 +124,7 @@ export async function pollClearAll(
     res: Response
 ): Promise<void> {
     log.debug("pollClearAll")
-    const eventModel = new EventModel(db, req.query.eventId)
+    const eventModel = new EventModel(db, req.query.eventId as string)
     const result = await eventModel.poll.pollClearAll()
     return res.json(result).end()
 }

@@ -57,52 +57,22 @@ export class CheckinModule extends Module {
         // lookup user document for logged on user
         const userCheckingInDoc = await this.userModel.userRef(personId).get()
 
-        if (userCheckingInDoc.exists) {
-            const existingCheckin = await this.checkinRef(personId).get()
-            const userCheckingIn = userCheckingInDoc.data() as IUser
-
-            const checkinStatus = new CheckinStatus(
-                    checkinEnabled &&
-                    (userCheckingIn.hasMembership ?? false),
-                existingCheckin.exists,
-                userCheckingIn
-            )
-
-            if (Array.isArray(userCheckingIn.linkedUserIds)) {
-                checkinStatus.linkedUsers = await parallelAsync(
-                    userCheckingIn.linkedUserIds,
-                    async (
-                        linkedUserId: number
-                    ): Promise<CheckinStatus | null> => {
-                        const linkedUserDoc = await this.userModel
-                            .userRef(`${linkedUserId}`)
-                            .get()
-                        if (linkedUserDoc.exists) {
-                            const linkedUser = linkedUserDoc.data() as IUser
-                            if (!linkedUser.hasMembership) return null
-                            const existingCheckin = await this.checkinRef(
-                                linkedUserId.toString()
-                            ).get()
-                            return new CheckinStatus(
-                                checkinEnabled,
-                                existingCheckin.exists,
-                                linkedUser
-                            )
-                        }
-                        return null
-                    }
-                )
-
-                checkinStatus.linkedUsers = checkinStatus.linkedUsers.filter(
-                    (v) => v !== null
-                )
-            }
-            return checkinStatus
-        } else {
+        if (!userCheckingInDoc.exists) {
             const msg = `Could not get checkin status for personId ${personId}, non-existent user.`
             log.error(msg)
             return { message: msg, checkedIn: false }
         }
+
+        const existingCheckin = await this.checkinRef(personId).get()
+        const userCheckingIn = userCheckingInDoc.data() as IUser
+
+        const checkinStatus = new CheckinStatus(
+            checkinEnabled && (userCheckingIn.hasMembership ?? false),
+            existingCheckin.exists,
+            userCheckingIn
+        )
+
+        return checkinStatus
     }
 
     async getCoordsByPersonId(personId: string) : Promise<firestore.GeoPoint> {

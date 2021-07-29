@@ -124,7 +124,6 @@ pollHandler.post('/poll/pickWinner', adminCheck, withDB(firestore, pickWinner));
 pollHandler.post('/poll/updateStats', adminCheck, withDB(firestore, updatePollStats));
 pollHandler.post('/poll/start', adminCheck, withDB(firestore, startPoll));
 pollHandler.post('/poll/clearAll', adminCheck, withDB(firestore, pollClearAll));
-pollHandler.post('/poll/generate', withDB(firestore, generatePoll));
 pollHandler.post('/poll/response', withDB(firestore, submitPollResponse));
 
 const feedHandler = handlerWithPrefix('feed')
