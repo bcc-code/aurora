@@ -67,7 +67,7 @@ export class CheckinModule extends Module {
         const userCheckingIn = userCheckingInDoc.data() as IUser
 
         const checkinStatus = new CheckinStatus(
-            checkinEnabled && (userCheckingIn.hasMembership ?? false),
+            checkinEnabled,
             existingCheckin.exists,
             userCheckingIn
         )
@@ -109,6 +109,7 @@ export class CheckinModule extends Module {
             timestamp: Date.now(),
             platform: platform,
         }
+
 
         const p1 = this.checkinRef(currentPersonId).set(newCheckin)
 
