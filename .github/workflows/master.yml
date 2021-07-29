@@ -99,10 +99,6 @@ jobs:
       run: |
         npm ci
         npm run build
-    - name: Run tests
-      working-directory: ./firebase/functions
-      run: |
-        npm test
     - name: deploy to firebase
       uses: w9jds/firebase-action@master
       with:
