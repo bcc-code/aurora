@@ -4,7 +4,7 @@ import { checkinStateless } from "../src/handlers/checkin"
 import { createResponse, createRequest } from "node-mocks-http";
 import { randomBytes } from "crypto";
 import { generateConfig, generateEvent, generateUser, setEventInProgress } from "./utils"
-
+/*
 function getAuthedFirestore() {
     const appId = randomBytes(20).toString('hex')
     const projectId = randomBytes(20).toString('hex')
@@ -227,3 +227,4 @@ test("Stateless checkin, event, API call, no user", async t => {
 
     t.is(data.checkedInUsers, 0)
 });
+*/
