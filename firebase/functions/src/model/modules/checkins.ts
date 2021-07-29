@@ -7,6 +7,7 @@ import { IUser } from '../../types/user'
 import { logger } from '../../log'
 import { firestore } from 'firebase-admin'
 import _ from 'lodash'
+import {delay} from '../../utils'
 
 const log = logger('index')
 
@@ -117,83 +118,79 @@ export class CheckinModule extends Module {
         return churchData.coordinates as firestore.GeoPoint;
     }
 
-    async checkin(currentPersonId: string, userIds: string[], platform = "NONE"): Promise<void> {
+    async checkin(currentPersonId: string, platform = "NONE"): Promise<void> {
         let coords = new firebaseadmin.firestore.GeoPoint(0, 0) // Fallback value, we will replace it
         try {
             coords = await this.getCoordsByPersonId(currentPersonId)
         } catch(e) {
             log.error(e)
-        /* Fallback to 0:0 coords in case we fail */
+            /* Fallback to 0:0 coords in case we fail */
         }
-        const currentUser = await this.userModel.userRef(currentPersonId).get()
 
-        const batch = this.db.batch()
-
-        let newCheckinCount = 0
-
-        if (currentUser.exists) {
-            const currentStatus = await this.getCheckinStatus(currentPersonId)
-            if (userIds.includes(currentPersonId) && currentStatus.canCheckin && currentStatus.checkedIn === false) {
-                const newCheckin: CheckinDoc = {
-                    personId: Number(currentPersonId),
-                    checkedInBy: Number(currentPersonId),
-                    coords: coords,
-                    timestamp: Date.now(),
-                    platform: platform,
-                }
-
-                batch.set(this.checkinRef(currentPersonId), newCheckin)
-                newCheckinCount++
-            }
-            if (Array.isArray(currentStatus.linkedUsers)) {
-                currentStatus.linkedUsers.map((linkedUser: CheckinStatus) => {
-                    if (
-                        userIds.includes(linkedUser.personId.toString()) &&
-                        linkedUser.canCheckin && linkedUser.checkedIn === false
-                    ) {
-                        const newCheckin: CheckinDoc = {
-                            personId: linkedUser.personId,
-                            checkedInBy: Number(currentPersonId),
-                            coords: coords,
-                            timestamp: Date.now(),
-                            platform: platform,
-                        }
-                        batch.set(
-                            this.checkinRef(linkedUser.personId.toString()),
-                            newCheckin
-                        )
-                        newCheckinCount++
-                    }
-                })
-            }
+        const currentStatus = await this.getCheckinStatus(currentPersonId)
+        if (!currentStatus.canCheckin || currentStatus.checkedIn === true) {
+            //return
         }
-        await batch.commit()
 
-        const event = (await this.event.get()).data() as Record<string, number>
-        const checkinFactor = _.isFinite(event?.checkinFactor)
-            ? event?.checkinFactor
-            : 1 // Because NaN is a number
+        const newCheckin: CheckinDoc = {
+            personId: Number(currentPersonId),
+            checkedInBy: Number(currentPersonId),
+            coords: coords,
+            timestamp: Date.now(),
+            platform: platform,
+        }
 
-        await this.event.update({
-            checkedInUsers: firestore.FieldValue.increment(
-                Math.round(newCheckinCount * checkinFactor)
-            ),
-        })
+        const p1 = this.checkinRef(currentPersonId).set(newCheckin)
+
+        const shard = currentPersonId.substring(currentPersonId.length - 2)
+        const shardDoc = this.event.collection("checkinShards").doc(shard)
+
+        await shardDoc.set({
+            count: firestore.FieldValue.increment(1),
+        }, {merge: true})
+        await p1;
+
+        void this.updateCheckinCount()
     }
 
     async updateCheckinCount(): Promise<{ checkedInUsers: number }> {
-        const allCheckins = await this.checkins.get()
-        let count = allCheckins.size
+        // This whole thing should be handled by a single function that is processing
+        // pubsub messages. This would allow us to for sure process all checkins, while
+        // maintaining a 1/s write frequency.
+        // Currently it runs async after every checkin, so the checkin speed *should* not be
+        // affected (citation needed), as the request has the chance to complete before
+        // this function completes execution.
+
         const evt = (await this.event.get()).data() as Record<string, number>
-        const extraCheckins = _.isFinite(evt?.extraCheckins)
-            ? evt?.extraCheckins
+        if (!evt) {
+            log.error("Unable to get event data")
+            return { checkedInUsers: 0 }
+        }
+
+        if (evt.lastCountUpdate && evt.lastCountUpdate - Date.now() > -1000 ) {
+            if (evt.updatePending) {
+                return { checkedInUsers: evt.checkedInUsers }
+            }
+
+            await this.event.update({updatePending: true})
+            await delay(700)
+        }
+
+        const shards = await this.event.collection("checkinShards").get()
+        let count = shards.docs.reduce((p, c) => p+(c.data().count as number), 0)
+        const extraCheckins = _.isFinite(evt.extraCheckins)
+            ? evt.extraCheckins
             : 0
-        const checkinFactor = _.isFinite(evt?.checkinFactor)
-            ? evt?.checkinFactor
+        const checkinFactor = _.isFinite(evt.checkinFactor)
+            ? evt.checkinFactor
             : 1
         count = Math.round(count * checkinFactor)
         count += extraCheckins
-        const docUpdate = { checkedInUsers: count }
+        const docUpdate = {
+            checkedInUsers: count,
+            lastCountUpdate: Date.now(),
+            updatePending: false,
+        }
         await this.event.update(docUpdate)
         return docUpdate
     }

@@ -43,4 +43,8 @@ export const firebaseServiceAccount = {
 export const config : Config = configRaw as Config;
 config.firebaseServiceAccount = firebaseServiceAccount;
 
+export function delay(ms: number) : Promise<void> {
+    return new Promise( resolve => setTimeout(resolve, ms) );
+}
+
 export { calculateAge }
