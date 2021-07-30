@@ -27,6 +27,7 @@ func main() {
 	}))
 
 	router.POST("pubsub-push", dummy)
+	router.Run("0.0.0.0:8000")
 }
 
 func dummy(c *gin.Context) {

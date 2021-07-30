@@ -6,7 +6,9 @@ steps:
       - '$_IMAGE_NAME:$COMMIT_SHA'
       - '-t'
       - '$_IMAGE_NAME:$BRANCH_NAME'
-      - .
+      - '-f'
+      - './background-jobs/Dockerfile'
+      - ./background-jobs
     id: Build
     timeout: 600s
   - name: gcr.io/cloud-builders/docker
