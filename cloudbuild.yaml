@@ -7,8 +7,8 @@ steps:
       - '-t'
       - '$_IMAGE_NAME:$BRANCH_NAME'
       - '-f'
-      - './background-jobs/Dockerfile'
-      - ./background-jobs/
+      - './api/Dockerfile'
+      - ./api/
     id: Build
     timeout: 600s
   - name: gcr.io/cloud-builders/docker

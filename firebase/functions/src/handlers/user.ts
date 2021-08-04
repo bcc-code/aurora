@@ -3,6 +3,9 @@ import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
 import {IUser} from '../types/user'
+import { logger } from '../log'
+
+const log = logger('userHandler')
 
 export async function updateProfileImage(
     db: firestore.Firestore,
@@ -27,6 +30,7 @@ export async function getProfileImage(
     req: Request,
     res: Response
 ): Promise<void> {
+    log.debug("getProfileImage - start")
     const userModel = new UserModel(db)
     const personId: string | null = getPersonId(req)
     if (!personId) {
@@ -35,6 +39,7 @@ export async function getProfileImage(
 
     const personData = await userModel.userRef(personId).get()
     const profileImageUrl = personData.data()?.profilePicture ?? '' // TODO: Placeholder
+    log.debug("getProfileImage - end")
     return res.status(200).send({ profilePictureUrl: profileImageUrl }).end()
 }
 
