@@ -20,7 +20,7 @@
                 "
                 :key="verseToDisplay.id"
                 >
-                {{ verseToDisplay.verse.book }} {{ verseToDisplay.verse.chapter }}:{{verseToDisplay.verse.verse_from}}<span v-if="verseToDisplay.verse.verse_to">-{{ verseToDisplay.verse.verse_to }}</span>
+                {{ formattedVerse }}
             </div>
         </transition>
     </section>
@@ -45,7 +45,13 @@ export default {
     computed: {
         ...mapGetters('events', ['event']),
         ...mapGetters('contributions', ['latestFeed']),
-        LastVerse: function () {
+        formattedVerse: function () {
+            let verseToDisplay = this.verseToDisplay;
+            let out = `${verseToDisplay.verse.book } ${verseToDisplay.verse.chapter}:${verseToDisplay.verse.verse_from}`
+            if (verseToDisplay.verse.verse_to) {
+                out += `-${ verseToDisplay.verse.verse_to }`
+            }
+            return out;
         }
     },
     async mounted(){
