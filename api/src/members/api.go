@@ -2,6 +2,7 @@ package members
 
 import (
 	"fmt"
+	"net/http"
 
 	"github.com/go-resty/resty/v2"
 	"github.com/rs/zerolog"
@@ -16,8 +17,8 @@ type Client struct {
 }
 
 // NewClient for members API
-func NewClient(domain, accessToken string, logClient *zerolog.Logger) *Client {
-	c := resty.New().
+func NewClient(httpClient *http.Client, domain, accessToken string, logClient *zerolog.Logger) *Client {
+	c := resty.NewWithClient(httpClient).
 		EnableTrace().
 		SetHeader("x-access-token", accessToken).
 		SetHeader("Content-Type", "application/json")

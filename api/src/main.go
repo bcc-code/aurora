@@ -16,12 +16,12 @@ import (
 	"go.bcc.media/bcco-api/members"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
+	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
 	"go.opencensus.io/plugin/ochttp"
 	"go.opencensus.io/trace"
-	"go.opencensus.io/trace/propagation"
 )
 
-func setupTracing() {
+func mustSetupTracing() *http.Client {
 	exporter, err := stackdriver.NewExporter(stackdriver.Options{
 		ProjectID: os.Getenv("GOOGLE_CLOUD_PROJECT"),
 	})
@@ -40,6 +40,8 @@ func setupTracing() {
 			Propagation: &propagation.HTTPFormat{},
 		},
 	}
+
+	return client
 }
 
 func mustSetupFirestore(ctx context.Context, projectID string) *firestore.Client {
@@ -56,6 +58,7 @@ func mustSetupFirestore(ctx context.Context, projectID string) *firestore.Client
 	return client
 }
 
+// User represents a user in the system as represented in the firebase
 type User struct {
 	Birthdate     string
 	ChurchName    string
@@ -71,30 +74,19 @@ type User struct {
 	Uid           string
 }
 
-type Server struct {
-	fs *firestore.Client
-}
-
-func NewServer(fs *firestore.Client) *Server {
-	return &Server{
-		fs: fs,
-	}
-}
-
-func (s Server) Profile(c *gin.Context) {
-	userID := c.Params.ByName("userID")
-	if userID == "" {
-		// TODO: Placeholder image
-	}
-}
-
 func main() {
 	log.ConfigureGlobalLogger(zerolog.DebugLevel)
-	//ctx := context.Background()
+	log.L.Debug().Msg("Seting up tracing")
+	tracedHTTPClient := mustSetupTracing()
+
+	log.L.Debug().Msg("Fetching ENV vars")
+	membersKey := os.Getenv("MEMBERS_API_KEY")
+
+	ctx := context.Background()
+	log.L.Debug().Msg("Connectiong to firebase")
+	fbClient := mustSetupFirestore(ctx, "brunstadtv-online-dev") // TODO: Get from ENV
 
 	/*
-		fbClient := mustSetupFirestore(ctx, "brunstadtv-online-dev") // TODO: Get from ENV
-
 		x, err := fbClient.Collection("users").Doc("19254").Get(ctx)
 		fmt.Printf("x: %v\n", x)
 		fmt.Printf("err: %v\n", err)
@@ -104,12 +96,11 @@ func main() {
 		fmt.Printf("err: %v\n", err)
 		fmt.Printf("y: %+v\n", y)
 	*/
+	log.L.Debug().Msg("Creating members client")
+	membersClient := members.NewClient(tracedHTTPClient, "members.bcc.no", membersKey, log.L)
 
-	membersKey := os.Getenv("MEMBERS_API_KEY")
-	membersClient := members.NewClient("members.bcc.no", membersKey, log.L)
-	member, err := membersClient.GetMemberData("19254")
-	log.L.Debug().Msgf("Member: %+v", member)
-	log.L.Debug().Err(err).Msg("Error")
+	log.L.Debug().Msg("Creating server")
+	server := NewServer(fbClient, membersClient)
 
 	router := gin.Default()
 	router.Use(logger.SetLogger(logger.Config{
@@ -123,11 +114,8 @@ func main() {
 		ExposeHeaders: []string{"Content-Length"},
 	}))
 
-	router.POST("pubsub-push", dummy)
+	router.POST("pubsub-push", server.dummy)
+	log.L.Info().Msg("About to listen to :8000")
 	router.Run("0.0.0.0:8000")
-}
-
-func dummy(c *gin.Context) {
-	log.L.Debug().Msgf("Got: %+v", c.Request.Body)
-	c.JSON(http.StatusOK, []string{})
+	log.L.Info().Msg("Server shutting down")
 }
