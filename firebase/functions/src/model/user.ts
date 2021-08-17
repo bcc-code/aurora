@@ -182,6 +182,8 @@ export class UserModel {
 
         await Promise.all(linkedUsers.map((childId: number) => this.updateFromMembers(childId.toFixed())))
         await uRef.set(data)
+
+        log.debug("Updated user from members")
         return data as IUser
     }
 
