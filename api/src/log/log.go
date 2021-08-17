@@ -12,6 +12,7 @@ var L *zerolog.Logger
 // ConfigureGlobalLogger with the correct formatter and debug level
 func ConfigureGlobalLogger(logLevel zerolog.Level) {
 	zerolog.SetGlobalLevel(logLevel)
+	zerolog.LevelFieldName = "severity"
 
 	logger := zerolog.
 		New(os.Stderr).
