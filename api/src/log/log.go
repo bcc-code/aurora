@@ -21,6 +21,7 @@ func ConfigureGlobalLogger(logLevel zerolog.Level) {
 	// Automatically detect if we are in GCR and apply Stackdriver log format
 	// https://cloud.google.com/run/docs/reference/container-contract#env-vars
 	serviceName := os.Getenv("K_SERVICE")
+	println("Service Name: " + serviceName)
 	if serviceName != "" {
 		logger.Str("service", serviceName).
 			Str("revision", os.Getenv("K_REVISION")).Logger()

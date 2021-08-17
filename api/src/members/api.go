@@ -50,7 +50,7 @@ func (c Client) GetMemberData(memberID string) (*Member, error) {
 
 	if !res.IsSuccess() { // != 4xx status
 		c.log.Error().Bytes("body", res.Body()).Msg("Request returned 4xx")
-		return nil, err
+		return nil, fmt.Errorf("API returned 4xx")
 	}
 
 	result := res.Result().(*MemberLookupResult)
