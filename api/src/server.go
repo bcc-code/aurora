@@ -95,12 +95,14 @@ func (s Server) UpdatePersonFromMembers(c *gin.Context) {
 	msg, err := MessageFromCtx(c)
 	if err != nil {
 		c.JSON(400, map[string]string{"message": "Malformed request"})
+		return
 	}
 
 	req := &UpdatePersonRequest{}
 	err = msg.ExtractDataInto(req)
 	if err != nil {
 		c.JSON(400, map[string]string{"message": "Malformed request"})
+		return
 	}
 
 	if req.PersonID == "" {
@@ -108,11 +110,16 @@ func (s Server) UpdatePersonFromMembers(c *gin.Context) {
 		return
 	}
 
-	_, err = s.members.GetMemberData(req.PersonID)
+	person, err := s.members.GetMemberData(req.PersonID)
 	if err != nil {
 		log.L.Error().
 			Err(err).
 			Str("person_id", req.PersonID).
 			Msg("Error when getting member data")
+		c.JSON(500, map[string]string{"message": "Unable to get data"})
+		return
 	}
+
+	log.L.Debug().Msgf("Person name: %v", person.FirstName)
+	c.Status(http.StatusNoContent)
 }

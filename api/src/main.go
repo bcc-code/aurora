@@ -115,6 +115,8 @@ func main() {
 	}))
 
 	router.POST("pubsub-push", server.dummy)
+	router.POST("update-person", server.UpdatePersonFromMembers)
+
 	log.L.Info().Msg("About to listen to :8000")
 	router.Run("0.0.0.0:8000")
 	log.L.Info().Msg("Server shutting down")

@@ -3,11 +3,8 @@ import { UserModel } from '../model/user'
 import { logger } from '../log'
 import { NextFunction, Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
-import {get} from '@google-cloud/trace-agent'
-import { PubSub } from '@google-cloud/pubsub'
 
-const tracer = get();
-const pubsub = new PubSub();
+//const pubsub = new PubSub();
 const log = logger('syncUserAndClaims')
 
 export const syncUserAndClaims = async (
@@ -36,10 +33,6 @@ export const syncUserAndClaims = async (
             .end()
     }
 
-    const topic = pubsub.topic("bcco-background-topic")
-    void topic.publish(Buffer.from(`Test Message, User: ${personId}`))
-
-    const syncSpan = tracer.createChildSpan({ name: "syncUserAndClaims" })
     try {
         // make sure we have a user in user-groups
         const userModel = new UserModel(firebaseAdmin.firestore())
@@ -50,7 +43,6 @@ export const syncUserAndClaims = async (
         log.error(msg, error.message)
         return res.status(500).send({ message: msg, error: error }).end()
     }
-    syncSpan.endSpan()
 
     if (typeof next === 'function') {
         return next()
