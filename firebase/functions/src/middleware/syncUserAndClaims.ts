@@ -4,7 +4,6 @@ import { logger } from '../log'
 import { NextFunction, Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
 
-//const pubsub = new PubSub();
 const log = logger('syncUserAndClaims')
 
 export const syncUserAndClaims = async (

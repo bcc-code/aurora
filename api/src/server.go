@@ -8,6 +8,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/gin-gonic/gin"
+	"go.bcc.media/bcco-api/firebase"
 	"go.bcc.media/bcco-api/log"
 	"go.bcc.media/bcco-api/members"
 )
@@ -91,22 +92,38 @@ type UpdatePersonRequest struct {
 }
 
 // UpdatePersonFromMembers handles the pubsub notification
+// StatusNoContent is used to ACK messages that we do not want retried even if the
+// actual staus is a permanent error
 func (s Server) UpdatePersonFromMembers(c *gin.Context) {
 	msg, err := MessageFromCtx(c)
 	if err != nil {
-		c.JSON(400, map[string]string{"message": "Malformed request"})
+		data,_ := c.GetRawData()
+		log.L.Info().
+			Str("body",string(data)).
+			Msg("Malformed request")
+		c.JSON(http.StatusNoContent, map[string]string{"message": "Malformed request"})
 		return
 	}
 
 	req := &UpdatePersonRequest{}
 	err = msg.ExtractDataInto(req)
 	if err != nil {
-		c.JSON(400, map[string]string{"message": "Malformed request"})
+		log.L.Info().
+			Str("data", msg.Message.Data).
+			Msg("Malformed request")
+		c.JSON(http.StatusNoContent, map[string]string{"message": "Malformed request"})
 		return
 	}
 
 	if req.PersonID == "" {
-		c.JSON(404, map[string]string{"message": "Unknown user"})
+		log.L.Info().
+			Str("person_id", req.PersonID).
+			Msg("Unknown user")
+
+		// This is used to ack a PubSub message, that's why the response has to be 2xx
+		// Since we do not want this message replayed. We still provide a meningful response
+		// if this is accessed in any other way.
+		c.JSON(http.StatusNoContent, map[string]string{"message": "Unknown user"})
 		return
 	}
 
@@ -120,6 +137,15 @@ func (s Server) UpdatePersonFromMembers(c *gin.Context) {
 		return
 	}
 
-	log.L.Debug().Msgf("Person name: %v", person.FirstName)
+	err = firebase.UpdateUser(c.Request.Context(), s.fs, person)
+	if err != nil {
+		log.L.Error().
+			Err(err).
+			Str("person_id", req.PersonID).
+			Msg("Error when updating user")
+		c.JSON(500, map[string]string{"message": "Unable to update user"})
+		return
+	}
+
 	c.Status(http.StatusNoContent)
 }

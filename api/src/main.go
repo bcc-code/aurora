@@ -5,13 +5,12 @@ import (
 	"net/http"
 	"os"
 
-	"cloud.google.com/go/firestore"
-	firebase "firebase.google.com/go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 
+	"go.bcc.media/bcco-api/firebase"
 	"go.bcc.media/bcco-api/log"
 	"go.bcc.media/bcco-api/members"
 
@@ -44,36 +43,6 @@ func mustSetupTracing() *http.Client {
 	return client
 }
 
-func mustSetupFirestore(ctx context.Context, projectID string) *firestore.Client {
-	conf := &firebase.Config{ProjectID: projectID}
-	app, err := firebase.NewApp(ctx, conf)
-	if err != nil {
-		log.L.Fatal().Err(err)
-	}
-
-	client, err := app.Firestore(ctx)
-	if err != nil {
-		log.L.Fatal().Err(err)
-	}
-	return client
-}
-
-// User represents a user in the system as represented in the firebase
-type User struct {
-	Birthdate     string
-	ChurchName    string
-	CountryName   string
-	DisplayName   string
-	FirstName     string
-	Guardian1Id   int
-	Guardian2Id   int
-	LastName      string
-	LastUpdated   string
-	LinkedUserIds []int
-	PersonId      int
-	Uid           string
-}
-
 func main() {
 	log.ConfigureGlobalLogger(zerolog.DebugLevel)
 	log.L.Debug().Msg("Seting up tracing")
@@ -82,20 +51,13 @@ func main() {
 	log.L.Debug().Msg("Fetching ENV vars")
 	membersKey := os.Getenv("MEMBERS_API_KEY")
 
+	// We currently only support running in the same project as firebase
+	firebaseProject := os.Getenv("GOOGLE_CLOUD_PROJECT")
+
 	ctx := context.Background()
 	log.L.Debug().Msg("Connectiong to firebase")
-	fbClient := mustSetupFirestore(ctx, "brunstadtv-online-dev") // TODO: Get from ENV
+	fbClient := firebase.MustSetupFirestore(ctx, firebaseProject) // TODO: Get from ENV
 
-	/*
-		x, err := fbClient.Collection("users").Doc("19254").Get(ctx)
-		fmt.Printf("x: %v\n", x)
-		fmt.Printf("err: %v\n", err)
-
-		y := User{}
-		err = x.DataTo(&y)
-		fmt.Printf("err: %v\n", err)
-		fmt.Printf("y: %+v\n", y)
-	*/
 	log.L.Debug().Msg("Creating members client")
 	membersClient := members.NewClient(tracedHTTPClient, "members.bcc.no", membersKey, log.L)
 
