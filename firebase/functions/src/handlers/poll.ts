@@ -5,7 +5,7 @@ import { ParamsDictionary } from 'express-serve-static-core'
 import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
-import {IUser} from '../types/user'
+import { IUser } from '../types/user'
 
 const log = logger('pollHandler')
 
@@ -42,7 +42,7 @@ export async function submitPollResponse(
         return res.status(404).json({"message": "user not found"}).end()
     }
 
-    // Is Person answering ofr themselves?
+    // Is Person answering for themselves?
     if (answeringPersonId !== authPersonId) {
         // Check if the person has permisson to answer on behalf of the other person
         const g1 = (userData.guardian1Id ?? -1).toFixed();
@@ -54,8 +54,8 @@ export async function submitPollResponse(
         }
     }
 
-
     try {
+        log.debug(`Recording answer for answeringPersonId: ${answeringPersonId}, authPersonId: ${authPersonId}`);
         await eventModel.poll.setPollResponse(
             userDoc,
             req.body.questionId,

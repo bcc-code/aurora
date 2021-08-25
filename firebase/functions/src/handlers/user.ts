@@ -2,7 +2,7 @@ import { UserModel } from '../model/user'
 import { firestore } from 'firebase-admin'
 import { Request, Response } from 'express'
 import { getPersonId } from '../model/utils'
-import {IUser} from '../types/user'
+import { IUser } from '../types/user'
 import { logger } from '../log'
 
 const log = logger('userHandler')
@@ -48,6 +48,7 @@ export async function getLinkedUsers(
     req: Request,
     res: Response
 ) : Promise<void> {
+    log.debug("getLinkedUsers - start")
     const personId = getPersonId(req)
     if (!personId) {
         return res.sendStatus(404).end()
@@ -62,5 +63,6 @@ export async function getLinkedUsers(
     const linkedUsers : Array<IUser> = await Promise.all(personData.linkedUserIds.map(
         async (linkedId) => ((await userModel.userRef(linkedId.toFixed()).get()).data() as IUser)
     ))
+    log.debug("getLinkedUsers - end")
     return res.status(200).json({linkedUsers}).end()
 }
