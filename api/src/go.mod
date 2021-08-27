@@ -16,6 +16,7 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/rs/zerolog v1.21.0
+	github.com/stretchr/testify v1.7.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.0.0-20210726213435-c6fcb2dbf985 // indirect
 	google.golang.org/api v0.52.0 // indirect

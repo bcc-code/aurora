@@ -50,6 +50,7 @@ func main() {
 
 	log.L.Debug().Msg("Fetching ENV vars")
 	membersKey := os.Getenv("MEMBERS_API_KEY")
+	membersWebhookSecret := os.Getenv("MEMBERS_WEBHOOKS_SECRET")
 
 	// We currently only support running in the same project as firebase
 	firebaseProject := os.Getenv("GOOGLE_CLOUD_PROJECT")
@@ -62,7 +63,7 @@ func main() {
 	membersClient := members.NewClient(tracedHTTPClient, "members.bcc.no", membersKey, log.L)
 
 	log.L.Debug().Msg("Creating server")
-	server := NewServer(fbClient, membersClient)
+	server := NewServer(membersWebhookSecret, fbClient, membersClient)
 
 	router := gin.Default()
 	router.Use(logger.SetLogger(logger.Config{
@@ -76,8 +77,9 @@ func main() {
 		ExposeHeaders: []string{"Content-Length"},
 	}))
 
-	router.POST("pubsub-push", server.dummy)
-	router.POST("update-person", server.UpdatePersonFromMembers)
+	webhooks := router.Group("webhooks")
+	webhooks.POST("members", server.MembersWebhook)
+	webhooks.POST("update-person", server.UpdatePersonFromMembers)
 
 	log.L.Info().Msg("About to listen to :8000")
 	router.Run("0.0.0.0:8000")
