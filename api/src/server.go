@@ -59,6 +59,9 @@ func (s Server) MembersWebhook(c *gin.Context) {
 	for i, person := range updatedMemebers {
 		err = firebase.UpdateUser(c.Request.Context(), s.fs, &person)
 		if err == nil {
+			log.L.Debug().
+				Int("person_id", person.PersonID).
+				Msg("Updated person")
 			continue
 		}
 
