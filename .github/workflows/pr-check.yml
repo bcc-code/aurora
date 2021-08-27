@@ -13,11 +13,6 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: 12.x
-    - name: Run tests
-      working-directory: ./firebase/functions
-      run: |
-        npm i
-        npm test
     - name: Copy firebase config file
       uses: canastro/copy-action@0.0.2
       with:
@@ -33,6 +28,11 @@ jobs:
       with:
         source: "client/src/configs/config.json.template"
         target: "client/src/configs/config.json"
+    - name: Run tests
+      working-directory: ./firebase/functions
+      run: |
+        npm i
+        npm test
     - name: npm install and build (client)
       working-directory: ./client
       run: |
