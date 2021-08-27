@@ -36,8 +36,9 @@ func (s Server) MembersWebhook(c *gin.Context) {
 		data, _ := c.GetRawData()
 		log.L.Info().
 			Str("body", string(data)).
+			Err(err).
 			Msg("Malformed request")
-		c.JSON(http.StatusNoContent, map[string]string{"message": "Malformed request"})
+		c.JSON(http.StatusNoContent, map[string]string{"message": "Malformed request 1"})
 		return
 	}
 
@@ -47,17 +48,18 @@ func (s Server) MembersWebhook(c *gin.Context) {
 	}
 
 	updatedMemebers := []members.Member{}
-	err = msg.ExtractDataInto(updatedMemebers)
+	err = msg.ExtractDataInto(&updatedMemebers)
 	if err != nil {
 		log.L.Info().
+			Err(err).
 			Str("data", msg.Message.Data).
 			Msg("Malformed request")
-		c.JSON(http.StatusOK, map[string]string{"message": "Malformed request"})
+		c.JSON(http.StatusOK, map[string]string{"message": "Malformed request 2"})
 		return
 	}
 
 	for i, person := range updatedMemebers {
-		err = firebase.UpdateUser(c.Request.Context(), s.fs, &person)
+		err = firebase.UpdateOrCreateUser(c.Request.Context(), s.fs, &person)
 		if err == nil {
 			log.L.Debug().
 				Int("person_id", person.PersonID).
@@ -130,7 +132,7 @@ func (s Server) UpdatePersonFromMembers(c *gin.Context) {
 		return
 	}
 
-	err = firebase.UpdateUser(c.Request.Context(), s.fs, person)
+	err = firebase.UpdateOrCreateUser(c.Request.Context(), s.fs, person)
 	if err != nil {
 		log.L.Error().
 			Err(err).

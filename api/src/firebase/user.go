@@ -8,6 +8,8 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"go.bcc.media/bcco-api/members"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 // User represents a user in the system as represented in the firebase
@@ -45,9 +47,16 @@ func (u User) UpdateWithMember(member *members.Member) (User, bool) {
 	return u, true
 }
 
-// UpdateUser in firebase
-func UpdateUser(ctx context.Context, client *firestore.Client, member *members.Member) error {
+// UpdateOrCreateUser in firebase
+func UpdateOrCreateUser(ctx context.Context, client *firestore.Client, member *members.Member) error {
 	fbUser, err := client.Collection("users").Doc(fmt.Sprintf("%.0d", member.PersonID)).Get(ctx)
+	if status.Code(err) == codes.NotFound {
+		u := User{}
+		u.UpdateWithMember(member)
+		_, err = fbUser.Ref.Create(ctx, u)
+		return err
+	}
+
 	if err != nil {
 		return err
 	}
@@ -64,6 +73,9 @@ func UpdateUser(ctx context.Context, client *firestore.Client, member *members.M
 	}
 
 	_, err = fbUser.Ref.Set(ctx, updatedUser)
+	if status.Code(err) == codes.NotFound {
+		_, err = fbUser.Ref.Create(ctx, updatedUser)
+	}
 	return err
 
 }
