@@ -8,6 +8,7 @@ require (
 	cloud.google.com/go/storage v1.16.0 // indirect
 	contrib.go.opencensus.io/exporter/stackdriver v0.13.8 // indirect
 	firebase.google.com/go v3.13.0+incompatible // indirect
+	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de // indirect
 	github.com/aws/aws-sdk-go v1.40.13 // indirect
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/logger v0.0.3

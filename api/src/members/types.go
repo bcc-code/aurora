@@ -1,6 +1,11 @@
 package members
 
-import "time"
+import (
+	"time"
+
+	"github.com/araddon/dateparse"
+	"go.bcc.media/bcco-api/log"
+)
 
 // Generated types for parsing API response
 
@@ -97,28 +102,17 @@ type Affiliations struct {
 	Active       bool      `json:"active"`
 }
 
-type Children struct {
-	ID               string    `json:"_id"`
-	Key              string    `json:"_key"`
-	ActiveStatusCode int       `json:"activeStatusCode"`
-	Age              int       `json:"age"`
-	BirthDate        time.Time `json:"birthDate"`
-	Church           Church    `json:"church"`
-	DisplayName      string    `json:"displayName"`
-	GenderCode       int       `json:"genderCode"`
-	PersonID         int       `json:"personID"`
-}
-
-type Parents struct {
-	ID               string    `json:"_id"`
-	Key              string    `json:"_key"`
-	ActiveStatusCode int       `json:"activeStatusCode"`
-	Age              int       `json:"age"`
-	BirthDate        time.Time `json:"birthDate"`
-	Church           Church    `json:"church"`
-	DisplayName      string    `json:"displayName"`
-	GenderCode       int       `json:"genderCode"`
-	PersonID         int       `json:"personID"`
+type RelatedPerson struct {
+	ID               string `json:"_id"`
+	Key              string `json:"_key"`
+	ActiveStatusCode int    `json:"activeStatusCode"`
+	Age              int    `json:"age"`
+	BirthDateRaw     string `json:"birthDate"`
+	BirthDate        time.Time
+	Church           Church `json:"church"`
+	DisplayName      string `json:"displayName"`
+	GenderCode       int    `json:"genderCode"`
+	PersonID         int    `json:"personID"`
 }
 
 type Roles struct {
@@ -130,26 +124,14 @@ type Roles struct {
 	SecurityLevel int      `json:"securityLevel"`
 }
 
-type Spouse struct {
-	ID               string    `json:"_id"`
-	Key              string    `json:"_key"`
-	ActiveStatusCode int       `json:"activeStatusCode"`
-	Age              int       `json:"age"`
-	BirthDate        time.Time `json:"birthDate"`
-	Church           Church    `json:"church"`
-	DisplayName      string    `json:"displayName"`
-	GenderCode       int       `json:"genderCode"`
-	PersonID         int       `json:"personID"`
-}
-
 type Related struct {
-	Affiliations []Affiliations `json:"affiliations"`
-	Children     []Children     `json:"children"`
-	Dependents   []interface{}  `json:"dependents"`
-	Guardians    []interface{}  `json:"guardians"`
-	Parents      []Parents      `json:"parents"`
-	Roles        []Roles        `json:"roles"`
-	Spouse       []Spouse       `json:"spouse"`
+	Affiliations []Affiliations  `json:"affiliations"`
+	Children     []RelatedPerson `json:"children"`
+	Dependents   []interface{}   `json:"dependents"`
+	Guardians    []interface{}   `json:"guardians"`
+	Parents      []RelatedPerson `json:"parents"`
+	Roles        []Roles         `json:"roles"`
+	Spouse       []RelatedPerson `json:"spouse"`
 }
 
 type Telegram struct {
@@ -159,14 +141,15 @@ type Telegram struct {
 }
 
 type Member struct {
-	ID                        string       `json:"_id"`
-	Key                       string       `json:"_key"`
-	ActiveRole                string       `json:"activeRole"`
-	ActiveStatusCode          int          `json:"activeStatusCode"`
-	Administrator             bool         `json:"administrator"`
-	Age                       int          `json:"age"`
-	BccNorwayStartdate        time.Time    `json:"bccNorwayStartdate"`
-	BirthDate                 time.Time    `json:"birthDate"`
+	ID                        string    `json:"_id"`
+	Key                       string    `json:"_key"`
+	ActiveRole                string    `json:"activeRole"`
+	ActiveStatusCode          int       `json:"activeStatusCode"`
+	Administrator             bool      `json:"administrator"`
+	Age                       int       `json:"age"`
+	BccNorwayStartdate        time.Time `json:"bccNorwayStartdate"`
+	BirthDateRaw              string    `json:"birthDate"`
+	BirthDate                 time.Time
 	BirthdayList              bool         `json:"birthdayList"`
 	CellPhone                 Phone        `json:"cellPhone"`
 	Church                    Church       `json:"church"`
@@ -206,4 +189,15 @@ type Member struct {
 	Telegram                  Telegram     `json:"telegram"`
 	TelephoneList             bool         `json:"telephoneList"`
 	VerifiedCode              interface{}  `json:"verifiedCode"`
+}
+
+// ParseBday to a time struct
+func (m *Member) ParseBday() {
+	birthDate, err := dateparse.ParseStrict(m.BirthDateRaw)
+	if err != nil {
+		log.L.Warn().Str("date", m.BirthDateRaw).Msg("Unable to parse date")
+		return
+	}
+
+	m.BirthDate = birthDate
 }

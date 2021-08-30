@@ -30,6 +30,7 @@ type User struct {
 
 // UpdateWithMember data as provided
 func (u User) UpdateWithMember(member *members.Member) (User, bool) {
+	member.ParseBday()
 	// TODO: Skip if changed date is in the past and return false
 	u.Birthdate = member.BirthDate.Format(time.RFC3339)
 	u.ChurchName = member.Church.Org.Name
