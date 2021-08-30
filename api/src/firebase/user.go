@@ -10,7 +10,6 @@ import (
 	"go.bcc.media/bcco-api/members"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"gopkg.in/guregu/null.v4"
 )
 
 // User represents a user in the system as represented in the firebase
@@ -20,8 +19,8 @@ type User struct {
 	CountryName   string
 	DisplayName   string
 	FirstName     string
-	Guardian1Id   null.Int
-	Guardian2Id   null.Int
+	Guardian1Id   *int64
+	Guardian2Id   *int64
 	LastName      string
 	LastUpdated   string
 	LinkedUserIds []int
@@ -39,8 +38,13 @@ func (u User) UpdateWithMember(member *members.Member) (User, bool) {
 	u.FirstName = member.FirstName
 	u.LastName = member.LastName
 	u.DisplayName = member.DisplayName
-	u.Guardian1Id = member.GuardianID
-	u.Guardian2Id = member.SecondGuardianID
+	if member.GuardianID.Valid {
+		u.Guardian1Id = &member.GuardianID.Int64
+	}
+
+	if member.SecondGuardianID.Valid {
+		u.Guardian2Id = &member.SecondGuardianID.Int64
+	}
 	u.LastUpdated = member.LastChangedDate.Format(time.RFC3339)
 	for _, r := range member.Related.Children {
 		u.LinkedUserIds = append(u.LinkedUserIds, r.PersonID)
