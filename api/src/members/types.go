@@ -5,6 +5,7 @@ import (
 
 	"github.com/araddon/dateparse"
 	"go.bcc.media/bcco-api/log"
+	"gopkg.in/guregu/null.v4"
 )
 
 // Generated types for parsing API response
@@ -166,7 +167,7 @@ type Member struct {
 	FirstName                 string       `json:"firstName"`
 	GenderCode                int          `json:"genderCode"`
 	GuardianDisplayName       string       `json:"guardianDisplayName"`
-	GuardianID                int          `json:"guardianID"`
+	GuardianID                null.Int     `json:"guardianID"`
 	HomePhone                 Phone        `json:"homePhone"`
 	InitialAudit              bool         `json:"initial_audit"`
 	LastChangedDate           time.Time    `json:"lastChangedDate"`
@@ -181,7 +182,7 @@ type Member struct {
 	Related                   Related      `json:"related"`
 	RequiresGuardian          bool         `json:"requiresGuardian"`
 	SecondGuardianDisplayName string       `json:"secondGuardianDisplayName"`
-	SecondGuardianID          int          `json:"secondGuardianID"`
+	SecondGuardianID          null.Int     `json:"secondGuardianID"`
 	SignonUserAccountGUID     string       `json:"signonUserAccountGuid"`
 	SignonUsername            string       `json:"signonUsername"`
 	SubsidyContributor        bool         `json:"subsidyContributor"`

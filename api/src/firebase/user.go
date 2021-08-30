@@ -10,6 +10,7 @@ import (
 	"go.bcc.media/bcco-api/members"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"gopkg.in/guregu/null.v4"
 )
 
 // User represents a user in the system as represented in the firebase
@@ -19,8 +20,8 @@ type User struct {
 	CountryName   string
 	DisplayName   string
 	FirstName     string
-	Guardian1Id   int
-	Guardian2Id   int
+	Guardian1Id   null.Int
+	Guardian2Id   null.Int
 	LastName      string
 	LastUpdated   string
 	LinkedUserIds []int
