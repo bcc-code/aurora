@@ -30,6 +30,7 @@ export async function getProfileImage(
     req: Request,
     res: Response
 ): Promise<void> {
+    log.debug("getProfileImage - start")
     const userModel = new UserModel(db)
     const personId: string | null = getPersonId(req)
     if (!personId) {
@@ -38,6 +39,7 @@ export async function getProfileImage(
 
     const personData = await userModel.userRef(personId).get()
     const profileImageUrl = personData.data()?.profilePicture ?? '' // TODO: Placeholder
+    log.debug("getProfileImage - end")
     return res.status(200).send({ profilePictureUrl: profileImageUrl }).end()
 }
 

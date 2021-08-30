@@ -5,10 +5,18 @@ export default {
     namespaced: true,
     state: {
         program: [],
+        event: null,
     },
     actions: {
-        bindProgramRef: firestoreAction(context => {
-            return context.bindFirestoreRef('program', context.getters.programRef.orderBy('order'))
+        bindProgramRef: firestoreAction((context, eventId) => {
+            if (!eventId) {
+                return context.bindFirestoreRef('program', context.getters.programRef.orderBy('order'))
+            }
+
+            return context.bindFirestoreRef('program', db.collection(`events/${eventId}/program/`).orderBy('order'))
+        }),
+        bindEvent: firestoreAction((context, eventId) => {
+            return context.bindFirestoreRef('event', db.doc(`events/${eventId}`))
         }),
         removeProgramElementRef: firestoreAction((context, programElementId) => {
             return context.getters.programRef.doc(programElementId).delete()
@@ -50,10 +58,16 @@ export default {
             return rootGetters['events/selectedEventRef'].collection('program')
         },
         currentProgramElement: (state, getters, rootState, rootGetters) => {
-            var event = rootGetters['events/selectedEvent'];
+            var event = state.event;
+
+            if (event == null) {
+                event = rootGetters['events/selectedEvent'];
+            }
+
             if (event == null) {
                 event = rootGetters['events/currentEvent'];
             }
+
             return (event == null) ? null : event['currentProgramElement'];
         },
         upcoming: (state, getters) => {

@@ -15,3 +15,5 @@ firestore-coverage.html
 
 .nyc_output
 coverage
+
+tmp
