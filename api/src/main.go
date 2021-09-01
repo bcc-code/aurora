@@ -58,6 +58,8 @@ func main() {
 	membersDomain := os.Getenv("MEMBERS_DOMAIN")
 
 	auth0Domain := os.Getenv("AUTH0_DOMAIN")
+	auth0Issuer := os.Getenv("AUTH0_ISSUER")
+	auth0Audience := os.Getenv("AUTH0_AUDIENCE")
 
 	// We currently only support running in the same project as firebase
 	firebaseProject := os.Getenv("GOOGLE_CLOUD_PROJECT")
@@ -89,7 +91,11 @@ func main() {
 	// There is currently no need for more complex access controll so we
 	// just mirror what FB api is doing
 	admin := router.Group("admin")
-	admin.Use(auth0.JWTCheck(auth0Domain))
+	admin.Use(auth0.JWTCheck(auth0.JWTConfig{
+		Domain:   auth0Domain,
+		Issuer:   auth0Issuer,
+		Audience: auth0Audience,
+	}))
 	admin.Use(firebase.ValidateRole(fbClient, firebase.Roles(firebase.Admin)))
 
 	// Webhooks have no direct authentication but use a HMAC to prove the origin

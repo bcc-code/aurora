@@ -8,8 +8,14 @@ import (
 	"go.bcc.media/bcco-api/log"
 )
 
-func JWTCheck(domain string) gin.HandlerFunc {
-	jwks := GetKeySet(domain)
+type JWTConfig struct {
+	Domain   string
+	Issuer   string
+	Audience string
+}
+
+func JWTCheck(config JWTConfig) gin.HandlerFunc {
+	jwks := GetKeySet(config.Domain)
 
 	return func(c *gin.Context) {
 		// middleware
@@ -21,8 +27,8 @@ func JWTCheck(domain string) gin.HandlerFunc {
 
 		err = jwt.Validate(
 			token,
-			jwt.WithIssuer("https://login.bcc.no/"),
-			jwt.WithAudience("1J2g4gsQX11e5WD7kgjlbeQj0qx14kfz"),
+			jwt.WithIssuer(config.Issuer),
+			jwt.WithAudience(config.Audience),
 		)
 
 		if err != nil {
