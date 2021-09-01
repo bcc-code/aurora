@@ -14,9 +14,9 @@ import (
 // Server holds shared resources for the webserver
 // so they can be accessed by all requests
 type Server struct {
-	fs      *firestore.Client
-	members *members.Client
+	fs *firestore.Client
 
+	members              *members.Client
 	membersWebhookSecret string
 }
 
