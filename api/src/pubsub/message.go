@@ -54,7 +54,7 @@ type Msg struct {
 
 // ExtractDataInto and attempt to put it into the provided object
 func (m *Message) ExtractDataInto(out interface{}) error {
-	decoded, err := base64.RawStdEncoding.DecodeString(m.Message.Data)
+	decoded, err := base64.StdEncoding.DecodeString(m.Message.Data)
 	if err != nil {
 		return err
 	}
