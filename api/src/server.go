@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"cloud.google.com/go/firestore"
@@ -45,6 +46,7 @@ func (s Server) MembersWebhook(c *gin.Context) {
 	if !msg.Validate(s.membersWebhookSecret) {
 		log.L.Debug().
 			Str("data", msg.Message.Data).
+			Str("msg", fmt.Sprintf("%+v", msg)).
 			Msg("Invalid HMAC")
 		c.JSON(http.StatusOK, gin.H{"error": "Message not signed correctly"})
 		return
