@@ -55,3 +55,20 @@ func TestHmac_noHash(t *testing.T) {
 	res := msg.Validate("ieChai8OphiSiek7chahkeidui3iya")
 	assert.False(t, res)
 }
+
+func TestHmac_moddedContent(t *testing.T) {
+	msg := Message{
+		Message: Msg{
+			Attributes: map[string]string{
+				"hash": "9gsFQqSYb3yC7DoukqpcZfeISuVh6UcdCcbyB6C9juI=",
+			},
+			Data:        "BAD CONTENT",
+			MessageID:   "2894600402015313",
+			PublishTime: time.Time{},
+		},
+		Subscription: "projects/bcc-members-webhook-service/subscriptions/beta-1362378521-sub",
+	}
+
+	res := msg.Validate("ieChai8OphiSiek7chahkeidui3iya")
+	assert.False(t, res)
+}

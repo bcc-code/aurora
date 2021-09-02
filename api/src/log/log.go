@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/pkgerrors"
 )
 
 // L is the main exposed logger
@@ -14,10 +15,13 @@ func ConfigureGlobalLogger(logLevel zerolog.Level) {
 	zerolog.SetGlobalLevel(logLevel)
 	zerolog.LevelFieldName = "severity"
 
+	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+
 	logger := zerolog.
 		New(os.Stderr).
 		With().
-		Timestamp()
+		Timestamp().
+		Stack()
 
 	// Automatically detect if we are in GCR and apply Stackdriver log format
 	// https://cloud.google.com/run/docs/reference/container-contract#env-vars

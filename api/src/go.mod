@@ -16,6 +16,8 @@ require (
 	github.com/go-resty/resty/v2 v2.6.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/kr/pretty v0.1.0 // indirect
+	github.com/lestrrat-go/jwx v1.2.6 // indirect
+	github.com/lestrrat-go/pdebug v0.0.0-20200204225717-4d6bd78da58d // indirect
 	github.com/rs/zerolog v1.21.0
 	github.com/stretchr/testify v1.7.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
