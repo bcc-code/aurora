@@ -43,6 +43,9 @@ func (s Server) MembersWebhook(c *gin.Context) {
 	}
 
 	if !msg.Validate(s.membersWebhookSecret) {
+		log.L.Debug().
+			Str("data", msg.Message.Data).
+			Msg("Invalid HMAC")
 		c.JSON(http.StatusOK, gin.H{"error": "Message not signed correctly"})
 		return
 	}
