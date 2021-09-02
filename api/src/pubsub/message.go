@@ -74,11 +74,11 @@ func (m Message) Validate(sharedKey string) bool {
 	}
 
 	h := hmac.New(sha256.New, []byte(sharedKey))
-	decoded, err := base64.RawStdEncoding.DecodeString(m.Message.Data)
+	decoded, err := base64.StdEncoding.DecodeString(m.Message.Data)
 	if err != nil {
 		return false
 	}
-	h.Write([]byte(decoded))
+	h.Write(decoded)
 
 	sha := base64.StdEncoding.EncodeToString(h.Sum(nil))
 
