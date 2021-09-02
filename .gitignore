@@ -17,3 +17,4 @@ firestore-coverage.html
 coverage
 
 tmp
+.env
