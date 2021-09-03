@@ -4,13 +4,10 @@ import { n } from './constants'
 import { IUser } from '../types/user'
 import { logger } from '../log'
 import { firestore } from 'firebase-admin'
-import { DateTime } from 'luxon'
-import MembersAPI from '../apis/members'
 import {
     QueryDocumentSnapshot,
 } from 'firebase-functions/lib/providers/firestore'
 import { UserRecord } from 'firebase-functions/lib/providers/auth'
-import { config } from '../utils'
 
 const log = logger('model/user')
 
