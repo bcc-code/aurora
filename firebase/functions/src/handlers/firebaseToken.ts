@@ -2,7 +2,6 @@ import * as firebaseAdmin from 'firebase-admin'
 import { config } from '../utils'
 import passport from 'passport'
 import { AuthenticateOptions } from 'passport-auth0'
-import { syncUserAndClaims } from '../middleware/syncUserAndClaims'
 import { UserModel } from '../model/user'
 import { logger } from '../log'
 import { NextFunction, Request, Response } from 'express'
@@ -69,7 +68,6 @@ export function processLoginCallback(
                         'https://login.bcc.no/claims/personId'
                     ].toString() ?? ''
                 )
-                await syncUserAndClaims(req, res, () => {})
                 const firebaseToken = await firebaseAdmin
                     .auth()
                     .createCustomToken(user.id)

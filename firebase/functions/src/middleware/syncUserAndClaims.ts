@@ -35,7 +35,7 @@ export const syncUserAndClaims = async (
     try {
         // make sure we have a user in user-groups
         const userModel = new UserModel(firebaseAdmin.firestore())
-        const userClaims = await userModel.syncUserAndClaims(req.user) // TODO: Where is the User type from
+        const userClaims = await userModel.extractUserClaims(req.user) // TODO: Where is the User type from
         req.params.userClaims = userClaims
     } catch (error) {
         const msg = `Error occurred while syncronizing user ID: ${personId}.`

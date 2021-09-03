@@ -128,66 +128,7 @@ export class UserModel {
         return customClaims
     }
 
-    async updateFromMembers(personId: string, uid: string|null = null) : Promise<IUser> {
-        log.debug("Runnign update for ", personId);
-        const uRef = this.userRef(personId)
-        const data = (await uRef.get()).data() ?? {}
-
-        let needsUpdate = !data
-        needsUpdate = needsUpdate || !Boolean(data.lastUpdated)
-
-        if (data && data.lastUpdated) {
-            needsUpdate = DateTime.fromISO(data.lastUpdated) < DateTime.now().minus({week: 1})
-        }
-
-        if (!needsUpdate){
-            return data as IUser;
-        }
-
-        const mApi = new MembersAPI(config.members.apiKey)
-        const membersData = await mApi.getPerson(personId)
-        if (!membersData) {
-            log.error("Unable to find member in members DB")
-            throw new Error("Unable to find member")
-        }
-        data.birthdate = membersData.birthDate
-
-        if (membersData.churchId) {
-            data.churchId = membersData.churchId ?? null
-        }
-        data.churchName = membersData.church.org.name
-
-        if (membersData.church.org.visitingAddress.country) {
-            data.countryName = membersData.church.org.visitingAddress.country.nameEn
-        } else {
-            console.warn("Church with no name", membersData.church.org)
-        }
-
-        const linkedUsers = membersData.related.children.map(c => c.personID)
-
-        if (uid) {
-            data.uid = uid
-        }
-
-        data.personId = membersData.personID
-        data.displayName = membersData.displayName
-        data.firstName = membersData.firstName
-        data.guardian1Id = membersData.guardianID ?? null
-        data.guardian2Id = membersData.secondGuardianID ?? null
-        data.lastName = membersData.lastName
-        data.linkedUserIds = linkedUsers
-        //data.profilePicture = membersData.profilePicture // This can only be done when we have webhooks
-        //data.profilePictureThumb = membersData.profilePicture
-        data.lastUpdated = DateTime.now().toISO()
-
-        await Promise.all(linkedUsers.map((childId: number) => this.updateFromMembers(childId.toFixed())))
-        await uRef.set(data)
-
-        log.debug("Updated user from members")
-        return data as IUser
-    }
-
-    async syncUserAndClaims(loggedInUser: {
+    async extractUserClaims(loggedInUser: {
         [i: string]: string
     }): Promise<{ personId?: number }> {
         if (!loggedInUser) {
@@ -214,7 +155,9 @@ export class UserModel {
         }
 
         const personId = (loggedInUser[n.claims.personId] as unknown as number).toFixed()
-        return await this.updateFromMembers(personId, loggedInUser[n.claims.uid])
+        const uRef = this.userRef(personId)
+        const data = (await uRef.get()).data() ?? {}
+        return data as IUser;
     }
 
     async getUserDocs(
