@@ -25,7 +25,7 @@
     "jwt-decode": "^2.2.0",
     "loadjs": "^4.2.0",
     "postcss": "^7.0.35",
-    "set-value": "^3.0.2",
+    "set-value": "^4.0.1",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat@^2.0.3",
     "vue": "^2.6.12",
     "vue-click-outside": "^1.1.0",
