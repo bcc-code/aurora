@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"os"
 
+	cloudtasks "cloud.google.com/go/cloudtasks/apiv2"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
@@ -13,7 +15,6 @@ import (
 	"go.bcc.media/bcco-api/auth0"
 	"go.bcc.media/bcco-api/firebase"
 	"go.bcc.media/bcco-api/log"
-	"go.bcc.media/bcco-api/members"
 
 	"contrib.go.opencensus.io/exporter/stackdriver"
 	"contrib.go.opencensus.io/exporter/stackdriver/propagation"
@@ -48,32 +49,39 @@ func main() {
 	ctx := context.Background()
 	log.ConfigureGlobalLogger(zerolog.DebugLevel)
 	log.L.Debug().Msg("Seting up tracing")
-	tracedHTTPClient := mustSetupTracing()
+	_ = mustSetupTracing()
 
 	ctx, initTrace := trace.StartSpan(ctx, "init")
 
 	log.L.Debug().Msg("Fetching ENV vars")
-	membersKey := os.Getenv("MEMBERS_API_KEY")
 	membersWebhookSecret := os.Getenv("MEMBERS_WEBHOOKS_SECRET")
-	membersDomain := os.Getenv("MEMBERS_DOMAIN")
 
 	auth0Domain := os.Getenv("AUTH0_DOMAIN")
 	auth0Issuer := os.Getenv("AUTH0_ISSUER")
 	auth0Audience := os.Getenv("AUTH0_AUDIENCE")
 
-	// We currently only support running in the same project as firebase
+	// We currently only support running stuff in the same project
 	firebaseProject := os.Getenv("GOOGLE_CLOUD_PROJECT")
+	cloudTasksProject := os.Getenv("GOOGLE_CLOUD_PROJECT")
+
+	taskQueueID := os.Getenv("TASK_QUEUE_ID")
+	baseURL := os.Getenv("BASE_URL")
 
 	go auth0.GetKeySet(auth0Domain)
 
 	log.L.Debug().Msg("Connectiong to firebase")
-	fbClient := firebase.MustSetupFirestore(ctx, firebaseProject) // TODO: Get from ENV
+	fbClient := firebase.MustSetupFirestore(ctx, firebaseProject)
 
-	log.L.Debug().Msg("Creating members client")
-	membersClient := members.NewClient(tracedHTTPClient, membersDomain, membersKey, log.L)
+	cloudTasksClient, err := cloudtasks.NewClient(ctx)
+	if err != nil {
+		log.L.Fatal().Err(err)
+		panic(err)
+	}
+	defer cloudTasksClient.Close()
 
 	log.L.Debug().Msg("Creating server")
-	server := NewServer(membersWebhookSecret, fbClient, membersClient)
+	queuePath := fmt.Sprintf("projects/%s/locations/europe-west1/queues/%s", cloudTasksProject, taskQueueID)
+	server := NewServer(membersWebhookSecret, fbClient, cloudTasksClient, queuePath, baseURL)
 
 	router := gin.Default()
 	router.Use(logger.SetLogger(logger.Config{
@@ -98,10 +106,13 @@ func main() {
 	}))
 	admin.Use(firebase.ValidateRole(fbClient, firebase.Roles(firebase.Admin)))
 
+	events := admin.Group("events")
+	events.POST("scheduleend", server.ScheduleEnd)
+
 	// Webhooks have no direct authentication but use a HMAC to prove the origin
 	webhooks := router.Group("webhooks")
 	webhooks.POST("members", server.MembersWebhook)
-	webhooks.POST("update-person", server.UpdatePersonFromMembers)
+	webhooks.POST("admin-tasks", server.AdminTasksWebhook)
 
 	initTrace.End()
 

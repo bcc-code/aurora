@@ -25,6 +25,15 @@ func JWTCheck(config JWTConfig) gin.HandlerFunc {
 			jwt.WithHeaderKey("Authorization"),
 		)
 
+		if err != nil {
+			log.L.Debug().
+			Err(err).
+			Msg("Token not found")
+
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
+		}
+
 		err = jwt.Validate(
 			token,
 			jwt.WithIssuer(config.Issuer),
