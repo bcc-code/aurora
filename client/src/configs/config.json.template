@@ -5,7 +5,7 @@
     "apiAudience": "https://widgets.brunstad.org"
   },
   "api": {
-    "baseUrl": "http://localhost:5001/brunstadtv-online-dev/europe-west1/"
+    "baseUrl": "http://localhost:5001/brunstadtv-online-dev/europe-west1/",
 	"baseURLv2": "http://localhost:8000/"
   },
   "app": {
