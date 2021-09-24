@@ -23,6 +23,7 @@
 import api from "../../../utils/api"
 import { crono } from 'vue-crono'
 import { mapState, mapActions, mapGetters } from 'vuex'
+import keys from '../../../utils/keys'
 
 export default {
     mixins: [crono],
@@ -54,7 +55,7 @@ export default {
     methods: {
 		...mapActions('competitions', ['bindChurchesRef']),
         async fetchData() {
-            let results = await api.sendRequestRaw("GET", "http://localhost:8000/api/donationstatus");
+            let results = await api.sendRequestRaw("GET", `${keys.API.BASE_PATH_V2}api/donationstatus`);
             if (results.status != 200) {
                 console.error(results);
                 return;

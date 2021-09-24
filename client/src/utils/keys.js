@@ -12,7 +12,8 @@ const keys = {
     API_AUDIENCE: config.auth0.apiAudience
   },
   API: {
-    BASE_PATH: config.api.baseUrl
+    BASE_PATH: config.api.baseUrl,
+    BASE_PATH_V2: config.api.baseUrlV2,
   },
   FIREBASE: {
     API_KEY: config.firebase.apiKey,
