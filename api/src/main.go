@@ -57,6 +57,13 @@ func main() {
 	membersWebhookSecret := os.Getenv("MEMBERS_WEBHOOKS_SECRET")
 	membersDomain := os.Getenv("MEMBERS_DOMAIN")
 
+	analyticsSecret := os.Getenv("ANALYTICS_SECRET")
+	if analyticsSecret == "" {
+		// It would be bad to use "" as a shared secret
+		log.L.Panic().Msg("ANALYTICS_SECRET is empty")
+		return
+	}
+
 	auth0Domain := os.Getenv("AUTH0_DOMAIN")
 	auth0Issuer := os.Getenv("AUTH0_ISSUER")
 	auth0Audience := os.Getenv("AUTH0_AUDIENCE")
@@ -73,7 +80,12 @@ func main() {
 	membersClient := members.NewClient(tracedHTTPClient, membersDomain, membersKey, log.L)
 
 	log.L.Debug().Msg("Creating server")
-	server := NewServer(membersWebhookSecret, fbClient, membersClient)
+	server := NewServer(
+		membersWebhookSecret,
+		analyticsSecret,
+		fbClient,
+		membersClient,
+	)
 
 	router := gin.Default()
 	router.Use(logger.SetLogger(logger.Config{
@@ -97,6 +109,15 @@ func main() {
 		Audience: auth0Audience,
 	}))
 	admin.Use(firebase.ValidateRole(fbClient, firebase.Roles(firebase.Admin)))
+
+	// /api/ only validates that a valid token exists but nothing else (accessible for all users)
+	apiGrp := router.Group("api")
+	apiGrp.Use(auth0.JWTCheck(auth0.JWTConfig{
+		Domain:   auth0Domain,
+		Issuer:   auth0Issuer,
+		Audience: auth0Audience,
+	}))
+	apiGrp.GET("analitycsid", server.GenerateAnalyticsID)
 
 	// Webhooks have no direct authentication but use a HMAC to prove the origin
 	webhooks := router.Group("webhooks")
