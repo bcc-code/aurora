@@ -7,6 +7,7 @@
         <FeedPictures v-else-if="screenOptions.component == ScreenEComponents.FEEDPICTURES" option="feedPictures" />
         <BukGames v-else-if="screenOptions.component == ScreenEComponents.BUKGAMES" option="bukGames" />
         <WWR v-else-if="screenOptions.component == ScreenEComponents.WWR" option="wwr" />
+        <DonationList v-else-if="screenOptions.component == ScreenEComponents.DonationList" option="" />
         <NeedRefresh v-if="screen.needRefresh" />
         <Actions canRefresh :canSave="hasChanged" @apply="apply" @refresh="refresh"/>
     </Form>
@@ -23,6 +24,8 @@ import WorldMap from '../Components/WorldMap'
 import FeedPictures from '../Components/FeedPictures'
 import BukGames from '../Components/BukGames'
 import WWR from '../Components/WWR'
+import DonationList from '../Components/DonationList'
+
 export default {
     components: {
         NeedRefresh,
@@ -31,7 +34,8 @@ export default {
         WorldMap,
         FeedPictures,
         BukGames,
-        WWR
+        WWR,
+        DonationList,
     },
     props: ['screen'],
     data: function() {

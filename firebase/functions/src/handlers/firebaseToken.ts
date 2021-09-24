@@ -47,6 +47,7 @@ export async function login(req: Request, res: Response, next: NextFunction) : P
         // @ts-ignore this is valid according to the docs
         audience: config.auth0.apiAudience,
     }
+
     return passport.authenticate('auth0', authOptions)(req, res, next)
 }
 

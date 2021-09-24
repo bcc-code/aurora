@@ -14,6 +14,8 @@ import BukGames from '@/components/LiveScreens/LED/BUKGames/Leaderboard'
 import Wwr from '@/components/LiveScreens/LED/WWR'
 import { mapActions, mapGetters } from 'vuex'
 import EventBus from '@/utils/eventBus.js'
+import DonationsList from '@/components/LiveScreens/shared/DonationsList'
+
 export default {
     components: {
         ProfilePictures,
@@ -23,7 +25,8 @@ export default {
         Question,
         Inquiry,
         BukGames,
-        Wwr
+        Wwr,
+        DonationsList,
     },
     data: function(){
         return {

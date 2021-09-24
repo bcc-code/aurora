@@ -7,6 +7,10 @@ const baseUri = keys.API.BASE_PATH;
  * Create and process the request
  */
 async function sendRequest(requestMethod, requestUrl, bodyData = null, headers = {}, auth = true){
+    return sendRequestRaw(requestMethod, baseUri + requestUrl, bodyData, headers, auth)
+}
+
+async function sendRequestRaw(requestMethod, requestUrl, bodyData = null, headers = {}, auth = true){
     if (auth) {
         var accessToken = localStorage.getItem(keys.AUTH0.CLIENT_ID);
 
@@ -22,7 +26,7 @@ async function sendRequest(requestMethod, requestUrl, bodyData = null, headers =
         headers: headers,
         method: requestMethod,
         data: bodyData,
-        url: baseUri + requestUrl
+        url: requestUrl
     });
 }
 
@@ -112,4 +116,5 @@ export default {
     startPoll,
     updateResponsesStats,
     updateUserCount,
+    sendRequestRaw,
 };

@@ -1,5 +1,4 @@
 import Auth0Strategy, {
-    AuthenticateOptions,
     ExtraVerificationParams,
     VerifyFunctionWithRequest,
 } from 'passport-auth0'
@@ -31,7 +30,6 @@ const strategy = new Auth0Strategy(
         return done(null, profile)
     }
 )
-
 passport.use(strategy)
 passport.serializeUser((user, done) => {
     done(null, user)
