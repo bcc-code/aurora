@@ -12,6 +12,21 @@ import (
 	"go.bcc.media/bcco-api/pubsub"
 )
 
+// ServerConfig for easier config of new server
+type ServerConfig struct {
+	AnalyticsIDSecret string
+
+	FirestoreClient *firestore.Client
+
+	HTTPClient *http.Client
+
+	MembersWebhookSecret string
+	MembersClient        *members.Client
+
+	CollectionAPIKey  string
+	CollectionBaseURL string
+}
+
 // Server holds shared resources for the webserver
 // so they can be accessed by all requests
 type Server struct {
@@ -19,14 +34,23 @@ type Server struct {
 
 	members              *members.Client
 	membersWebhookSecret string
+	analyticsIDSecret    string
+	httpClient           *http.Client
+
+	collectionBaseURL string
+	collectionAPIKey  string
 }
 
 // NewServer with embedded shared resources
-func NewServer(membersWebhookSecret string, fs *firestore.Client, membersClient *members.Client) *Server {
+func NewServer(c ServerConfig) *Server {
 	return &Server{
-		fs:                   fs,
-		members:              membersClient,
-		membersWebhookSecret: membersWebhookSecret,
+		fs:                   c.FirestoreClient,
+		members:              c.MembersClient,
+		membersWebhookSecret: c.MembersWebhookSecret,
+		analyticsIDSecret:    c.AnalyticsIDSecret,
+		httpClient:           c.HTTPClient,
+		collectionBaseURL:    c.CollectionBaseURL,
+		collectionAPIKey:     c.CollectionAPIKey,
 	}
 }
 
