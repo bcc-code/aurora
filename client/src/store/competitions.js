@@ -67,6 +67,11 @@ export default {
         doneDistance: (state) => {
             return state.distanceShards.reduce((acc, c) => acc + c.distance, 0);
         },
+        churches: (state) => {
+            let out = {}
+            state.churches.forEach((c) => out[c.churchId] = c)
+            return out
+        },
         rankedChurchesTotalDistance: (state) => {
             return [...state.distancesPerChurch].sort((a, b) => b.distance - a.distance)
         },
@@ -85,7 +90,7 @@ export default {
         statsByChurchId: (state, getters) => (churchId) => {
             var church = Object.assign({}, state.churches.find((church) => church.id == churchId))
             var churchStats = state.distancesPerChurch.find((el) => el.id == churchId)
-            if (churchStats == null) 
+            if (churchStats == null)
                 churchStats = { distance: 0 }
             church.id = churchId
             church.distance = churchStats.distance

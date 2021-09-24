@@ -1,61 +1,110 @@
 <template>
-
-   <div>
-       <table class="scroll-animate">
-            <tr v-for="(value,index) in sortedByDS">
-            <td>{{ index + 1 }}</td>
-                <td> {{ churches[value.churchId].name }} </td>
-                 <td>{{ value.amountPerDS }}</td>
+<div>
+   <div class="scroll-animate" id="animated-wrapper" v-if="dataLoaded">
+    <div class="table-wrapper" >
+       <table>
+            <tr v-for="(value,index) in sortedByDS" :key="value.churchId" v-if="value.amountPerDS > 0">
+                <td :class="'nr' + index">{{ index + 1 }}</td>
+                <td :class="'nr' + index">{{ churches[value.churchId].name }} </td>
+                <td :class="'nr' + index" class="amount">{{ value.amountPerDS }} kr/DS</td>
             </tr>
       </table>
+    </div>
+    <div class="table-wrapper">
+      <div class="total-title">Totalt innsamlet:</div>
+      <div class="total">{{ formattedTotal }} kr</div>
+    </div>
   </div>
+</div>
 </template>
 
 <script>
 
+import api from "../../../utils/api"
+import { crono } from 'vue-crono'
+import { mapState, mapActions, mapGetters } from 'vuex'
+
 export default {
+    mixins: [crono],
     data: function(){
         return {
-            collection: {"timestamp":"2021-09-22T13:12:31.81+00:00","items":{"101":{"churchId":101,"count":1822,"amountPerDS":65,"participation":117,"participants":605,"amount":18190.000000},"42":{"churchId":42,"count":1,"amountPerDS":0,"participation":0,"participants":1,"amount":1.00},"445":{"churchId":445,"count":177,"amountPerDS":78,"participation":115,"participants":59,"amount":1770.00},"392":{"churchId":392,"count":6,"amountPerDS":16375,"participation":1,"participants":2,"amount":1105324.00},"117":{"churchId":117,"count":130,"amountPerDS":117,"participation":113,"participants":43,"amount":2290.000000},"55":{"churchId":55,"count":813,"amountPerDS":4162,"participation":111,"participants":214,"amount":379744.011000}},"totalAmount":1507319.011000,"participants":0},
-            churches: {"3":{"churchId":3,"name":"Twente","country":"Netherlands","ds":188,"participants":374,"countryCode":"NL","group":"L","showParticipation":true},"7":{"churchId":7,"name":"Bergen","country":"Norway","ds":158.25,"participants":308,"countryCode":"NO","group":"L","showParticipation":true},"286":{"churchId":286,"name":"Estland","country":"Estonia","ds":1.5,"participants":5,"countryCode":"EE","group":"S","showParticipation":false},"9":{"churchId":9,"name":"Mumbai","country":"India","ds":20.25,"participants":33,"countryCode":"IN","group":"M","showParticipation":true},"287":{"churchId":287,"name":"A-laget","country":"Norway","ds":122.5,"participants":245,"countryCode":"NO","group":"L","showParticipation":true},"10":{"churchId":10,"name":"Lilienhof","country":"Germany","ds":53.25,"participants":100,"countryCode":"DE","group":"M","showParticipation":true},"11":{"churchId":11,"name":"Cairo","country":"Egypt","ds":5,"participants":6,"countryCode":"EG","group":"S","showParticipation":false},"12":{"churchId":12,"name":"Connecticut","country":"USA","ds":52.5,"participants":105,"countryCode":"US","group":"L","showParticipation":true},"15":{"churchId":15,"name":"Delaware","country":"USA","ds":35.25,"participants":58,"countryCode":"US","group":"M","showParticipation":true},"16":{"churchId":16,"name":"Detroit","country":"USA","ds":38.25,"participants":82,"countryCode":"US","group":"M","showParticipation":true},"17":{"churchId":17,"name":"Didcot","country":"United Kingdom","ds":58.25,"participants":101,"countryCode":"GB","group":"L","showParticipation":true},"18":{"churchId":18,"name":"Drammen","country":"Norway","ds":177.25,"participants":373,"countryCode":"NO","group":"L","showParticipation":true},"20":{"churchId":20,"name":"Eiker","country":"Norway","ds":218,"participants":419,"countryCode":"NO","group":"L","showParticipation":true},"22":{"churchId":22,"name":"Dürrmenz","country":"Germany","ds":78,"participants":164,"countryCode":"DE","group":"L","showParticipation":true},"24":{"churchId":24,"name":"Mittewald","country":"Austria","ds":19,"participants":47,"countryCode":"AT","group":"M","showParticipation":true},"26":{"churchId":26,"name":"Graz","country":"Austria","ds":12.5,"participants":22,"countryCode":"AT","group":"S","showParticipation":false},"27":{"churchId":27,"name":"Grenland","country":"Norway","ds":310.75,"participants":623,"countryCode":"NO","group":"L","showParticipation":true},"305":{"churchId":305,"name":"Ozornoe","country":"Ukraine","ds":29,"participants":57,"countryCode":"UA","group":"M","showParticipation":true},"29":{"churchId":29,"name":"Groningen","country":"Netherlands","ds":84,"participants":173,"countryCode":"NL","group":"L","showParticipation":true},"30":{"churchId":30,"name":"Gross-Godems","country":"Germany","ds":2.75,"participants":7,"countryCode":"DE","group":"S","showParticipation":false},"32":{"churchId":32,"name":"Hallingdal","country":"Norway","ds":60.5,"participants":120,"countryCode":"NO","group":"L","showParticipation":true},"33":{"churchId":33,"name":"Hamar","country":"Norway","ds":110,"participants":203,"countryCode":"NO","group":"L","showParticipation":true},"34":{"churchId":34,"name":"Hamburg","country":"Germany","ds":66.25,"participants":115,"countryCode":"DE","group":"L","showParticipation":true},"35":{"churchId":35,"name":"Exter","country":"Germany","ds":113.25,"participants":214,"countryCode":"DE","group":"L","showParticipation":true},"36":{"churchId":36,"name":"Harstad","country":"Norway","ds":33.5,"participants":60,"countryCode":"NO","group":"M","showParticipation":true},"39":{"churchId":39,"name":"Hessenhöfe","country":"Germany","ds":88.75,"participants":171,"countryCode":"DE","group":"L","showParticipation":true},"40":{"churchId":40,"name":"Holstebro","country":"Denmark","ds":90.75,"participants":185,"countryCode":"DK","group":"L","showParticipation":true},"41":{"churchId":41,"name":"Hong Kong","country":"Hong Kong","ds":27.5,"participants":40,"countryCode":"HK","group":"M","showParticipation":true},"42":{"churchId":42,"name":"Horten","country":"Norway","ds":164.25,"participants":309,"countryCode":"NO","group":"L","showParticipation":true},"43":{"churchId":43,"name":"Hønefoss","country":"Norway","ds":47.75,"participants":89,"countryCode":"NO","group":"M","showParticipation":true},"44":{"churchId":44,"name":"Israel","country":"Israel","ds":7,"participants":11,"countryCode":"IL","group":"S","showParticipation":false},"45":{"churchId":45,"name":"Istanbul","country":"Turkey","ds":18.5,"participants":34,"countryCode":"TR","group":"M","showParticipation":true},"46":{"churchId":46,"name":"Bafoussam","country":"Cameroon","ds":23.75,"participants":57,"countryCode":"CM","group":"M","showParticipation":true},"47":{"churchId":47,"name":"Nyakweri","country":"Kenya","ds":6.75,"participants":15,"countryCode":"KE","group":"S","showParticipation":false},"48":{"churchId":48,"name":"Raumberg","country":"Austria","ds":12.25,"participants":25,"countryCode":"AT","group":"S","showParticipation":false},"49":{"churchId":49,"name":"Sørlandet","country":"Norway","ds":113.25,"participants":232,"countryCode":"NO","group":"L","showParticipation":true},"326":{"churchId":326,"name":"Flevoland","country":"Netherlands","ds":57.75,"participants":139,"countryCode":"NL","group":"L","showParticipation":true},"327":{"churchId":327,"name":"Crasna","country":"Romania","ds":31.5,"participants":55,"countryCode":"RO","group":"M","showParticipation":true},"50":{"churchId":50,"name":"Kyrkslätt","country":"Finland","ds":13.75,"participants":27,"countryCode":"FI","group":"S","showParticipation":false},"51":{"churchId":51,"name":"København","country":"Denmark","ds":208,"participants":410,"countryCode":"DK","group":"L","showParticipation":true},"52":{"churchId":52,"name":"Lahti","country":"Finland","ds":52,"participants":104,"countryCode":"FI","group":"L","showParticipation":true},"54":{"churchId":54,"name":"Linnenbach","country":"Germany","ds":122.5,"participants":243,"countryCode":"DE","group":"L","showParticipation":true},"55":{"churchId":55,"name":"Malinka","country":"Poland","ds":91.25,"participants":192,"countryCode":"PL","group":"L","showParticipation":true},"57":{"churchId":57,"name":"Maubach","country":"Germany","ds":134.75,"participants":241,"countryCode":"DE","group":"L","showParticipation":true},"58":{"churchId":58,"name":"Melbourne","country":"Australia","ds":42.75,"participants":80,"countryCode":"AU","group":"M","showParticipation":true},"59":{"churchId":59,"name":"Zeeland-Belgie","country":"Netherlands","ds":27,"participants":55,"countryCode":"NL","group":"M","showParticipation":true},"60":{"churchId":60,"name":"Missouri","country":"USA","ds":12.5,"participants":23,"countryCode":"US","group":"S","showParticipation":false},"61":{"churchId":61,"name":"Molde","country":"Norway","ds":67,"participants":134,"countryCode":"NO","group":"L","showParticipation":true},"62":{"churchId":62,"name":"Missoula","country":"USA","ds":5.25,"participants":11,"countryCode":"US","group":"S","showParticipation":false},"64":{"churchId":64,"name":"Måløy","country":"Norway","ds":27.25,"participants":48,"countryCode":"NO","group":"M","showParticipation":true},"66":{"churchId":66,"name":"Utrecht","country":"Netherlands","ds":25.25,"participants":55,"countryCode":"NL","group":"M","showParticipation":true},"67":{"churchId":67,"name":"Novo Sarandi","country":"Brazil","ds":24.25,"participants":44,"countryCode":"BR","group":"M","showParticipation":true},"345":{"churchId":345,"name":"Brasov","country":"Romania","ds":20.5,"participants":41,"countryCode":"RO","group":"M","showParticipation":true},"69":{"churchId":69,"name":"Oslo/Follo","country":"Norway","ds":494.5,"participants":935,"countryCode":"NO","group":"L","showParticipation":true},"70":{"churchId":70,"name":"Ottawa","country":"Canada","ds":93.75,"participants":193,"countryCode":"CA","group":"L","showParticipation":true},"72":{"churchId":72,"name":"Paso Flores","country":"Argentina","ds":15.5,"participants":30,"countryCode":"AR","group":"S","showParticipation":false},"73":{"churchId":73,"name":"Fulda","country":"Germany","ds":77.5,"participants":130,"countryCode":"DE","group":"L","showParticipation":true},"76":{"churchId":76,"name":"Rotterdam","country":"Netherlands","ds":65.75,"participants":116,"countryCode":"NL","group":"L","showParticipation":true},"77":{"churchId":77,"name":"Salem","country":"USA","ds":127.25,"participants":277,"countryCode":"US","group":"L","showParticipation":true},"78":{"churchId":78,"name":"Sandefjord","country":"Norway","ds":203,"participants":400,"countryCode":"NO","group":"L","showParticipation":true},"80":{"churchId":80,"name":"Sardinia","country":"Italy","ds":10,"participants":17,"countryCode":"IT","group":"S","showParticipation":false},"83":{"churchId":83,"name":"Seattle","country":"USA","ds":55,"participants":106,"countryCode":"US","group":"L","showParticipation":true},"84":{"churchId":84,"name":"Singapore","country":"China","ds":15.75,"participants":31,"countryCode":"CN","group":"M","showParticipation":true},"86":{"churchId":86,"name":"Schweiz","country":"Switzerland","ds":183.5,"participants":356,"countryCode":"CH","group":"L","showParticipation":true},"87":{"churchId":87,"name":"St. Petersburg","country":"Russia","ds":26.25,"participants":45,"countryCode":"RU","group":"M","showParticipation":true},"88":{"churchId":88,"name":"Stavanger","country":"Norway","ds":126.25,"participants":255,"countryCode":"NO","group":"L","showParticipation":true},"90":{"churchId":90,"name":"Stord","country":"Norway","ds":82.75,"participants":159,"countryCode":"NO","group":"L","showParticipation":true},"367":{"churchId":367,"name":"Lima","country":"Peru","ds":5,"participants":9,"countryCode":"PE","group":"S","showParticipation":false},"369":{"churchId":369,"name":"Zhitkovichi","country":"Belarus","ds":3,"participants":7,"countryCode":"BY","group":"S","showParticipation":false},"92":{"churchId":92,"name":"Sydney","country":"Australia","ds":30.75,"participants":63,"countryCode":"AU","group":"M","showParticipation":true},"93":{"churchId":93,"name":"Syracuse","country":"USA","ds":26.5,"participants":57,"countryCode":"US","group":"M","showParticipation":true},"370":{"churchId":370,"name":"Slobozia Mare","country":"Moldova","ds":5,"participants":9,"countryCode":"MD","group":"S","showParticipation":false},"371":{"churchId":371,"name":"Bangalore","country":"India","ds":20,"participants":32,"countryCode":"IN","group":"M","showParticipation":true},"372":{"churchId":372,"name":"Trivandrum","country":"India","ds":6,"participants":8,"countryCode":"IN","group":"S","showParticipation":false},"95":{"churchId":95,"name":"Huntworth","country":"United Kingdom","ds":41.75,"participants":92,"countryCode":"GB","group":"M","showParticipation":true},"96":{"churchId":96,"name":"Terwolde","country":"Netherlands","ds":88.25,"participants":172,"countryCode":"NL","group":"L","showParticipation":true},"373":{"churchId":373,"name":"South Africa","country":"South Africa","ds":103,"participants":209,"countryCode":"ZA","group":"L","showParticipation":true},"97":{"churchId":97,"name":"Toronto","country":"Canada","ds":28.5,"participants":64,"countryCode":"CA","group":"M","showParticipation":true},"376":{"churchId":376,"name":"Alwaye","country":"India","ds":22.25,"participants":45,"countryCode":"IN","group":"M","showParticipation":true},"377":{"churchId":377,"name":"Mallorca","country":"Spain","ds":31,"participants":57,"countryCode":"ES","group":"M","showParticipation":true},"101":{"churchId":101,"name":"Tønsberg","country":"Norway","ds":279.75,"participants":515,"countryCode":"NO","group":"L","showParticipation":true},"102":{"churchId":102,"name":"Urbana","country":"USA","ds":61,"participants":122,"countryCode":"US","group":"L","showParticipation":true},"379":{"churchId":379,"name":"Padej","country":"Serbia","ds":2.25,"participants":5,"countryCode":"RS","group":"S","showParticipation":false},"380":{"churchId":380,"name":"Medias","country":"Romania","ds":3,"participants":6,"countryCode":"RO","group":"S","showParticipation":false},"104":{"churchId":104,"name":"Vácduka","country":"Hungary","ds":103,"participants":192,"countryCode":"HU","group":"L","showParticipation":true},"381":{"churchId":381,"name":"Ilo","country":"Peru","ds":6.25,"participants":18,"countryCode":"PE","group":"S","showParticipation":false},"105":{"churchId":105,"name":"Valdivia","country":"Chile","ds":9,"participants":22,"countryCode":"CL","group":"S","showParticipation":false},"382":{"churchId":382,"name":"Leon","country":"Mexico","ds":7,"participants":11,"countryCode":"MX","group":"S","showParticipation":false},"106":{"churchId":106,"name":"Vancouver","country":"Canada","ds":32,"participants":61,"countryCode":"CA","group":"M","showParticipation":true},"383":{"churchId":383,"name":"Pune","country":"India","ds":5.5,"participants":13,"countryCode":"IN","group":"S","showParticipation":false},"107":{"churchId":107,"name":"Varna","country":"Bulgaria","ds":6.75,"participants":11,"countryCode":"BG","group":"S","showParticipation":false},"384":{"churchId":384,"name":"Mersin","country":"Turkey","ds":6.5,"participants":8,"countryCode":"TR","group":"S","showParticipation":false},"385":{"churchId":385,"name":"Jakarta","country":"Indonesia","ds":3.5,"participants":6,"countryCode":"ID","group":"S","showParticipation":false},"109":{"churchId":109,"name":"Nancy","country":"France","ds":90.25,"participants":197,"countryCode":"FR","group":"L","showParticipation":true},"110":{"churchId":110,"name":"Waldhausen","country":"Germany","ds":154.5,"participants":295,"countryCode":"DE","group":"L","showParticipation":true},"387":{"churchId":387,"name":"Dubai","country":"United Arab Emirates","ds":8.5,"participants":15,"countryCode":"AE","group":"S","showParticipation":false},"111":{"churchId":111,"name":"Waltrop","country":"Germany","ds":75.5,"participants":138,"countryCode":"DE","group":"L","showParticipation":true},"388":{"churchId":388,"name":"Colombo","country":"Sri Lanka","ds":7.25,"participants":12,"countryCode":"LK","group":"S","showParticipation":false},"390":{"churchId":390,"name":"Adjud","country":"Romania","ds":51.25,"participants":87,"countryCode":"RO","group":"M","showParticipation":true},"114":{"churchId":114,"name":"Winnipeg","country":"Canada","ds":55.75,"participants":117,"countryCode":"CA","group":"L","showParticipation":true},"391":{"churchId":391,"name":"Caragiale","country":"Romania","ds":25.75,"participants":38,"countryCode":"RO","group":"M","showParticipation":true},"392":{"churchId":392,"name":"Bucharest","country":"Romania","ds":67.5,"participants":121,"countryCode":"RO","group":"L","showParticipation":true},"116":{"churchId":116,"name":"Wien","country":"Austria","ds":28,"participants":54,"countryCode":"AT","group":"M","showParticipation":true},"117":{"churchId":117,"name":"Wroclaw","country":"Poland","ds":19.5,"participants":38,"countryCode":"PL","group":"M","showParticipation":true},"394":{"churchId":394,"name":"Cràiova","country":"Romania","ds":6.5,"participants":15,"countryCode":"RO","group":"S","showParticipation":false},"395":{"churchId":395,"name":"Giurgiu","country":"Romania","ds":11.5,"participants":20,"countryCode":"RO","group":"S","showParticipation":false},"396":{"churchId":396,"name":"Dorohoi","country":"Romania","ds":7.5,"participants":13,"countryCode":"RO","group":"S","showParticipation":false},"119":{"churchId":119,"name":"Østfold","country":"Norway","ds":233.25,"participants":469,"countryCode":"NO","group":"L","showParticipation":true},"398":{"churchId":398,"name":"Catania","country":"Italy","ds":3.25,"participants":7,"countryCode":"IT","group":"S","showParticipation":false},"122":{"churchId":122,"name":"Valdres","country":"Norway","ds":31.75,"participants":58,"countryCode":"NO","group":"M","showParticipation":true},"399":{"churchId":399,"name":"Curico","country":"Chile","ds":18,"participants":32,"countryCode":"CL","group":"M","showParticipation":true},"400":{"churchId":400,"name":"Sofia","country":"Bulgaria","ds":3.25,"participants":4,"countryCode":"BG","group":"S","showParticipation":false},"401":{"churchId":401,"name":"Dobarsko","country":"Bulgaria","ds":10.75,"participants":20,"countryCode":"BG","group":"S","showParticipation":false},"125":{"churchId":125,"name":"Schermer","country":"Netherlands","ds":82,"participants":150,"countryCode":"NL","group":"L","showParticipation":true},"402":{"churchId":402,"name":"Blagoevgrad","country":"Bulgaria","ds":6.75,"participants":10,"countryCode":"BG","group":"S","showParticipation":false},"405":{"churchId":405,"name":"Debrecen","country":"Hungary","ds":2.5,"participants":5,"countryCode":"HU","group":"S","showParticipation":false},"406":{"churchId":406,"name":"Inke","country":"Hungary","ds":1,"participants":2,"countryCode":"HU","group":"S","showParticipation":false},"407":{"churchId":407,"name":"Bakonycsernye","country":"Hungary","ds":3.75,"participants":6,"countryCode":"HU","group":"S","showParticipation":false},"409":{"churchId":409,"name":"Majlat","country":"Romania","ds":1,"participants":2,"countryCode":"RO","group":"S","showParticipation":false},"145":{"churchId":145,"name":"São Paulo - Cabreúva","country":"Brazil","ds":9.25,"participants":14,"countryCode":"BR","group":"S","showParticipation":false},"424":{"churchId":424,"name":"Yaoundé","country":"Cameroon","ds":76.75,"participants":155,"countryCode":"CM","group":"L","showParticipation":true},"147":{"churchId":147,"name":"New Zealand","country":"New Zealand","ds":21.5,"participants":43,"countryCode":"NZ","group":"M","showParticipation":true},"427":{"churchId":427,"name":"Ternopol","country":"Ukraine","ds":15,"participants":27,"countryCode":"UA","group":"S","showParticipation":false},"150":{"churchId":150,"name":"Horetice","country":"Czech Republic","ds":10,"participants":11,"countryCode":"CZ","group":"S","showParticipation":false},"428":{"churchId":428,"name":"Beljaevka","country":"Ukraine","ds":14,"participants":27,"countryCode":"UA","group":"S","showParticipation":false},"151":{"churchId":151,"name":"Kroatia","country":"Croatia","ds":2,"participants":5,"countryCode":"HR","group":"S","showParticipation":false},"429":{"churchId":429,"name":"Kharkov","country":"Ukraine","ds":6.75,"participants":8,"countryCode":"UA","group":"S","showParticipation":false},"430":{"churchId":430,"name":"Zakarpattia","country":"Ukraine","ds":15.5,"participants":31,"countryCode":"UA","group":"M","showParticipation":true},"431":{"churchId":431,"name":"Cherkassy","country":"Ukraine","ds":3,"participants":6,"countryCode":"UA","group":"S","showParticipation":false},"433":{"churchId":433,"name":"Tudora","country":"Moldova","ds":11,"participants":23,"countryCode":"MD","group":"S","showParticipation":false},"439":{"churchId":439,"name":"Kreta","country":"Greece","ds":1,"participants":1,"countryCode":"GR","group":"S","showParticipation":false},"440":{"churchId":440,"name":"Goa","country":"India","ds":5,"participants":9,"countryCode":"IN","group":"S","showParticipation":false},"441":{"churchId":441,"name":"Coimbatore","country":"India","ds":16.5,"participants":27,"countryCode":"IN","group":"S","showParticipation":false},"165":{"churchId":165,"name":"Paradera","country":"Aruba","ds":7.5,"participants":14,"countryCode":"AW","group":"S","showParticipation":false},"443":{"churchId":443,"name":"Langtore","country":"India","ds":14,"participants":26,"countryCode":"IN","group":"S","showParticipation":false},"445":{"churchId":445,"name":"Douala","country":"Cameroon","ds":22.75,"participants":51,"countryCode":"CM","group":"M","showParticipation":true},"168":{"churchId":168,"name":"Paris","country":"France","ds":21.75,"participants":45,"countryCode":"FR","group":"M","showParticipation":true},"170":{"churchId":170,"name":"Steinseltz","country":"France","ds":20,"participants":35,"countryCode":"FR","group":"M","showParticipation":true},"447":{"churchId":447,"name":"Mwanza","country":"Tanzania","ds":4.75,"participants":9,"countryCode":"TZ","group":"S","showParticipation":false},"448":{"churchId":448,"name":"Congo","country":"Congo","ds":27.5,"participants":54,"countryCode":"CG","group":"M","showParticipation":true},"171":{"churchId":171,"name":"Palmi","country":"Italy","ds":2,"participants":4,"countryCode":"IT","group":"S","showParticipation":false},"172":{"churchId":172,"name":"Shanghai","country":"China","ds":21.5,"participants":33,"countryCode":"CN","group":"M","showParticipation":true},"450":{"churchId":450,"name":"Villa Regina","country":"Argentina","ds":21,"participants":33,"countryCode":"AR","group":"M","showParticipation":true},"451":{"churchId":451,"name":"Para","country":"Brazil","ds":52,"participants":94,"countryCode":"BR","group":"M","showParticipation":true},"455":{"churchId":455,"name":"Arequipa","country":"Peru","ds":7.5,"participants":10,"countryCode":"PE","group":"S","showParticipation":false},"456":{"churchId":456,"name":"Kisii","country":"Kenya","ds":8,"participants":18,"countryCode":"KE","group":"S","showParticipation":false},"457":{"churchId":457,"name":"Kisumu","country":"Kenya","ds":17,"participants":29,"countryCode":"KE","group":"S","showParticipation":false},"458":{"churchId":458,"name":"Santa Rosa","country":"Brazil","ds":3,"participants":5,"countryCode":"BR","group":"S","showParticipation":false},"469":{"churchId":469,"name":"Porto Alegre","country":"Brazil","ds":5.5,"participants":10,"countryCode":"BR","group":"S","showParticipation":false},"471":{"churchId":471,"name":"Rodi Kopany","country":"Kenya","ds":3.75,"participants":12,"countryCode":"KE","group":"S","showParticipation":false},"473":{"churchId":473,"name":"Central Russia","country":"Russia","ds":6,"participants":10,"countryCode":"RU","group":"S","showParticipation":false},"475":{"churchId":475,"name":"Mulanje","country":"Malawi","ds":21.25,"participants":34,"countryCode":"MW","group":"M","showParticipation":true},"478":{"churchId":478,"name":"Uganda","country":"Uganda","ds":4,"participants":6,"countryCode":"UG","group":"S","showParticipation":false},"205":{"churchId":205,"name":"Slovenia","country":"Slovenia","ds":8.75,"participants":14,"countryCode":"SI","group":"S","showParticipation":false},"225":{"churchId":225,"name":"Etiopia","country":"Ethiopia","ds":4,"participants":6,"countryCode":"ET","group":"S","showParticipation":false},"507":{"churchId":507,"name":"Kirkenes","country":"Albania","ds":4,"participants":9,"countryCode":"AL","group":"S","showParticipation":false},"508":{"churchId":508,"name":"Lilongwe","country":"Malawi","ds":11.5,"participants":21,"countryCode":"MW","group":"S","showParticipation":false},"267":{"churchId":267,"name":"Shenzhen","country":"China","ds":14.5,"participants":24,"countryCode":"CN","group":"S","showParticipation":false}},
+            loaded: false,
+            dataLoaded: false,
+            collection: {},
         }
 
     },
     computed: {
+		...mapGetters('competitions', ['churches']),
         sortedByDS() {
-            //return Object.values(this.collection.items).sort((a, b) => b.amountPerDS - a.amountPerDS)
-            return this.randomCollection.sort((a, b) => b.amountPerDS - a.amountPerDS)
+            this.loaded = true;
+            return Object.values(this.collection.items).sort((a, b) => b.amountPerDS - a.amountPerDS)
         },
-        randomCollection() {
-            let items = Object.values(this.churches)
-            let out = [];
-            for (let x = 0; x < 100; x++) {
-                let item = items[Math.floor(Math.random()*items.length)];
-                out[x] = {
-                    churchId: item.churchId,
-                    amountPerDS: Math.floor(Math.random()*100000)
-                }
+        formattedTotal() {
+            let x = this.collection.totalAmount;
+            return x.toFixed().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+    },
+    watch: {
+        loaded() {
+            const animationDiv = document.getElementById("animated-wrapper");
+            animationDiv.style.setProperty('--height', (-1 * animationDiv.offsetHeight).toFixed() + "px");
+        }
+    },
+    methods: {
+		...mapActions('competitions', ['bindChurchesRef']),
+        async fetchData() {
+            let results = await api.sendRequestRaw("GET", "http://localhost:8000/api/donationstatus");
+            if (results.status != 200) {
+                console.error(results);
+                return;
             }
 
-            return out;
-        }
+            this.collection = results.data;
+            if (this.loaded) {
+                const animationDiv = document.getElementById("animated-wrapper");
+                animationDiv.style.setProperty('--height', (-1 * animationDiv.offsetHeight).toFixed() + "px");
+            }
+        },
+    },
+    cron: {
+        time: 15000,
+        method: 'fetchData'
+    },
+    async mounted(){
+		await this.bindChurchesRef();
+        await this.fetchData();
+        this.dataLoaded = true;
     },
 }
 </script>
 
 <style scoped>
 table {
-    height: 10px;
     font-size: 60px;
+}
+
+.table-wrapper {
     border-radius: 65px;
     background-color: rgba(100, 100, 100, 0.3);
     padding: 60px;
     margin: 25px;
-    width: 980px;
-    }
+    width: 1400px;
+    height: max-content;
+    overflow: hidden;
+}
+
+table {
+    width: 100%;
+}
+
 td {
-padding-left: 40px;
-padding-right: 40px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+td.amount {
+    min-width: 350px;
 }
 
 @keyframes moveUp {
@@ -63,12 +112,26 @@ padding-right: 40px;
         transform: translateY(1080px);
     }
 	100% {
-        transform: translateY(-10000px);
+        transform: translateY(var(--height));
 	}
 }
 
 .scroll-animate {
   animation: moveUp linear infinite;
-animation-duration: 90s;
+  animation-duration: 90s;
+  height: max-content;
 }
+
+td.nr0 {
+    padding-top: 12px;
+}
+
+div.total {
+    font-size: 205px;
+}
+
+div.total-title {
+    font-size: 145px;
+}
+
 </style>
