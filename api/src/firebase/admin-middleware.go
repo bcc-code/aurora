@@ -39,10 +39,11 @@ func ValidateRole(fs *firestore.Client, roles []role) gin.HandlerFunc {
 		}
 
 		var personID float64
-		if pid, ok := c.Get("PersonID"); !ok {
-			c.AbortWithStatus(http.StatusUnauthorized)
-		} else {
+		if pid, ok := c.Get("PersonID"); ok {
 			personID = pid.(float64)
+		} else {
+			c.AbortWithStatus(http.StatusUnauthorized)
+			return
 		}
 
 		permissionRef, err := fs.Collection("permissions").Doc(fmt.Sprintf("%.0f", personID)).Get(c.Request.Context())

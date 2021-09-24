@@ -19,14 +19,16 @@ type Server struct {
 
 	members              *members.Client
 	membersWebhookSecret string
+	analyticsIDSecret    string
 }
 
 // NewServer with embedded shared resources
-func NewServer(membersWebhookSecret string, fs *firestore.Client, membersClient *members.Client) *Server {
+func NewServer(membersWebhookSecret, analyticsIDSecret string, fs *firestore.Client, membersClient *members.Client) *Server {
 	return &Server{
 		fs:                   fs,
 		members:              membersClient,
 		membersWebhookSecret: membersWebhookSecret,
+		analyticsIDSecret:    analyticsIDSecret,
 	}
 }
 
