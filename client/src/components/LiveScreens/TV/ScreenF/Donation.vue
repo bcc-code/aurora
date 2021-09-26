@@ -49,7 +49,7 @@ export default {
     methods: {
         async updateCollected() {
             await Api.collectionResults().then((result) => {
-                this.collected = result.data
+                this.collected = result
             })
         }
     },

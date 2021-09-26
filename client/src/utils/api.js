@@ -79,10 +79,14 @@ async function importData(toImport) {
 }
 
 async function collectionResults() {
-    return axios({
-        method: 'GET',
-        url: 'https://smscollection.azurewebsites.net/api/collectionresults/',
-    });
+    let results = await sendRequestRaw("GET", `${keys.API.BASE_PATH_V2}api/donationstatus`);
+    if (results.status != 200) {
+        console.error(results);
+        return "";
+    }
+
+    let total = results.data.totalAmount.toFixed();
+    return total.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
 /**
