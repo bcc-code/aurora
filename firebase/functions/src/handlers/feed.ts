@@ -27,7 +27,7 @@ export async function newFeedPost(
         }
         const currentUser = currentUserObj.data() as IUser
 
-        const churchId = currentUser.churchId ?? null
+        const churchId = currentUser.ChurchId || currentUser.churchId || null
         if (churchId !== null) {
             const churchDoc = await userModel
                 .churchRef((currentUser.churchId ?? '').toString())
@@ -40,11 +40,11 @@ export async function newFeedPost(
         }
 
         const feedEntry: FeedEntry = {
-            firstName: currentUser.firstName || '',
-            lastName: currentUser.lastName || '',
-            displayName: currentUser.displayName || '',
-            churchName: currentUser.churchName || '',
-            countryName: currentUser.countryName || '',
+            firstName: currentUser.firstName || currentUser.FirstName || '',
+            lastName: currentUser.lastName || currentUser.LastName || '',
+            displayName: currentUser.displayName || currentUser.DisplayName || '',
+            churchName: currentUser.churchName || currentUser.ChurchName || '',
+            countryName: currentUser.countryName || currentUser.CountryName || '',
             text: req.body.text || '',
             imageUrl: req.body.imageUrl || '',
         }
