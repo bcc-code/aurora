@@ -77,7 +77,7 @@ func main() {
 	go auth0.GetKeySet(auth0Domain)
 
 	log.L.Debug().Msg("Connectiong to firebase")
-	fbClient := firebase.MustSetupFirestore(ctx, firebaseProject) // TODO: Get from ENV
+	fbApp, fsClient := firebase.MustSetupFirebase(ctx, firebaseProject) // TODO: Get from ENV
 
 	log.L.Debug().Msg("Creating members client")
 	membersClient := members.NewClient(tracedHTTPClient, membersDomain, membersKey, log.L)
@@ -86,7 +86,7 @@ func main() {
 	server := NewServer(ServerConfig{
 		MembersWebhookSecret: membersWebhookSecret,
 		AnalyticsIDSecret:    analyticsSecret,
-		FirestoreClient:      fbClient,
+		FirestoreClient:      fsClient,
 		MembersClient:        membersClient,
 		HTTPClient:           tracedHTTPClient,
 		CollectionAPIKey:     collectionAPIKey,
@@ -101,7 +101,7 @@ func main() {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"*"},
 		AllowMethods:  []string{"GET", "POST"},
-		AllowHeaders:  []string{"Origin", "audience", "authorization"},
+		AllowHeaders:  []string{"Origin", "audience", "authorization", "x-api-token"},
 		ExposeHeaders: []string{"Content-Length"},
 	}))
 
@@ -109,20 +109,24 @@ func main() {
 	// There is currently no need for more complex access controll so we
 	// just mirror what FB api is doing
 	admin := router.Group("admin")
-	admin.Use(auth0.JWTCheck(auth0.JWTConfig{
+	admin.Use(auth0.JWTCheck(ctx, auth0.JWTConfig{
 		Domain:   auth0Domain,
 		Issuer:   auth0Issuer,
 		Audience: auth0Audience,
-	}))
-	admin.Use(firebase.ValidateRole(fbClient, firebase.Roles(firebase.Admin)))
+	}, fbApp))
+	admin.Use(firebase.ValidateRole(fsClient, firebase.Roles(firebase.Admin)))
 
 	// /api/ only validates that a valid token exists but nothing else (accessible for all users)
 	apiGrp := router.Group("api")
-	apiGrp.Use(auth0.JWTCheck(auth0.JWTConfig{
-		Domain:   auth0Domain,
-		Issuer:   auth0Issuer,
-		Audience: auth0Audience,
-	}))
+	apiGrp.Use(auth0.JWTCheck(
+		ctx,
+		auth0.JWTConfig{
+			Domain:   auth0Domain,
+			Issuer:   auth0Issuer,
+			Audience: auth0Audience,
+		},
+		fbApp,
+	))
 	apiGrp.GET("analitycsid", server.GenerateAnalyticsID)
 	apiGrp.GET("donationstatus", server.GetCollectionResults)
 

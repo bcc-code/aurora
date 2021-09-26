@@ -8,8 +8,8 @@ import (
 	"go.bcc.media/bcco-api/log"
 )
 
-// MustSetupFirestore and return a valid client
-func MustSetupFirestore(ctx context.Context, projectID string) *firestore.Client {
+// MustSetupFirebase and return a valid client
+func MustSetupFirebase(ctx context.Context, projectID string) (*firebase.App, *firestore.Client) {
 	conf := &firebase.Config{ProjectID: projectID}
 	app, err := firebase.NewApp(ctx, conf)
 	if err != nil {
@@ -20,5 +20,5 @@ func MustSetupFirestore(ctx context.Context, projectID string) *firestore.Client
 	if err != nil {
 		log.L.Fatal().Err(err)
 	}
-	return client
+	return app, client
 }
