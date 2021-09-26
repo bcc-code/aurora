@@ -49,7 +49,7 @@ export default {
     watch: {
         loaded() {
             const animationDiv = document.getElementById("animated-wrapper");
-            animationDiv.style.setProperty('--height', (-1 * animationDiv.offsetHeight).toFixed() + "px");
+            animationDiv.style.setProperty('--x-height', (-1 * animationDiv.offsetHeight).toFixed() + "px");
         }
     },
     methods: {
@@ -64,7 +64,7 @@ export default {
             this.collection = results.data;
             if (this.loaded) {
                 const animationDiv = document.getElementById("animated-wrapper");
-                animationDiv.style.setProperty('--height', (-1 * animationDiv.offsetHeight).toFixed() + "px");
+                animationDiv.style.setProperty('--x-height', (-1 * animationDiv.offsetHeight).toFixed() + "px");
             }
         },
     },
@@ -113,7 +113,8 @@ td.amount {
         transform: translateY(1080px);
     }
 	100% {
-        transform: translateY(var(--height));
+        transform: translateY(-10974px);
+       /* transform: translateY(var(--x-height)); */
 	}
 }
 
