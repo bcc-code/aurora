@@ -6,6 +6,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/gin-gonic/gin"
+	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/firebase"
 	"go.bcc.media/bcco-api/log"
 	"go.bcc.media/bcco-api/members"
@@ -14,7 +15,7 @@ import (
 
 // ServerConfig for easier config of new server
 type ServerConfig struct {
-	AnalyticsIDSecret string
+	AnalyticsClient *analytics.Client
 
 	FirestoreClient *firestore.Client
 
@@ -31,6 +32,7 @@ type ServerConfig struct {
 // so they can be accessed by all requests
 type Server struct {
 	fs *firestore.Client
+	analyticsClient *analytics.Client
 
 	members              *members.Client
 	membersWebhookSecret string
@@ -47,7 +49,7 @@ func NewServer(c ServerConfig) *Server {
 		fs:                   c.FirestoreClient,
 		members:              c.MembersClient,
 		membersWebhookSecret: c.MembersWebhookSecret,
-		analyticsIDSecret:    c.AnalyticsIDSecret,
+		analyticsClient :    c.AnalyticsClient ,
 		httpClient:           c.HTTPClient,
 		collectionBaseURL:    c.CollectionBaseURL,
 		collectionAPIKey:     c.CollectionAPIKey,

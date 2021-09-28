@@ -53,6 +53,18 @@ func (u User) UpdateWithMember(member *members.Member) (User, bool) {
 	return u, true
 }
 
+// GetUser from firebase
+func GetUser(ctx context.Context, client firestore.Client, personID string) (User, error) {
+	user := User{}
+	fbUser, err := client.Collection("users").Doc(personID).Get(ctx)
+	if err != nil {
+		return user, err
+	}
+
+	err = fbUser.DataTo(&user)
+	return user, err
+}
+
 // UpdateOrCreateUser in firebase
 func UpdateOrCreateUser(ctx context.Context, client *firestore.Client, member *members.Member) error {
 	fbUser, err := client.Collection("users").Doc(fmt.Sprintf("%.0d", member.PersonID)).Get(ctx)

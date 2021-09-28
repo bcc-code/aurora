@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
 
+	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/auth0"
 	"go.bcc.media/bcco-api/firebase"
 	"go.bcc.media/bcco-api/log"
@@ -57,6 +58,13 @@ func main() {
 	membersWebhookSecret := os.Getenv("MEMBERS_WEBHOOKS_SECRET")
 	membersDomain := os.Getenv("MEMBERS_DOMAIN")
 
+	analyticsAPIKey := os.Getenv("ANALYTICS_API_KEY")
+	if analyticsAPIKey == "" {
+		// If this is empty the `/analytics/*` endpoints are public. Not ideal
+		log.L.Panic().Msg("ANALYTICS_API_KEY is empty")
+		return
+	}
+
 	analyticsSecret := os.Getenv("ANALYTICS_SECRET")
 	if analyticsSecret == "" {
 		// It would be bad to use "" as a shared secret
@@ -74,10 +82,22 @@ func main() {
 	// We currently only support running in the same project as firebase
 	firebaseProject := os.Getenv("GOOGLE_CLOUD_PROJECT")
 
+	rudderstackKey := os.Getenv("RUDDERSTACK_KEY")
+	rudderstackURL := os.Getenv("RUDDERSTACK_URL")
+
+	// A bit of misuse but K_REVISION is set by GCR and gives a lot of info
+	appBuild := os.Getenv("K_REVISION")
+	if appBuild == "" {
+		appBuild = "DeveloperLocal"
+	}
+
+	// Instantiates a client to use send messages to the Rudder API.
+	analyticsClient := analytics.MustSetupAnalytics(rudderstackURL, rudderstackKey, analyticsSecret, "", appBuild)
+
 	go auth0.GetKeySet(auth0Domain)
 
 	log.L.Debug().Msg("Connectiong to firebase")
-	fbApp, fsClient := firebase.MustSetupFirebase(ctx, firebaseProject) // TODO: Get from ENV
+	fbApp, fsClient := firebase.MustSetupFirebase(ctx, firebaseProject)
 
 	log.L.Debug().Msg("Creating members client")
 	membersClient := members.NewClient(tracedHTTPClient, membersDomain, membersKey, log.L)
@@ -85,12 +105,12 @@ func main() {
 	log.L.Debug().Msg("Creating server")
 	server := NewServer(ServerConfig{
 		MembersWebhookSecret: membersWebhookSecret,
-		AnalyticsIDSecret:    analyticsSecret,
 		FirestoreClient:      fsClient,
 		MembersClient:        membersClient,
 		HTTPClient:           tracedHTTPClient,
 		CollectionAPIKey:     collectionAPIKey,
 		CollectionBaseURL:    collectionBaseURL,
+		AnalyticsClient:      analyticsClient,
 	})
 
 	router := gin.Default()
@@ -130,10 +150,15 @@ func main() {
 	apiGrp.GET("analitycsid", server.GenerateAnalyticsID)
 	apiGrp.GET("donationstatus", server.GetCollectionResults)
 
+	// /analytics/ is protected by a (set) of API keys. It is meant to be used by the
+	// transformers in rudderstack
+	analyticsGrp := router.Group("analytics")
+	analyticsGrp.Use(APIKeyMiddleware([]string{analyticsAPIKey}, "x-api-key"))
+	analyticsGrp.GET("enrichment", server.GetEnrichmentData)
+
 	// Webhooks have no direct authentication but use a HMAC to prove the origin
 	webhooks := router.Group("webhooks")
 	webhooks.POST("members", server.MembersWebhook)
-	webhooks.POST("update-person", server.UpdatePersonFromMembers)
 
 	initTrace.End()
 

@@ -1,0 +1,23 @@
+export GOOGLE_CLOUD_PROJECT="PRODJECT ID"
+export BASE_URL="http://localhost:8080"
+export TASK_QUEUE_ID=test1
+
+# NOT NEEDED UNLESS YOU ARE TESTING MEMBERS WEBHOOK
+export MEMBERS_WEBHOOKS_SECRET=""
+export MEMBERS_DOMAIN="members.bcc.no"
+
+export AUTH0_DOMAIN="login.bcc.no"
+export AUTH0_ISSUER="https://login.bcc.no/"
+export AUTH0_AUDIENCE="AUDIENCE"
+
+# Random string
+export ANALYTICS_SECRET=""
+
+export COLLECTION_URL="https://API-DOMAIN"
+export COLLECTION_API_KEY="API-KEY"
+
+export RUDDERSTACK_URL="RUDDERSTACK DATAPALANE URL"
+export RUDDERSTACK_KEY="RUDDERSTACK WRITE KEY"
+
+# Random string
+export ANALYTICS_API_KEY=""

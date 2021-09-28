@@ -1,15 +1,13 @@
 package main
 
 import (
-	"crypto/hmac"
-	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 
 	"github.com/gin-gonic/gin"
+	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/log"
 )
 
@@ -24,21 +22,16 @@ func (s Server) GenerateAnalyticsID(c *gin.Context) {
 		return
 	}
 
-	id := generateAnalyticsID(personID, s.analyticsIDSecret)
+	id := analytics.GenerateID(personID, s.analyticsIDSecret)
 
 	c.JSON(http.StatusOK, gin.H{"id": string(id)})
-}
-
-func generateAnalyticsID(personID float64, key string) string {
-	h := hmac.New(sha256.New, []byte(key))
-	sum := h.Sum([]byte(fmt.Sprintf("%.0f", personID)))
-	return base64.StdEncoding.EncodeToString(sum)
 }
 
 // GetCollectionResults from the collection api.
 // This is just a simple proxy to do M2M authentication
 func (s Server) GetCollectionResults(c *gin.Context) {
 	url := fmt.Sprintf("%s/Collection/status?apiKey=%s", s.collectionBaseURL, url.QueryEscape(s.collectionAPIKey))
+	userID := s.analyticsClient.GetID(c.GetFloat64("PersonID"))
 
 	res, err := s.httpClient.Get(url)
 	if err != nil {
@@ -58,5 +51,6 @@ func (s Server) GetCollectionResults(c *gin.Context) {
 		}
 	}
 
+	s.analyticsClient.Track(userID, "collection_status", nil)
 	c.Data(http.StatusOK, "application/json; charset=utf-8", bodyBytes)
 }
