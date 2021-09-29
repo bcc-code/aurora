@@ -121,7 +121,7 @@ func main() {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"*"},
 		AllowMethods:  []string{"GET", "POST"},
-		AllowHeaders:  []string{"Origin", "audience", "authorization", "x-api-token"},
+		AllowHeaders:  []string{"Origin", "audience", "authorization", "x-api-token", "x-api-key"},
 		ExposeHeaders: []string{"Content-Length"},
 	}))
 
