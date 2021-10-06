@@ -58,7 +58,7 @@ export const NewScreen = (id, order) => {
     switch (id[0]) {
         case 'L':
         case 'R':
-            newScreen.size = { width: 2048, height: 820 }
+            newScreen.size = { width: 2496, height: 1404 }
             newScreen.options.feedPictures = { view: null, columns: null }
             newScreen.options.profilePictures = { frequency: null }
             newScreen.options.question = { question: null, view: null, viewType: null }
@@ -66,7 +66,7 @@ export const NewScreen = (id, order) => {
             newScreen.options.worldMap = { showCheckinsNumber: true }
             break;
         case 'M':
-            newScreen.size = {  width: 3840, height: 1097 }
+            newScreen.size = {  width: 2802, height: 1560 }
             newScreen.options.worldMap = { showCheckinsNumber: true }
             newScreen.options.question = { question: null, view: null, viewType: null }
             newScreen.options.component = Components.WORLDMAP
