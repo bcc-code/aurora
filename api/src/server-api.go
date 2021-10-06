@@ -31,7 +31,6 @@ func (s Server) GenerateAnalyticsID(c *gin.Context) {
 // This is just a simple proxy to do M2M authentication
 func (s Server) GetCollectionResults(c *gin.Context) {
 	url := fmt.Sprintf("%s/Collection/status?apiKey=%s", s.collectionBaseURL, url.QueryEscape(s.collectionAPIKey))
-	userID := s.analyticsClient.GetID(c.GetFloat64("PersonID"))
 
 	res, err := s.httpClient.Get(url)
 	if err != nil {
@@ -51,6 +50,5 @@ func (s Server) GetCollectionResults(c *gin.Context) {
 		}
 	}
 
-	s.analyticsClient.Track(userID, "collection_status", nil)
 	c.Data(http.StatusOK, "application/json; charset=utf-8", bodyBytes)
 }

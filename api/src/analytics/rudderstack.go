@@ -62,6 +62,7 @@ func (c Client) Track(
 ) {
 	if c.rsClient == nil {
 		log.L.Warn().Stack().Msg("Analytics is not set up yet")
+		return
 	}
 
 	t := rs.Track{
