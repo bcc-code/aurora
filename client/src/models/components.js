@@ -24,6 +24,6 @@ Object.slice = (obj, list) =>
 
 export const ScreenLRComponents = Object.slice(Components, ['world-map', 'profile-pictures', 'feed-pictures', 'question', 'inquiry', 'donations-top-5', 'donations-total'])
 export const ScreenMComponents = Object.slice(Components, ['world-map', 'question', 'inquiry'])
-export const ScreenEComponents = Object.slice(Components, ['world-map', 'feed-pictures', 'inquiry', 'question', 'wwr', 'buk-games', 'donations-list'])
+export const ScreenEComponents = Object.slice(Components, ['world-map', 'feed-pictures', 'inquiry', 'question', 'wwr', 'buk-games', 'donations-list', 'donations-top-5', 'donations-total'])
 export const ScreenFComponents = Object.slice(Components, ['program', 'information', 'question', 'checkins-count', 'donation', 'inquiry', 'verse'])
 export const ScreenAComponents = Object.slice(Components, ['information', 'default-text', 'question', 'donation', 'wwr'])
