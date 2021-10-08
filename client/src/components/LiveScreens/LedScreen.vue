@@ -15,18 +15,20 @@ import Wwr from '@/components/LiveScreens/LED/WWR'
 import { mapActions, mapGetters } from 'vuex'
 import EventBus from '@/utils/eventBus.js'
 import DonationsList from '@/components/LiveScreens/shared/DonationsList'
+import DonationsTop5 from '@/components/LiveScreens/LED/DonationsTop5'
 
 export default {
     components: {
-        ProfilePictures,
-        FeedPicturesSlideshow,
-        FeedPicturesGrid,
-        WorldMap,
-        Question,
-        Inquiry,
         BukGames,
-        Wwr,
         DonationsList,
+        DonationsTop5,
+        FeedPicturesGrid,
+        FeedPicturesSlideshow,
+        Inquiry,
+        ProfilePictures,
+        Question,
+        WorldMap,
+        Wwr,
     },
     data: function(){
         return {
