@@ -14,6 +14,7 @@ export const Components = {
     DEFAULTTEXT: 'default-text',
     DONATIONSLIST: 'donations-list',
     DONATIONSTOP5: 'donations-top-5',
+    DONATIONSTOTAL: 'donations-total',
 }
 
 Object.slice = (obj, list) =>
@@ -21,7 +22,7 @@ Object.slice = (obj, list) =>
         .filter( key => list.includes(obj[key]) )
         .reduce( (res, key) => (res[key] = obj[key], res), {} );
 
-export const ScreenLRComponents = Object.slice(Components, ['world-map', 'profile-pictures', 'feed-pictures', 'question', 'inquiry', 'donations-top-5'])
+export const ScreenLRComponents = Object.slice(Components, ['world-map', 'profile-pictures', 'feed-pictures', 'question', 'inquiry', 'donations-top-5', 'donations-total'])
 export const ScreenMComponents = Object.slice(Components, ['world-map', 'question', 'inquiry'])
 export const ScreenEComponents = Object.slice(Components, ['world-map', 'feed-pictures', 'inquiry', 'question', 'wwr', 'buk-games', 'donations-list'])
 export const ScreenFComponents = Object.slice(Components, ['program', 'information', 'question', 'checkins-count', 'donation', 'inquiry', 'verse'])

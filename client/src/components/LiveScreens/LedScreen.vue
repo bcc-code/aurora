@@ -16,11 +16,13 @@ import { mapActions, mapGetters } from 'vuex'
 import EventBus from '@/utils/eventBus.js'
 import DonationsList from '@/components/LiveScreens/shared/DonationsList'
 import DonationsTop5 from '@/components/LiveScreens/LED/DonationsTop5'
+import DonationsTotal from '@/components/LiveScreens/LED/DonationsTotal'
 
 export default {
     components: {
         BukGames,
         DonationsList,
+        DonationsTotal,
         DonationsTop5,
         FeedPicturesGrid,
         FeedPicturesSlideshow,

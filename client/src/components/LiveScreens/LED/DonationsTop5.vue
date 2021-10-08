@@ -1,5 +1,5 @@
 <template>
-<div>
+<div style="background-color: magenta;">
    <div style="display: flex" v-if="dataLoaded">
     <div class="table-wrapper league-l" >
             <div class="league-title">
