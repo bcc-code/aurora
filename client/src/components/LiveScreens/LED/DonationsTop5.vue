@@ -181,9 +181,9 @@ td {
 }
 
 td.amount {
-    font-family: FivoSansBlack;
+    font-family: Fivo Sans;
     font-style: normal;
-    font-weight: normal;
+    font-weight: bold;
     font-size: 32px;
     line-height: 59px;
     text-align: right;
