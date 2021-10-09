@@ -153,7 +153,7 @@ export class PollModule extends Module {
             throw new Error('User not provided')
         }
 
-        const personId = userData.personId as number
+        const personId = userData.PersonId as number
         // make sure we don't already have a response for this personId + qustionId
         const responseDoc = await this.response(personId.toFixed(), questionId).get()
         const questionDoc = await this.question(questionId).get()
@@ -304,7 +304,7 @@ export class PollModule extends Module {
                                 if (!d) {
                                     return -1
                                 }
-                                return d.personId as number
+                                return d.PersonId as number
                             }
                         )
                         break
@@ -318,7 +318,7 @@ export class PollModule extends Module {
                         if (!d) {
                             return -1
                         }
-                        return d.personId as number
+                        return d.PersonId as number
                     })
                     break
                 default:
