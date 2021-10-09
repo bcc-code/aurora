@@ -45,8 +45,8 @@ export async function submitPollResponse(
     // Is Person answering for themselves?
     if (answeringPersonId !== authPersonId) {
         // Check if the person has permisson to answer on behalf of the other person
-        const g1 = (userData.guardian1Id ?? -1).toFixed();
-        const g2 = (userData.guardian2Id ?? -1).toFixed();
+        const g1 = (userData.Guardian1Id ?? -1).toFixed();
+        const g2 = (userData.Guardian2Id ?? -1).toFixed();
 
         // Neither of the guardians is the authenticated person
         if (g1 !== authPersonId && g2 !== authPersonId) {
