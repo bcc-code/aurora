@@ -1,6 +1,9 @@
 const path = require("path");
 
 module.exports = {
+    devServer: {
+    disableHostCheck: true
+  },
   publicPath: "/",
   outputDir: "../firebase/public/",
   chainWebpack: config => {

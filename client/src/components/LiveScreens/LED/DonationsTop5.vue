@@ -122,11 +122,12 @@ table {
     height: max-content;
     flex: 1;
     overflow: hidden;
-    width: 487px;
+    width: 500px;
     height: 505px;
     position: relative;
     top: 285px;
-    margin-left:52px;
+    margin-left:32px;
+    background-color: rgba(0,0,0, 0.5);
 }
 
 .league-title {
@@ -139,7 +140,7 @@ table {
     font-weight: 900;
     font-size: 48px;
     line-height: 50px;
-    color: #000000;
+    color: #FFFFFF;
 }
 
 .league-l, .league-s, .league-m {
@@ -147,15 +148,12 @@ table {
 }
 
 .league-l {
-    background-image: url(../../../assets/img/blended_paper1.jpg);
 }
 
 .league-m {
-    background-image: url(../../../assets/img/blended_paper2.jpg);
 }
 
 .league-s {
-    background-image: url(../../../assets/img/blended_paper3.jpg);
 }
 
 .table-wrapper > .overlay-color {
@@ -172,7 +170,7 @@ table {
     font-weight: normal;
     font-size: 32px;
     line-height: 34px;
-    color: #000000;
+    color: #FFFFFF;
     position: relative;
     top: 97px;
 }
@@ -183,7 +181,7 @@ td {
 td.amount {
     font-family: Fivo Sans;
     font-style: normal;
-    font-weight: bold;
+    font-weight: normal;
     font-size: 32px;
     line-height: 59px;
     text-align: right;
@@ -194,10 +192,13 @@ td.pos {
     padding-left: 25px;
 }
 
+td.name {
+    font-weight: bold;
+}
+
 td.name, td.pos {
     font-family: Fivo Sans;
     font-style: normal;
-    font-weight: normal;
     font-size: 30px;
     line-height: 34px;
     text-align: left;
@@ -213,7 +214,7 @@ div.total-title {
 
 .divider {
     width: 70%;
-    border: black 1px solid;
+    border: #FFFFFF 1px solid;
     position: relative;
     top: 60px;
     left: 67px;

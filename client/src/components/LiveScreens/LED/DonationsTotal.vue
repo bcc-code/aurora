@@ -66,7 +66,7 @@ export default {
      line-height: 67px;
      text-align: center;
 
-color: #B4B1AA;
+color: #FFFFFF;
 }
 
 .result {
