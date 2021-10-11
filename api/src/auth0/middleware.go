@@ -25,7 +25,7 @@ func JWTCheck(ctx context.Context, config JWTConfig, app *firebase.App) gin.Hand
 
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
-		apiToken := c.GetHeader("x-api-token")
+		apiToken := c.GetHeader("x-api-token") // TODO: Replace with const
 
 		if apiToken != "" {
 			_, err := client.VerifyIDToken(ctx, apiToken)

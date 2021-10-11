@@ -22,6 +22,12 @@ import (
 	"go.opencensus.io/trace"
 )
 
+// Header keys
+const (
+	HeaderXApiKey   = "x-api-key"
+	HeaderXApiToken = "x-api-token"
+)
+
 func mustSetupTracing() *http.Client {
 	exporter, err := stackdriver.NewExporter(stackdriver.Options{
 		ProjectID: os.Getenv("GOOGLE_CLOUD_PROJECT"),
@@ -121,7 +127,7 @@ func main() {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"*"},
 		AllowMethods:  []string{"GET", "POST"},
-		AllowHeaders:  []string{"Origin", "audience", "authorization", "x-api-token", "x-api-key"},
+		AllowHeaders:  []string{"Origin", "audience", "authorization", HeaderXApiKey, HeaderXApiToken, HeaderXPersonID},
 		ExposeHeaders: []string{"Content-Length"},
 	}))
 
@@ -153,7 +159,7 @@ func main() {
 	// /analytics/ is protected by a (set) of API keys. It is meant to be used by the
 	// transformers in rudderstack
 	analyticsGrp := router.Group("analytics")
-	analyticsGrp.Use(APIKeyMiddleware([]string{analyticsAPIKey}, "x-api-key"))
+	analyticsGrp.Use(APIKeyMiddleware([]string{analyticsAPIKey}, HeaderXApiKey))
 	analyticsGrp.GET("enrichment", server.GetEnrichmentData)
 
 	// Webhooks have no direct authentication but use a HMAC to prove the origin

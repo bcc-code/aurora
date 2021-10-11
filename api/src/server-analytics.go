@@ -12,7 +12,7 @@ import (
 // one of the valid values
 func APIKeyMiddleware(allowedKeys []string, headerName string) gin.HandlerFunc {
 	if headerName == "" {
-		headerName = "x-api-key"
+		headerName = HeaderXApiKey
 	}
 
 	keyMap := map[string]bool{}

@@ -5,10 +5,16 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/log"
+)
+
+// Header constants
+const (
+	HeaderXPersonID = "x-person-id"
 )
 
 // GenerateAnalyticsID for the user requesting
@@ -17,6 +23,15 @@ func (s Server) GenerateAnalyticsID(c *gin.Context) {
 
 	if pid, ok := c.Get("PersonID"); ok {
 		personID = pid.(float64)
+	} else if pidHeader := c.GetHeader(HeaderXPersonID); pidHeader != "" {
+		pidFloat, err := strconv.ParseFloat(pidHeader, 64)
+		if err != nil {
+			log.L.Debug().Str(HeaderXPersonID, pidHeader).
+				Msg("Could not parse x-person-id")
+			c.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+		personID = pidFloat
 	} else {
 		c.AbortWithStatus(http.StatusUnauthorized)
 		return
