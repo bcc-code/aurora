@@ -56,11 +56,11 @@ export async function getLinkedUsers(
 
     const userModel = new UserModel(db)
     const personData = (await userModel.userRef(personId).get()).data() as IUser
-    if (!personData.linkedUserIds) {
-        return res.status(200).json({linkedUsers: []}).end()
+    if (!personData.LinkedUserIds) {
+        return res.status(200).json({LinkedUsers: []}).end()
     }
 
-    const linkedUsers : Array<IUser> = await Promise.all(personData.linkedUserIds.map(
+    const linkedUsers : Array<IUser> = await Promise.all(personData.LinkedUserIds.map(
         async (linkedId) => ((await userModel.userRef(linkedId.toFixed()).get()).data() as IUser)
     ))
     log.debug("getLinkedUsers - end")
