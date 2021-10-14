@@ -153,8 +153,8 @@ export class UserModel {
 
         const personId = (loggedInUser[n.claims.personId] as unknown as number).toFixed()
         const uRef = this.userRef(personId)
-        const data = (await uRef.get()).data() ?? {}
-        return data as IUser;
+        const data = ((await uRef.get()).data() ?? {}) as IUser
+        return { personId: data.PersonId }
     }
 
     async getUserDocs(

@@ -63,20 +63,20 @@ function randInt() : number {
 
 function NewUser(id : number) {
     return {
-        birthdate: "1960-03-10T00:00:00",
-        churchId: 9999,
-        churchName: "New Mars",
-        countryName: "New Center",
-        displayName: "Alien Alieno",
-        firstName: "Alient",
-        genderId: 1,
-        guardian1Id: id,
-        guardian2Id: 0,
-        hasMembership: true,
-        lastName: "Alieno",
-        linkedUserIds: [],
-        personId: id,
-        userGroupId: "bcc",
+        Birthdate: "1960-03-10T00:00:00",
+        ChurchId: 9999,
+        ChurchName: "New Mars",
+        CountryName: "New Center",
+        DisplayName: "Alien Alieno",
+        FirstName: "Alient",
+        GenderId: 1,
+        Guardian1Id: id,
+        Guardian2Id: 0,
+        HasMembership: true,
+        LastName: "Alieno",
+        LinkedUserIds: [],
+        PersonId: id,
+        UserGroupId: "bcc",
     }
 }
 
