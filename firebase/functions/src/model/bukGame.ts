@@ -50,10 +50,10 @@ export class BukGameModel {
         const personDoc = await this.user(personId).get()
         const person = personDoc.data() as IUser
         let newDoc: BukGameEntry = {
-            displayName: person.displayName,
-            churchName: person.churchName,
-            countryName: person.countryName,
-            profilePictureThumb: person.profilePicture,
+            displayName: person.DisplayName,
+            churchName: person.ChurchName,
+            countryName: person.CountryName,
+            profilePictureThumb: person.ProfilePicture,
         }
 
         if (!entryDoc.exists) {

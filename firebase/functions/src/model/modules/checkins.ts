@@ -1,5 +1,5 @@
 import * as firebaseadmin from 'firebase-admin'
-import { parallelAsync, calculateAge } from '../utils'
+import { calculateAge } from '../utils'
 import { n } from '../constants'
 import { UserModel } from '../user'
 import { Module } from './module'
@@ -32,11 +32,11 @@ export class CheckinStatus {
     constructor(canCheckin: boolean, checkedIn: boolean, user: IUser) {
         this.canCheckin = canCheckin
         this.checkedIn = checkedIn
-        this.personId = user.personId
-        this.firstName = user.firstName ?? null
-        this.lastName = user.lastName ?? null
-        this.profilePicture = user.profilePicture ?? null
-        this.age = calculateAge(new Date(user.birthdate ?? ''))
+        this.personId = user.PersonId
+        this.firstName = user.FirstName ?? null
+        this.lastName = user.LastName ?? null
+        this.profilePicture = user.ProfilePicture ?? null
+        this.age = calculateAge(new Date(user.Birthdate ?? ''))
         this.linkedUsers = []
     }
 }

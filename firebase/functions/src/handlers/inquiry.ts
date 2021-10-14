@@ -19,12 +19,12 @@ export async function newInquiry(
     }
     const currentUser = currentUserObj.data() as IUser
     const newInquiry: Inquiry = {
-        personId: currentUser.personId,
-        firstName: currentUser.firstName ?? '',
-        lastName: currentUser.lastName ?? '',
-        displayName: currentUser.displayName ?? '',
-        churchName: currentUser.churchName ?? '',
-        countryName: currentUser.countryName ?? '',
+        personId: currentUser.PersonId,
+        firstName: currentUser.FirstName ?? '',
+        lastName: currentUser.LastName ?? '',
+        displayName: currentUser.DisplayName ?? '',
+        churchName: currentUser.ChurchName ?? '',
+        countryName: currentUser.CountryName ?? '',
         text: req.body.text || '',
         date: Date.now(),
     }

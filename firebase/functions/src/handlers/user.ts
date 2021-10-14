@@ -38,7 +38,7 @@ export async function getProfileImage(
     }
 
     const personData = await userModel.userRef(personId).get()
-    const profileImageUrl = personData.data()?.profilePicture ?? '' // TODO: Placeholder
+    const profileImageUrl = personData.data()?.ProfilePicture ?? '' // TODO: Placeholder
     log.debug("getProfileImage - end")
     return res.status(200).send({ profilePictureUrl: profileImageUrl }).end()
 }

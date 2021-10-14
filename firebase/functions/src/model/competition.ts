@@ -73,19 +73,19 @@ export class CompetitionModel {
             const userData = userDoc.data() as IUser
             update.user = userRef
 
-            if (userData.churchId) {
-                update.churchId = userData.churchId
+            if (userData.ChurchId) {
+                update.churchId = userData.ChurchId
 
                 const distancePerChurchDoc = await this.distancePerChurch(
-                    userData.churchId.toString()
+                    userData.ChurchId.toString()
                 ).get()
 
                 if (!distancePerChurchDoc.exists) {
                     log.info(
-                        `Initializing distancePerChurch doc for churchId ${userData.churchId}`
+                        `Initializing distancePerChurch doc for churchId ${userData.ChurchId}`
                     )
                     await this.distancePerChurch(
-                        userData.churchId.toString()
+                        userData.ChurchId.toString()
                     ).set({ distance: 0 })
                 }
             } else {
