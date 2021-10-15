@@ -1,7 +1,0 @@
-{
-    "plugins": ["@babel/plugin-transform-runtime"]
-	 "presets":  [
-		 "env",
-		 { "exclude": ["transform-es2015-classes"] }
-	]
-}
