@@ -2,7 +2,6 @@
     "parser": "@typescript-eslint/parser",
     "parserOptions": {
         "ecmaVersion": 2017,
-		"target": "esnext",
         "project": "./tsconfig.json"
     },
     "plugins": ["@typescript-eslint", "promise"],
