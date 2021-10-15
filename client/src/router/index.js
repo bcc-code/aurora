@@ -20,7 +20,7 @@ router.beforeEach(async (to, from, next) => {
 		|| store.state.session.firebaseInfo == null
 		|| Date.now() > store.state.session.userInfo.exp * 1000
 		|| Date.now() > store.state.session.firebaseInfo.exp * 1000){
-		if (localStorage.getItem(keys.AUTH0.CLIENT_ID) && localStorage.getItem('firebase-' + keys.AUTH0.CLIENT_ID)) {
+		if (localStorage.getItem('firebase-' + keys.AUTH0.CLIENT_ID)) {
 			await firebase.auth()
 				.signInWithCustomToken(localStorage.getItem('firebase-' + keys.AUTH0.CLIENT_ID))
 				.catch(() => {
@@ -30,7 +30,7 @@ router.beforeEach(async (to, from, next) => {
 					window.location.reload();
 				});
 			store.commit('session/setAuthenticated', true);
-			store.commit('session/setUserInfo', jwtDecode(localStorage.getItem(keys.AUTH0.CLIENT_ID)));
+			//store.commit('session/setUserInfo', jwtDecode(localStorage.getItem(keys.AUTH0.CLIENT_ID)));
 			store.commit('session/setFirebaseInfo', jwtDecode(localStorage.getItem('firebase-' + keys.AUTH0.CLIENT_ID)));
 			store.commit('session/setUserRole', localStorage.getItem('role') ? atob(localStorage.getItem('role')) : 'viewer');
 			next();

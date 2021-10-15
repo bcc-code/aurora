@@ -72,13 +72,12 @@ export function processLoginCallback(
                 const firebaseToken = await firebaseAdmin
                     .auth()
                     .createCustomToken(user.id)
-                return res.redirect(
-                    `${config.app.baseUrl}/callback?accessToken=${
-                        user.accessToken
-                    }&firebaseToken=${firebaseToken}&role=${Buffer.from(
+                let url =
+                    `${config.app.baseUrl}/callback?firebaseToken=${firebaseToken}&role=${Buffer.from(
                         userRole
                     ).toString('base64')}`
-                )
+                return res.redirect(302, url);
+                // Note: redirect seems to break if url is > 2465 chars
             })
         })(req, res, next)
     } catch (e) {

@@ -13,7 +13,7 @@ export default {
                 console.error('could not load resource: ' + path);
                 localStorage.clear();
             },
-            success: function() { 
+            success: function() {
                 localStorage.clear();
             },
         });
