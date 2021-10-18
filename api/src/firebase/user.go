@@ -46,6 +46,7 @@ func (u User) UpdateWithMember(member *members.Member) (User, bool) {
 		u.Guardian2Id = &member.SecondGuardianID.Int64
 	}
 	u.LastUpdated = member.LastChangedDate.Format(time.RFC3339)
+	u.LinkedUserIds = []int{}
 	for _, r := range member.Related.Children {
 		u.LinkedUserIds = append(u.LinkedUserIds, r.PersonID)
 	}
