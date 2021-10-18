@@ -59,46 +59,30 @@ export class UserModel {
         }
     }
 
-    async updateFirebaseUser(user: IUser): Promise<{ personId?: number }> {
-        if (!user.Uid) {
-            return {}
+    async updateFirebaseUser(personId : string, uid : string): Promise<void> {
+        if (!uid) {
+            return
         }
 
-        let firebaseUser = await this.getUser(user.Uid)
-        const userDisplayName =
-            user.DisplayName ??
-            `${user.FirstName ?? ''} ${user.LastName ?? ''}`.trim()
+        let firebaseUser = await this.getUser(uid)
 
         if (!firebaseUser) {
-            log.warn(`No user found for uid: ${user.Uid}, creating user...`)
+            log.warn(`No user found for uid: ${uid}, creating user...`)
             try {
                 firebaseUser = await firebaseAdmin.auth().createUser({
-                    uid: user.Uid,
-                    email: `${user.PersonId}@person.id`,
-                    displayName: userDisplayName,
+                    uid,
+                    email: `${personId}@person.id`,
+                    displayName: personId,
                 })
             } catch (error) {
                 log.error(
-                    `Error creating user ID: ${user.PersonId}, ${user.Uid}`,
+                    `Error creating user ID: ${personId}, ${uid}`,
                     error
                 )
             }
-        } else {
-            log.info(
-                `Found user uid: ${
-                    firebaseUser.uid
-                }, custom claims: ${JSON.stringify(firebaseUser.customClaims)}`
-            )
-            if (
-                firebaseUser.displayName !== userDisplayName ||
-                firebaseUser.email !== `${user.PersonId}@person.id`
-            )
-                firebaseUser = await firebaseAdmin.auth().updateUser(user.Uid, {
-                    displayName: userDisplayName,
-                    email: `${user.PersonId}@person.id`,
-                })
         }
-        const customClaims = Object.assign({}, { personId: user.PersonId })
+
+        const customClaims = Object.assign({}, { personId })
         if (
             firebaseUser &&
             (!firebaseUser.customClaims ||
@@ -108,21 +92,20 @@ export class UserModel {
             try {
                 await firebaseAdmin
                     .auth()
-                    .setCustomUserClaims(user.Uid, customClaims)
+                    .setCustomUserClaims(uid, customClaims)
                 log.info(
-                    `Updated claims for uid ${user.Uid} to: ${JSON.stringify(
+                    `Updated claims for uid ${uid} to: ${JSON.stringify(
                         customClaims
                     )}`
                 )
             } catch (error) {
                 log.error(
                     `Error attempting to update user claims for user ID ${
-                        user.PersonId
-                    }, '${user.Uid} - ${error as string}`
+                        personId
+                    }, '${uid} - ${error as string}`
                 )
             }
         }
-        return customClaims
     }
 
     async extractUserClaims(loggedInUser: {

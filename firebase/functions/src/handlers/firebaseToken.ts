@@ -64,11 +64,11 @@ export function processLoginCallback(
                 if (err) return next(err)
                 req.user = user._json
                 const userModel = new UserModel(firebaseAdmin.firestore())
-                const userRole = await userModel.role(
-                    req.user?.[
+                let personId = req.user?.[
                         'https://login.bcc.no/claims/personId'
-                    ].toString() ?? ''
-                )
+                    ].toString() ?? '';
+                const userRole = await userModel.role(personId)
+                await userModel.updateFirebaseUser(personId, user.id)
                 const firebaseToken = await firebaseAdmin
                     .auth()
                     .createCustomToken(user.id)
