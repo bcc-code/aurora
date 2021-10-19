@@ -1,5 +1,5 @@
 <template>
-    <div class="rounded-xl m-2 mb-8" v-if="loaded">
+    <div class="m-2 mb-8" v-if="loaded">
         <div class="text-white leading-tight py-6 px-8 text-left rounded-t-2xl" :class="theme == 'tv' ? 'bg-primary': 'bg-slate'">
             <p class="font-semibold" :class="isBig ? 'text-4xl' : 'text-xl'">{{ displayName }}</p>
             <p class="opacity-50" :class="isBig ? 'text-3xl' : 'text-lg'">{{ churchAndCountry }}</p>
