@@ -117,8 +117,8 @@ export default {
 </script>
 <style>
 :root {
-    --primary-color: rgba(24, 38, 58, 0.8);
-    --primary-color-dark: rgb(34, 52, 72)
+    --primary-color: rgba(0, 0, 255, 1);
+    --primary-color-dark: rgba(255, 0, 0, 0.2)
 }
 
 .debug {
