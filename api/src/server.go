@@ -26,12 +26,14 @@ type ServerConfig struct {
 
 	CollectionAPIKey  string
 	CollectionBaseURL string
+
+	AnalitycsIDSecret string
 }
 
 // Server holds shared resources for the webserver
 // so they can be accessed by all requests
 type Server struct {
-	fs *firestore.Client
+	fs              *firestore.Client
 	analyticsClient *analytics.Client
 
 	members              *members.Client
@@ -49,10 +51,11 @@ func NewServer(c ServerConfig) *Server {
 		fs:                   c.FirestoreClient,
 		members:              c.MembersClient,
 		membersWebhookSecret: c.MembersWebhookSecret,
-		analyticsClient :    c.AnalyticsClient ,
+		analyticsClient:      c.AnalyticsClient,
 		httpClient:           c.HTTPClient,
 		collectionBaseURL:    c.CollectionBaseURL,
 		collectionAPIKey:     c.CollectionAPIKey,
+		analyticsIDSecret:    c.AnalitycsIDSecret,
 	}
 }
 
