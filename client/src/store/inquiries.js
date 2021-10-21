@@ -20,6 +20,7 @@ export default {
             });
         }),
         approveInquiry: firestoreAction(async (context, inquiry) => {
+            console.log('this thing gest run now 2')
             await context.getters.inquiriesQueueRef.doc(inquiry.id).set({ ...inquiry, order: -1 })
             return context.getters.inquiriesRef.doc(inquiry.id).delete()
         }),
