@@ -19,14 +19,15 @@ export const jwtCheckFull = async (admin: firebase.app.App,req: Request, res: Re
 
     try {
         // Check for FB token
-        await admin.auth().verifyIdToken(fbToken)
+        const claims = await admin.auth().verifyIdToken(fbToken)
+        req.userClaims = claims;
     } catch(e) {
         console.error(e)
         return res.status(401).end()
     }
 
     t.endSpan()
-    return next();
+    next()
 }
 
 export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void => {
@@ -51,7 +52,7 @@ export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void
         audience: audience,
         issuer: `https://${config.auth0.domain}/`,
         algorithm: 'RS256',
-    })(req, res, (err) => {
+    })(req, res, (err : string) => {
         if (err) {
             log.error(`Error in jwtCheck: ${err}`)
             res.status(401)
