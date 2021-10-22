@@ -85,5 +85,9 @@ export const getPersonId = (req: Request): string => {
         return personId.toString()
     }
 
+    if (req.userClaims) {
+        return req.userClaims.personId
+    }
+
     throw new Error(`Unable to find personId: ${personId ?? '<null>'}`)
 }

@@ -117,6 +117,7 @@ func main() {
 		CollectionAPIKey:     collectionAPIKey,
 		CollectionBaseURL:    collectionBaseURL,
 		AnalyticsClient:      analyticsClient,
+		AnalitycsIDSecret:    analyticsSecret,
 	})
 
 	router := gin.Default()

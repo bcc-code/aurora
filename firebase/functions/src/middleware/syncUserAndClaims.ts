@@ -16,6 +16,10 @@ export const syncUserAndClaims = async (
         return res.status(500).send({ message: 'Invalid user.' }).end()
     }
 
+    if (req.userClaims) {
+        req.params.userClaims = { personId: req.userClaims.personId }
+    }
+
     if (!req.user) {
         // If we don't have a user, then just skip this.
         // It is likely a service account requesting
