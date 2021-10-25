@@ -51,6 +51,10 @@ export default {
         unifiedSearchQuery: {
             type: String,
             default: ''
+        },
+        sortNull: {
+            type: Boolean,
+            default: false
         }
     },
     mixins: [Translation],
@@ -86,8 +90,27 @@ export default {
         },
         sortElements(){
             this.sortedElements = this.filteredElements;
-            if (this.sortable)
+            if (this.sortNull != true) {
                 this.sortedElements.sort((a,b) => a.order - b.order)
+            } else {
+                this.sortedElements.sort(function compareFn(a, b) {
+                if (a.order === b.order) {
+                    return 0;
+                } 
+                if (a.order === null) {
+                    console.log(a)
+                    return 1;
+                }
+                if (b.order === null) {
+                    console.log(b)
+                    return -1;
+                }
+                if (a.order > b.order) {
+                    return 1;
+                }  
+                return -1;
+                });
+            }
         },
         sort(e){
             this.sortedElements.map((element, index) => element.order = index + 1);

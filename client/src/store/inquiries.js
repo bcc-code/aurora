@@ -20,12 +20,10 @@ export default {
             });
         }),
         approveInquiry: firestoreAction(async (context, inquiry) => {
-            console.log('this thing gest run now 2')
-            await context.getters.inquiriesQueueRef.doc(inquiry.id).set({ ...inquiry, order: -1 })
+            await context.getters.inquiriesQueueRef.doc(inquiry.id).set({ ...inquiry, order: null })
             return context.getters.inquiriesRef.doc(inquiry.id).delete()
         }),
         showInquiry: firestoreAction((context, inquiry) => {
-            console.log('this thing gest run now')
             return context.rootGetters['events/selectedEventRef'].update({
                 currentInquiry: inquiry == null ? null : context.getters.inquiriesQueueRef.doc(inquiry.id)
             });
