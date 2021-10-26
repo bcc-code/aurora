@@ -94,21 +94,12 @@ export default {
                 this.sortedElements.sort((a,b) => a.order - b.order)
             } else {
                 this.sortedElements.sort(function compareFn(a, b) {
-                if (a.order === b.order) {
-                    return 0;
-                } 
-                if (a.order === null) {
-                    console.log(a)
-                    return 1;
-                }
-                if (b.order === null) {
-                    console.log(b)
-                    return -1;
-                }
-                if (a.order > b.order) {
-                    return 1;
-                }  
-                return -1;
+                    console.log('a: ' + a.order)
+                    console.log('b: ' + b.order)
+                    if (a.order === null && b.order === null) {return a.date - b.date}
+                    if (a.order === null) {return 1;}
+                    if (b.order === null) {return -1;}
+                    return a.order - b.order
                 });
             }
         },
