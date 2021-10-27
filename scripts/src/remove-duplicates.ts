@@ -15,11 +15,13 @@ db.collection('users').get().then((querySnapshot) => {
     querySnapshot.docs.forEach(doc => {
         var userId = doc.id
         var linkedUserId = doc.data().LinkedUserIds
-        var linkedUserIdSet = new Set(linkedUserId);
-        var newLinkedUserId = [...linkedUserIdSet];
-        console.log('id :' + userId)
-        console.log('linkedUserId :' + linkedUserId)
-        console.log('newLinkedUserId: ' + newLinkedUserId);
+        var linkedUserIdSet = new Set(linkedUserId)
+        var newLinkedUserId = [...linkedUserIdSet]
+        
+        // console.log('id :' + userId)
+        // console.log('linkedUserId :' + linkedUserId)
+        // console.log('newLinkedUserId: ' + newLinkedUserId)
+        // console.log('')
 
         updatelinkedUserId(userId, newLinkedUserId)
     })
