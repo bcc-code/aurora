@@ -1,34 +1,44 @@
 import * as firebase from 'firebase-admin'
 
-var serviceAccount = require("../../firebase/functions/firebase-key.json");
-// var serviceAccount = require("../firebase-key.prod.json");
+//let serviceAccount = require("../firebase-key.json");
+let serviceAccount = require("../firebase-key.prod.json");
 
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
-  // databaseURL: "https://brunstadtv-online.firebaseio.com"
-  databaseURL: "https://brunstadtv-online-dev.firebaseio.com",
+  databaseURL: "https://brunstadtv-online.firebaseio.com"
+  //databaseURL: "https://brunstadtv-online-dev.firebaseio.com",
 });
 
 const db = firebase.firestore();
 
-db.collection('users').get().then((querySnapshot) => {
-    querySnapshot.docs.forEach(doc => {
-        var userId = doc.id
-        var linkedUserId = doc.data().LinkedUserIds
-        var linkedUserIdSet = new Set(linkedUserId)
-        var newLinkedUserId = [...linkedUserIdSet]
-        
-        // console.log('id :' + userId)
-        // console.log('linkedUserId :' + linkedUserId)
-        // console.log('newLinkedUserId: ' + newLinkedUserId)
-        // console.log('')
+async function dedup() {
+    let data = await db.collection('users').get()
+    let updates = data.docs.map(async doc => {
+        console.log("Processing", doc.id);
+        let linkedUserId = doc.data().LinkedUserIds
 
-        updatelinkedUserId(userId, newLinkedUserId)
-    })
-})
+        if (linkedUserId == null) {
+            return
+        }
 
-function updatelinkedUserId(userId: any, newLinkedUserId: any) {
-    db.collection('users').doc(userId).update({
-        LinkedUserIds: newLinkedUserId
+        let linkedUserIdSet = new Set(linkedUserId)
+        let newLinkedUserId = [...linkedUserIdSet]
+
+        if (newLinkedUserId.length != linkedUserId.length) {
+            console.log("Updating ", doc.id);
+            return await db.collection('users').doc(doc.id).update({
+                LinkedUserIds: newLinkedUserId
+            })
+        }
+
+        console.log("Skipping", doc.id);
     })
+
+    console.log("Waiting for all")
+    console.log(updates);
+    await Promise.all(updates)
+    console.log(updates);
 }
+
+
+dedup()
