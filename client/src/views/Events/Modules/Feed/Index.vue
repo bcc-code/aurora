@@ -18,6 +18,7 @@
         <transition name="fade" mode="out-in">
             <Approval v-if="selectedTab == 'approval'" />
             <Queue v-else-if="selectedTab == 'queue'" />
+            <Live v-else-if="selevtedTab == 'live'" />
         </transition>
     </section>
 </template>
@@ -25,16 +26,18 @@
 import Tabs from '@/components/Tabs'
 import Approval from './Approval'
 import Queue from './Queue'
+import Live from './Live'
 import { mapActions, mapGetters } from 'vuex'
 export default {
     components: {
         Tabs,
         Approval,
-        Queue
+        Queue,
+        Live
     },
     data: function () {
         return {
-            tabs: ['approval', 'queue'],
+            tabs: ['approval', 'queue', 'live'],
             selectedTab: 'approval',
             searchQuery: ''
         }
