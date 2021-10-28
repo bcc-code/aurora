@@ -11,7 +11,7 @@ firebase.initializeApp({
 
 const db = firebase.firestore();
 
-async function sortNullToBottom() {
+async function checkForDuplicates() {
     await db.collection('users').get().then((querySnapshot) => {
         querySnapshot.docs.forEach(doc => {
             var userId = doc.id
@@ -29,4 +29,4 @@ async function updatelinkedUserId(userId: string, newLinkedUserId: object) {
     })
 }
 
-sortNullToBottom()
+checkForDuplicates()
