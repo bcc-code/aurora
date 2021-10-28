@@ -52,7 +52,7 @@ export default {
             type: String,
             default: ''
         },
-        sortNull: {
+        sortNullToBottom: {
             type: Boolean,
             default: false
         }
@@ -90,7 +90,7 @@ export default {
         },
         sortElements(){
             this.sortedElements = this.filteredElements;
-            if (this.sortNull != true) {
+            if (this.sortNullToBottom != true) {
                 this.sortedElements.sort((a,b) => a.order - b.order)
             } else {
                 this.sortedElements.sort(function compareFn(a, b) {
