@@ -11,24 +11,22 @@ firebase.initializeApp({
 
 const db = firebase.firestore();
 
-db.collection('users').get().then((querySnapshot) => {
-    querySnapshot.docs.forEach(doc => {
-        var userId = doc.id
-        var linkedUserId = doc.data().LinkedUserIds
-        var linkedUserIdSet = new Set(linkedUserId)
-        var newLinkedUserId = [...linkedUserIdSet]
-        
-        // console.log('id :' + userId)
-        // console.log('linkedUserId :' + linkedUserId)
-        // console.log('newLinkedUserId: ' + newLinkedUserId)
-        // console.log('')
-
-        updatelinkedUserId(userId, newLinkedUserId)
+async function sortNullToBottom() {
+    await db.collection('users').get().then((querySnapshot) => {
+        querySnapshot.docs.forEach(doc => {
+            var userId = doc.id
+            var linkedUserId = doc.data().LinkedUserIds
+            var linkedUserIdSet = new Set(linkedUserId)
+            var newLinkedUserId = [...linkedUserIdSet]
+            updatelinkedUserId(userId, newLinkedUserId)
+        })
     })
-})
+}
 
-function updatelinkedUserId(userId: any, newLinkedUserId: any) {
-    db.collection('users').doc(userId).update({
+async function updatelinkedUserId(userId: string, newLinkedUserId: object) {
+    await db.collection('users').doc(userId).update({
         LinkedUserIds: newLinkedUserId
     })
 }
+
+sortNullToBottom()
