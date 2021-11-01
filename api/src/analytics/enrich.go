@@ -32,6 +32,7 @@ type UserData struct {
 	CountryName string
 	AgeGroup    ageGroup
 	AnalyticsID string
+	Gender      string
 }
 
 func getAgeGroup(bd string) ageGroup {
@@ -41,7 +42,7 @@ func getAgeGroup(bd string) ageGroup {
 		return AgeGroupUnknown
 	}
 
-	age := math.Floor( time.Now().Sub(bdTime).Hours() / 24.0 / 365.0)
+	age := math.Floor(time.Now().Sub(bdTime).Hours() / 24.0 / 365.0)
 	if age < 1 {
 		return AgeGroupUnknown
 	} else if age < 11 {
@@ -72,5 +73,6 @@ func GetAnalyticsData(ctx context.Context, firestoreClient *firestore.Client, an
 		CountryName: user.CountryName,
 		AgeGroup:    getAgeGroup(user.Birthdate),
 		AnalyticsID: analyticsClient.GetID(float64(user.PersonId)),
+		Gender:      user.Gender,
 	}, nil
 }

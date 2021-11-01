@@ -24,6 +24,7 @@ type User struct {
 	LastName      string
 	LastUpdated   string
 	LinkedUserIds []int
+	Gender        string
 	PersonId      int
 	Uid           string
 }
@@ -38,6 +39,7 @@ func (u User) UpdateWithMember(member *members.Member) (User, bool) {
 	u.FirstName = member.FirstName
 	u.LastName = member.LastName
 	u.DisplayName = member.DisplayName
+	u.Gender = member.Gender
 	if member.GuardianID.Valid {
 		u.Guardian1Id = &member.GuardianID.Int64
 	}

@@ -166,6 +166,7 @@ type Member struct {
 	Email                     string       `json:"email"`
 	FirstName                 string       `json:"firstName"`
 	GenderCode                int          `json:"genderCode"`
+	Gender                    string       `json:"gender"`
 	GuardianDisplayName       string       `json:"guardianDisplayName"`
 	GuardianID                null.Int     `json:"guardianID"`
 	HomePhone                 Phone        `json:"homePhone"`
