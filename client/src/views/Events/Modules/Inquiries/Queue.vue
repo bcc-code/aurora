@@ -1,7 +1,7 @@
 <template>
 	<div class="w-full mt-8">
         <template v-if="!loaded" />
-        <List v-else :elements="queue" :multiLang="false" :searchable="false" :unifiedSearchQuery="$parent.searchQuery" @sorted="onSorted">
+        <List v-else :elements="queue" :sortNullToBottom="true" :multiLang="false" :searchable="false" :unifiedSearchQuery="$parent.searchQuery" @sorted="onSorted">
             <template v-slot:list="{ elements, searchQuery }">
                 <Inquiry v-for="inquiry in elements" :key="inquiry.id" :inquiry="inquiry" :searchQuery="searchQuery" inQueue/>
             </template>

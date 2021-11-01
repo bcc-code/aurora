@@ -20,7 +20,7 @@ export default {
             });
         }),
         approveInquiry: firestoreAction(async (context, inquiry) => {
-            await context.getters.inquiriesQueueRef.doc(inquiry.id).set({ ...inquiry, order: -1 })
+            await context.getters.inquiriesQueueRef.doc(inquiry.id).set({ ...inquiry, order: null })
             return context.getters.inquiriesRef.doc(inquiry.id).delete()
         }),
         showInquiry: firestoreAction((context, inquiry) => {

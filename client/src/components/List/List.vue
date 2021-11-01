@@ -51,6 +51,10 @@ export default {
         unifiedSearchQuery: {
             type: String,
             default: ''
+        },
+        sortNullToBottom: {
+            type: Boolean,
+            default: false
         }
     },
     mixins: [Translation],
@@ -86,8 +90,18 @@ export default {
         },
         sortElements(){
             this.sortedElements = this.filteredElements;
-            if (this.sortable)
+            if (this.sortNullToBottom != true) {
                 this.sortedElements.sort((a,b) => a.order - b.order)
+            } else {
+                this.sortedElements.sort(function compareFn(a, b) {
+                    console.log('a: ' + a.order)
+                    console.log('b: ' + b.order)
+                    if (a.order === null && b.order === null) {return a.date - b.date}
+                    if (a.order === null) {return 1;}
+                    if (b.order === null) {return -1;}
+                    return a.order - b.order
+                });
+            }
         },
         sort(e){
             this.sortedElements.map((element, index) => element.order = index + 1);
