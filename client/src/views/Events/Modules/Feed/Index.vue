@@ -18,7 +18,7 @@
         <transition name="fade" mode="out-in">
             <Approval v-if="selectedTab == 'approval'" />
             <Queue v-else-if="selectedTab == 'queue'" />
-            <Live v-else-if="selevtedTab == 'live'" />
+            <Live v-else-if="selectedTab == 'live'" />
         </transition>
     </section>
 </template>

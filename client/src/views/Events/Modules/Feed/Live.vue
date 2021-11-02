@@ -12,7 +12,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex';
-import ApprovalEntry from '@/components/List/Elements/Contribution/ApprovalEntry.vue'
+import ApprovalEntry from '@/components/List/Elements/Contribution/LiveEntry.vue'
 import List from '@/components/List/List.vue'
 
 export default {
@@ -26,17 +26,17 @@ export default {
         ApprovalEntry
     },
     computed: {
-        ...mapState('contributions', ['contributions']),
+        ...mapState('contributions', ['feed']),
         filteredContributions(){
-            return this.contributions.filter((contribution) => contribution.tags == null || contribution.tags.indexOf('rejected') < 0);
+            return this.feed.filter((contribution) => contribution.tags == null || contribution.tags.indexOf('rejected') < 0);
         }
     },
     async mounted(){
-        await this.bindContributionsRef();
+        await this.bindLiveRef();
         this.loaded = true;
     },
     methods: {
-        ...mapActions('contributions', ['bindContributionsRef']),
+        ...mapActions('contributions', ['bindLiveRef']),
     },
 }
 </script>
