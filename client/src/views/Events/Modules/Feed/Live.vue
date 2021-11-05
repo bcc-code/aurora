@@ -1,9 +1,9 @@
 <template>
 	<div class="w-full mt-8">
         <template v-if="!loaded" />
-        <List v-else :elements="filteredContributions" :searchable="false" :unifiedSearchQuery="$parent.searchQuery" :multiLang="false" revert>
+        <List v-else :elements="feed" :searchable="false" :unifiedSearchQuery="$parent.searchQuery" :multiLang="false" revert>
             <template v-slot:list="{ elements, searchQuery }">
-                <p class="text-center w-full text-gray-400" v-if="filteredContributions.length == 0">There is nothing to approve</p>
+                <p class="text-center w-full text-gray-400" v-if="feed.length == 0">There is nothing in the Live Feed</p>
                 <ApprovalEntry v-for="entry in elements" :key="entry.id" :entry="entry" :searchQuery="searchQuery"/>
             </template>
         </List>
@@ -27,9 +27,6 @@ export default {
     },
     computed: {
         ...mapState('contributions', ['feed']),
-        filteredContributions(){
-            return this.feed.filter((contribution) => contribution.tags == null || contribution.tags.indexOf('rejected') < 0);
-        }
     },
     async mounted(){
         await this.bindLiveRef();
