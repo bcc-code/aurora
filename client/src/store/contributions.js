@@ -21,6 +21,9 @@ export default {
         bindQueueRef: firestoreAction(context => {
             return context.bindFirestoreRef('queue', context.getters.queueRef.orderBy('approvedDate', 'asc'))
         }),
+        bindLiveRef: firestoreAction(context => {
+            return context.bindFirestoreRef('feed', context.getters.feedRef.orderBy('approvedDate', 'desc'))
+        }),
         bindFeedRef: firestoreAction( async (context, additionalFeed = null) => {
             if (additionalFeed && additionalFeed.length > 0 && additionalFeed > 0)
                 await context.bindFirestoreRef('additionalFeed', context.getters.feedByEventIdRef(additionalFeed).orderBy('publishedDate', 'desc'))
@@ -75,6 +78,9 @@ export default {
         }),
         removeQueueElementRef: firestoreAction((context, entryId) => {
             return context.getters.queueRef.doc(entryId).delete();
+        }),
+        removeLiveRef: firestoreAction((context, entry) => {
+            return context.getters.feedRef.doc(entry.id).delete();
         }),
     },
     getters: {
