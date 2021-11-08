@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"os"
+	"strings"
 
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/logger"
@@ -80,7 +81,10 @@ func main() {
 
 	auth0Domain := os.Getenv("AUTH0_DOMAIN")
 	auth0Issuer := os.Getenv("AUTH0_ISSUER")
-	auth0Audience := os.Getenv("AUTH0_AUDIENCE")
+
+	auth0AudiencesRaw := os.Getenv("AUTH0_AUDIENCES")
+	// Audience can be a comma separated string
+	auth0Audiences := strings.Split(auth0AudiencesRaw, ",")
 
 	collectionBaseURL := os.Getenv("COLLECTION_URL")
 	collectionAPIKey := os.Getenv("COLLECTION_API_KEY")
@@ -137,9 +141,9 @@ func main() {
 	// just mirror what FB api is doing
 	admin := router.Group("admin")
 	admin.Use(auth0.JWTCheck(ctx, auth0.JWTConfig{
-		Domain:   auth0Domain,
-		Issuer:   auth0Issuer,
-		Audience: auth0Audience,
+		Domain:    auth0Domain,
+		Issuer:    auth0Issuer,
+		Audiences: auth0Audiences,
 	}, fbApp))
 	admin.Use(firebase.ValidateRole(fsClient, firebase.Roles(firebase.Admin)))
 
@@ -148,9 +152,9 @@ func main() {
 	apiGrp.Use(auth0.JWTCheck(
 		ctx,
 		auth0.JWTConfig{
-			Domain:   auth0Domain,
-			Issuer:   auth0Issuer,
-			Audience: auth0Audience,
+			Domain:    auth0Domain,
+			Issuer:    auth0Issuer,
+			Audiences: auth0Audiences,
 		},
 		fbApp,
 	))

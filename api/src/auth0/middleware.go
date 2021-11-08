@@ -11,9 +11,9 @@ import (
 )
 
 type JWTConfig struct {
-	Domain   string
-	Issuer   string
-	Audience string
+	Domain    string
+	Issuer    string
+	Audiences []string
 }
 
 func JWTCheck(ctx context.Context, config JWTConfig, app *firebase.App) gin.HandlerFunc {
@@ -26,12 +26,12 @@ func JWTCheck(ctx context.Context, config JWTConfig, app *firebase.App) gin.Hand
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
 		apiToken := c.GetHeader("x-api-token") // TODO: Replace with const
-
 		if apiToken != "" {
 			_, err := client.VerifyIDToken(ctx, apiToken)
 			if err != nil {
+				log.L.Debug().Err(err).Msg("Validating x-api-token")
 				c.AbortWithStatus(http.StatusUnauthorized)
-				log.L.Debug().Err(err)
+				return
 			}
 
 			// Token accepted
@@ -51,15 +51,30 @@ func JWTCheck(ctx context.Context, config JWTConfig, app *firebase.App) gin.Hand
 			return
 		}
 
-		err = jwt.Validate(
-			token,
-			jwt.WithIssuer(config.Issuer),
-			jwt.WithAudience(config.Audience),
-		)
+		valid := false
+		errors := []error{}
 
-		if err != nil {
+		// Loop all allowed audiences, and collect errors
+		// If none pass then print all errors for easier debugging,
+		// else we can ignore the errors since we found a ok combo
+		for _, audience := range config.Audiences {
+			err := jwt.Validate(
+				token,
+				jwt.WithIssuer(config.Issuer),
+				jwt.WithAudience(audience),
+			)
+
+			if err != nil {
+				errors = append(errors, err)
+			} else {
+				valid = true
+				break
+			}
+		}
+
+		if !valid {
 			log.L.Debug().
-				Err(err).
+				Errs("Validation errors", errors).
 				Msg("Validation")
 			c.AbortWithStatus(http.StatusUnauthorized)
 			return
