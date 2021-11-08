@@ -88,7 +88,7 @@ export default {
                 return this.verseData.
                     verses.reduce(
                         (accumulator, currentValue) => accumulator + " " + `${currentValue.number} ${currentValue.text}`,
-                        "");
+                    "");
             }
         },
         location: {
@@ -99,10 +99,9 @@ export default {
                 if (!val || !val.verse) {
                     return
                 }
-
                 // Internally we use the index
                 for (let index in this.bible) {
-                    if (this.bible[index].abbr == val.verse.book) {
+                    if (this.bible[index].translated.no.abbr == val.verse.book) {
                         this.book = index;
                         break;
                     }
@@ -110,7 +109,7 @@ export default {
                 // Internally we use the index so ch 1 == index 0
                 this.chapter = val.verse.chapter - 1
                 this.verse_from = val.verse.verse_from
-                this.verse_to = val.verse.verse_from
+                this.verse_to = val.verse.verse_to
             },
         },
     },
@@ -199,20 +198,21 @@ export default {
 
              let verseParam = `${verse.canonical_book}/${verse.chapter}/${verse.verse_from}`
 
-                 if (verse.verse_to) {
-                     verseParam += `/${verse.verse_to}`
-                 }
+            if (verse.verse_to) {
+                verseParam += `/${verse.verse_to}`
+            }
 
-                this.verseData = null;
-                 try {
-                     this.fetching_verse = true;
-                     const reply = await fetch(`https://bibleapi.bcc.media/v1/${version}/${verseParam}`);
-                     this.verseData = (await reply.json())
-                 } catch(e) {
-                     this.preview = `Unable to fetch verse: ${err}`
-                 } finally {
-                     this.fetching_verse = false;
-                 }
+            this.verseData = null;
+            
+            try {
+                this.fetching_verse = true;
+                const reply = await fetch(`https://bibleapi.bcc.media/v1/${version}/${verseParam}`);
+                this.verseData = (await reply.json())
+            } catch(e) {
+                this.preview = `Unable to fetch verse: ${err}`
+            } finally {
+                this.fetching_verse = false;
+            }
          },
     }
 }
