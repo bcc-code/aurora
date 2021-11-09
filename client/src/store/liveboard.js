@@ -18,7 +18,7 @@ export default {
             return context.getters.liveboardRef.doc(liveboardElement.id).delete()
         }),
         addLiveboardElement: firestoreAction((context, liveboardElement) => {
-            context.getters.liveboardRef.add(liveboardElement).then(function(docRef){console.log("id: " + docRef.id)})
+            context.getters.liveboardRef.add(liveboardElement).then(function(docRef){docRef.update({id:`${docRef.id}`})})
         }),
         updateLiveboardElement: firestoreAction((context, liveboardElement) => {
             liveboardElement.action = liveboardElement.actionCustom || liveboardElement.actionPredefined || null
