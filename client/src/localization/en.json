@@ -184,7 +184,8 @@
 	"dialogs": {
 		"are-you-sure": "Are you sure?",
 		"confirm-action": "Please confirm this action",
-		"confirm-delete-event": "All data related to this event will be deleted. This action is irreversible."
+		"confirm-delete-event": "All data related to this event will be deleted. This action is irreversible.",
+		"confirm-delete-contribution": "This contribution will be deleted permanently. This action is irreversible."
 	},
 	"profile-pictures": {
 		"thisWeek": "This week",
