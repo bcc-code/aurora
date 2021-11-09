@@ -16,7 +16,7 @@
                 </template>
                 <div class="relative bg-black bg-opacity-25 rounded-xl text-3xl leading-tight text-left">
                     <div class="flex flex-wrap items-center justify-center">
-                        <p class="py-5 px-2 leading-snug text-4xl text-center">Bidra via <strong class="italic">BrunstadTV-appen</strong><br>eller<br>på <strong class="italic">portalen</strong></p>
+                        <p class="py-5 px-2 leading-snug text-4xl text-center">Bidra på <strong class="italic">donation.bcc.no</strong><br>eller<br>via <strong class="italic">BrunstadTV-appen</strong></p>
                     </div>
                 </div>
             </div>
