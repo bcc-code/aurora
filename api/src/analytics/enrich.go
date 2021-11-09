@@ -20,7 +20,8 @@ const (
 	AgeGroup13to18  = "13 - 18"
 	AgeGroup19to25  = "19 - 26"
 	AgeGroup26to36  = "26 - 36"
-	AgeGroup37to64  = "37 - 64"
+	AgeGroup37to50  = "37 - 50"
+	AgeGroup51to65  = "51 - 65"
 	AgeGroupOver65  = "65+"
 )
 
@@ -55,8 +56,10 @@ func getAgeGroup(bd string) ageGroup {
 		return AgeGroup19to25
 	} else if age <= 36 {
 		return AgeGroup26to36
-	} else if age <= 64 {
-		return AgeGroup37to64
+	} else if age <= 50 {
+		return AgeGroup37to50
+	} else if age <= 65 {
+		return AgeGroup51to65
 	}
 	return AgeGroupOver65
 }
