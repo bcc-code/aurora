@@ -28,7 +28,7 @@
                     <input type="text" class="mb-3 form-input" v-model="newDeskEntry.title" placeholder="Title" />
                     <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Content" />
                 </template>
-                <List :elements="desk" :searchable="false">
+                <List :elements="desk = testDesk.concat(liveDesk)" :searchable="false">
                     <template v-slot:list="{ elements }">
                         <DeskEntry v-for="element in elements" :key="element.id" :element="element"/>
                     </template>
@@ -57,7 +57,7 @@ export default {
         }
     },
     computed: {
-        ...mapState('contributions', ['desk']),
+        ...mapState('contributions', ['desk', 'liveDesk', 'testDesk']),
         AllowedTypes(){
             return [ContributionTypes.DEFAULT, ContributionTypes.INFORMATION, ContributionTypes.QUOTE, ContributionTypes.BIBLEVERSE];
         },
@@ -75,11 +75,13 @@ export default {
         },
     },
     async mounted(){
-        await this.bindDeskRef();
+        await this.bindDeskRef()
+        await this.bindLiveDeskRef();
     },
     methods: {
         ...mapActions('contributions', ['addToDeskRef']),
         ...mapActions('contributions', ['bindDeskRef']),
+        ...mapActions('contributions', ['bindLiveDeskRef']),
         async addElement(){
             if (this.isCompleted) {
                 this.newDeskEntry.date = Date.now();

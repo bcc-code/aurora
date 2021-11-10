@@ -97,6 +97,7 @@ export default {
         async pushElement(){
             var computedElement = this.element;
             computedElement.publishedDate = Date.now();
+            computedElement.isLive = true;
             await this.sendDeskToFeedRef(computedElement)
         },
         async updateElement(){
