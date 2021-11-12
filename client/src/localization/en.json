@@ -149,6 +149,7 @@
 		"number-elements": "{number} element(s)",
 		"frequency": "Publish frequency (in seconds)",
 		"push": "Push",
+		"withdraw": "Withdraw",
 		"notice": "Notice",
 		"pusher-notice": "Closing this window will stop the autopush.",
 		"auto-push-notice": "Automatic push is activated."

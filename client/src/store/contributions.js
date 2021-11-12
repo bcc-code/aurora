@@ -1,3 +1,4 @@
+
 import { firestoreAction  } from 'vuexfire'
 import { db } from '@/data/db'
 import firebase from 'firebase'
@@ -9,7 +10,6 @@ export default {
         contributions: [],
         queue: [],
         desk: [],
-        testDesk: [],
         liveDesk: [],
         feed: [],
         additionalFeed: [],
@@ -46,40 +46,21 @@ export default {
 
             return context.bindFirestoreRef('feedByEvent', db.collection(`events/${screenEvent.id}/feed-outgoing`));
         }),
-
+                   
         bindDeskRef: firestoreAction(context => {
-            return context.bindFirestoreRef('testDesk', context.getters.deskRef.orderBy('date', 'desc'))
+            return context.bindFirestoreRef('desk', context.getters.deskRef.orderBy('date', 'desc'))
         }),
 
         bindLiveDeskRef: firestoreAction(context => {
-            return context.bindFirestoreRef('liveDesk', context.getters.feedRef.where("type", "==", 3).orderBy('date', 'desc'))
+            return context.bindFirestoreRef('liveDesk', context.getters.feedRef.where("type", "==", 3).orderBy('publishedDate', 'desc'))
         }),
-
-        // bindDeskRef: firestoreAction(context => {
-        //     return context.bindFirestoreRef('desk', context.getters.deskRef.orderBy('date', 'desc'))
-        // }), 
-
-        // bindDeskRef: firestoreAction(context => {
-        //     return context.bindFirestoreRef('desk', test.push(test2))
-        // }),
-
-        // bindDeskRef: firestoreAction(async context => {
-        //     await context.bindFirestoreRef('test', context.getters.feedRef.where("type", "==", 3).orderBy('date', 'desc'))
-        //     await context.bindFirestoreRef('test2', context.getters.deskRef.orderBy('date', 'desc'))
-        //     return context.bindFirestoreRef('desk', this.test.push(this.test2))
-        // }),
-
-        // bindDeskRef: firestoreAction(context => {
-        //     return context.bindFirestoreRef('test', context.getters.feedRef.where("type", "==", 3).orderBy('date', 'desc')).then(context.bindFirestoreRef('test2', context.getters.deskRef.orderBy('date', 'desc'))).then(context.bindFirestoreRef('desk', test.push(test2)))
-        // }),
-
 
         addToDeskRef: firestoreAction((context, entry) => {
             return context.getters.deskRef.add(entry);
         }),
         sendDeskToFeedRef: firestoreAction(async (context, entry) => {
             await context.getters.feedRef.doc(entry.id).set({ ...entry })
-            // return context.getters.deskRef.doc(entry.id).delete()
+            return context.getters.deskRef.doc(entry.id).delete()
         }),
         updateContribsCount: firestoreAction(async (context, count) => {
             const contribCounter = await context.rootGetters['events/selectedEventRef'].collection('counters').doc('feedContributions')
@@ -102,6 +83,13 @@ export default {
         }),
         removeDeskElementRef: firestoreAction((context, entryId) => {
             return context.getters.deskRef.doc(entryId).delete();
+        }),
+        updateLiveVerse: firestoreAction((context, entry) => {
+            return context.getters.feedRef.doc(entry.id).update({ ...entry });
+        }),
+        withdrawLiveVerse: firestoreAction(async (context, entry) => {
+            await context.getters.deskRef.doc(entry.id).set({ ...entry })
+            return context.getters.feedRef.doc(entry.id).delete()
         }),
         removeQueueElementRef: firestoreAction((context, entryId) => {
             return context.getters.queueRef.doc(entryId).delete();
@@ -145,10 +133,6 @@ export default {
         },
         queueByEventIdRef: (state, getters, rootState, rootGetters) => (eventId) => {
             return db.collection('events').doc(eventId).collection('feed-approved')
-        },
-
-        test3: (state, getters) => {
-            return getters.desk.push(test);
         },
     }
 }

@@ -1,4 +1,4 @@
-<template>
+  <template>
     <li class="mb-2" v-click-outside="() => editMode = false" @click.stop="editMode = true">
         <div class=" list-item bg-background-2">
             <template v-if="!editMode">
@@ -50,7 +50,6 @@
 
 <script>
 import { mapActions } from 'vuex'
-
 import { ContributionTypes, ContributionTypesLabels } from '@/models/contribution.js'
 import DateHelper from '@/mixins/date.js'
 import ClickOutside from 'vue-click-outside'
@@ -80,9 +79,7 @@ export default {
             if (this.editableElement.type == ContributionTypes.BIBLEVERSE && this.editableElement.author == "") {
                 return false;
             }
-
             return this.editableElement.content && this.editableElement.content.length > 0;
-
         },
         isNotCompleted(){
             return !this.isCompleted
@@ -97,7 +94,6 @@ export default {
         async pushElement(){
             var computedElement = this.element;
             computedElement.publishedDate = Date.now();
-            computedElement.isLive = true;
             await this.sendDeskToFeedRef(computedElement)
         },
         async updateElement(){

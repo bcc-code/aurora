@@ -28,9 +28,15 @@
                     <input type="text" class="mb-3 form-input" v-model="newDeskEntry.title" placeholder="Title" />
                     <textarea rows="3" class="mb-3 form-input" v-model="newDeskEntry.content" placeholder="Content" />
                 </template>
-                <List :elements="desk = testDesk.concat(liveDesk)" :searchable="false">
+                <List :elements="desk" :searchable="false">
                     <template v-slot:list="{ elements }">
                         <DeskEntry v-for="element in elements" :key="element.id" :element="element"/>
+                    </template>
+                    <template v-slot:newElement></template>
+                </List>
+                <List :elements="liveDesk" :searchable="false">
+                    <template v-slot:list="{ elements }">
+                        <LiveDeskEntry v-for="element in elements" :key="element.id" :element="element"/>
                     </template>
                     <template v-slot:newElement></template>
                 </List>
@@ -44,11 +50,13 @@ import { ContributionTypes, ContributionTypesLabels } from '@/models/contributio
 import { mapState, mapActions } from 'vuex';
 import List from '@/components/List/List.vue'
 import DeskEntry from '@/components/List/Elements/Contribution/Desk.vue'
+import LiveDeskEntry from '@/components/List/Elements/Contribution/LiveDesk.vue'
 import BibleVerse from '@/components/Forms/BibleVerse.vue';
 export default {
     components: {
         List,
         DeskEntry,
+        LiveDeskEntry,
         BibleVerse,
     },
     data: function() {
@@ -57,10 +65,13 @@ export default {
         }
     },
     computed: {
-        ...mapState('contributions', ['desk', 'liveDesk', 'testDesk']),
+        ...mapState('contributions', ['desk', 'liveDesk']),
         AllowedTypes(){
             return [ContributionTypes.DEFAULT, ContributionTypes.INFORMATION, ContributionTypes.QUOTE, ContributionTypes.BIBLEVERSE];
         },
+        // combinedList() {
+        //     return this.desk.concat(this.liveDesk)
+        // },
         ContributionTypes(){
             return ContributionTypes
         },
