@@ -84,8 +84,7 @@ async function collectionResults() {
         console.error(results);
         return "";
     }
-
-    let total = results.data.totalAmount.toFixed();
+    let total = results.data.total.toFixed();
     return total.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 

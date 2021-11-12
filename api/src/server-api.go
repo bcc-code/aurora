@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -42,11 +43,27 @@ func (s Server) GenerateAnalyticsID(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"id": string(id)})
 }
 
+type CollectionResult struct {
+	Values      []CollectionResultValue `json:"value"`
+	Failed      bool                    `json:"failed"`
+	HasWarnings bool                    `json:"hasWarnings"`
+	Success     bool                    `json:"success"`
+}
+type CollectionResultValue struct {
+	ActivityID  int     `json:"activityId"`
+	Timestamp   string  `json:"timestamp"`
+	ChurchID    int     `json:"churchId"`
+	Amount      float64 `json:"amount"`
+	PersonID    int     `json:"personId"`
+	OrderNumber string  `json:"orderNumber"`
+	SpouseID    int     `json:"spouseId"`
+}
+
 // GetCollectionResults from the collection api.
 // This is just a simple proxy to do M2M authentication
 func (s Server) GetCollectionResults(c *gin.Context) {
-	url := fmt.Sprintf("%s/Collection/status?apiKey=%s", s.collectionBaseURL, url.QueryEscape(s.collectionAPIKey))
-
+	url := fmt.Sprintf("%s/Collection/v2/status/string?apiKey=%s", s.collectionBaseURL, url.QueryEscape(s.collectionAPIKey))
+	log.L.Debug().Str("URL", url).Msg("URL is")
 	res, err := s.httpClient.Get(url)
 	if err != nil {
 		log.L.Error().Err(err).Msg("Error fetching collection data")
@@ -63,7 +80,24 @@ func (s Server) GetCollectionResults(c *gin.Context) {
 			c.AbortWithStatus(http.StatusGatewayTimeout)
 			return
 		}
+	} else {
+		log.L.Error().Int("Status Code", res.StatusCode).Msg("Request failed")
 	}
 
-	c.Data(http.StatusOK, "application/json; charset=utf-8", bodyBytes)
+	collectionResult := &CollectionResult{}
+	err = json.Unmarshal(bodyBytes, collectionResult)
+	if err != nil {
+		log.L.Error().Err(err).Msg("Error parsing body")
+		c.AbortWithStatus(http.StatusBadGateway)
+		return
+	}
+
+	total := 0.0
+	for _, val := range collectionResult.Values {
+		total += val.Amount
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"total": total,
+	})
 }
