@@ -56,7 +56,7 @@ export default {
         }),
 
         addToDeskRef: firestoreAction((context, entry) => {
-            return context.getters.deskRef.add(entry);
+            return context.getters.deskRef.add(entry).then(function(docRef){docRef.update({id:`${docRef.id}`})});
         }),
         sendDeskToFeedRef: firestoreAction(async (context, entry) => {
             await context.getters.feedRef.doc(entry.id).set({ ...entry })
@@ -79,7 +79,7 @@ export default {
             return context.getters.contributionsRef.doc(entry.id).update({ tags: ['rejected'] })
         }),
         updateDeskElementRef: firestoreAction((context, entry) => {
-            return context.getters.deskRef.doc(entry.id).set({ ...entry });
+            return context.getters.deskRef.doc(entry.id).update({ ...entry });
         }),
         removeDeskElementRef: firestoreAction((context, entryId) => {
             return context.getters.deskRef.doc(entryId).delete();
@@ -97,6 +97,15 @@ export default {
         removeLiveRef: firestoreAction((context, entry) => {
             return context.getters.feedRef.doc(entry.id).delete();
         }),
+
+        addWasLive: firestoreAction((context, id) => {
+            return context.getters.feedRef.doc(id).update({ wasLive: true })
+        }),
+        removeWasLive: firestoreAction((context, id) => {
+            return context.getters.feedRef.doc(id).update({ wasLive: false })
+        }),
+
+
     },
     getters: {
         contributionsRef: (_s, _g, _r, rootGetters) => {

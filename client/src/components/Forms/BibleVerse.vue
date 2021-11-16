@@ -64,6 +64,7 @@ export default {
     props: [ "value" ],
     created: function() {
         this.location = this.value;
+        this.incoming_value = this.value;
     },
     computed: {
         ContributionTypes(){

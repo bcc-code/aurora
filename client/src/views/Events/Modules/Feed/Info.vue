@@ -69,9 +69,6 @@ export default {
         AllowedTypes(){
             return [ContributionTypes.DEFAULT, ContributionTypes.INFORMATION, ContributionTypes.QUOTE, ContributionTypes.BIBLEVERSE];
         },
-        // combinedList() {
-        //     return this.desk.concat(this.liveDesk)
-        // },
         ContributionTypes(){
             return ContributionTypes
         },

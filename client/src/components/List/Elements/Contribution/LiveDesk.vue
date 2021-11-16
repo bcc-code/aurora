@@ -4,10 +4,10 @@
             <template v-if="!editMode">
                 <template>
                     <section class="w-full">
-                        <p class="elType">{{ContributionTypesLabels[element.type]}}</p>
-                        <p class="text-white text-base w-full">{{element.content}}</p>
-                        <div class="text-gray-400 text-sm mb-2">{{element.author}}</div>
-                        <div class="text-gray-400 text-sm mb-2">{{date(element.date)}}</div>
+                        <p class="text-grey-100 elType">{{ContributionTypesLabels[element.type]}}</p>
+                        <p class="text-white font-medium text-base w-full">{{element.content}}</p>
+                        <div class="text-grey-100 text-sm mb-2">{{element.author}}</div>
+                        <div class="text-grey-100 text-sm mb-2">{{date(element.date)}}</div>
                     </section>
                     <section class="overlay h-full">
                         <button class="h-10 mt-3 btn bg-bluewood" @click="withdrawElement">{{$t('queue.withdraw')}}</button>
@@ -16,7 +16,7 @@
             </template>
             <section v-else class="w-full flex flex-wrap justify-end">
                 <template>
-                    <p class="elType">{{ContributionTypesLabels[element.type]}}</p>
+                    <p class="text-grey-100 elType">{{ContributionTypesLabels[element.type]}}</p>
                     <BibleVerse v-model="editableElement" />
                 </template>
                 <button class="btn bg-bluewood" :class="{'disabled': isNotCompleted}" @click="updateElement">{{$t('actions.save')}}</button>
@@ -67,14 +67,14 @@ export default {
     },
     mixins: [DateHelper],
     methods: {
-        ...mapActions('contributions', ['updateLiveVerse', 'withdrawLiveVerse']),
+        ...mapActions('contributions', ['updateLiveVerse', 'withdrawLiveVerse', 'removeWasLive']),
 
         async withdrawElement(){
+            await this.removeWasLive(this.element.id)
             await this.withdrawLiveVerse(this.element);
         },
         async updateElement(){
             if (this.isCompleted) {
-                console.log(this.editableElement.id)
                 await this.updateLiveVerse(this.editableElement);
                 this.editMode = false
             }
@@ -90,7 +90,6 @@ export default {
 </script>
 <style scoped>
 .elType {
-   color: rgba(156, 163, 175);
    font-style: italic;
    font-size: 13px;
    text-align: right;
