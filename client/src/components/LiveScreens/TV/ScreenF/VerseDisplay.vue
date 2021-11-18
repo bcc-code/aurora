@@ -30,7 +30,6 @@
 import { mapGetters, mapActions } from 'vuex';
 import FeedEntry from '@/components/Feed/Base.vue'
 import { ContributionTypes } from '@/models/contribution.js'
-
 export default {
     components: {
         FeedEntry
@@ -40,6 +39,7 @@ export default {
         return {
             loaded: false,
             verseToDisplay: null,
+            oldLatestFeed: [],
         }
     },
     computed: {
@@ -61,26 +61,22 @@ export default {
         }
     },
     methods: {
-        ...mapActions('contributions', ['bindFeedRef', 'addWasLive']),
+        ...mapActions('contributions', ['bindFeedRef']),
         loadLastVerse() {
             if ((!this.loaded && !this.displayPrevious) || this.latestFeed.length == 0) {
                 this.verseToDisplay = null;
                 return
             }
-
             if (this.displayPrevious) {
                 let verses = this.latestFeed.filter((el, i) => (el.type == ContributionTypes.BIBLEVERSE))
                 this.verseToDisplay = verses[0] || null;
                 return
             }
-
             const lastElement = this.latestFeed[0]
-            console.log(lastElement)
             if (!lastElement || lastElement.type != ContributionTypes.BIBLEVERSE) {
                 this.verseToDisplay = null;
                 return
             }
-            this.addWasLive(lastElement.id)
             this.verseToDisplay = lastElement;
         }
     },
@@ -92,12 +88,15 @@ export default {
             this.loadLastVerse();
         },
         latestFeed() {
-            this.loadLastVerse()
+            if(this.latestFeed >= this.oldLatestFeed) {
+                this.loadLastVerse()
+            }
+            this.oldLatestFeed = this.latestFeed
         },
         verseToDisplay() {
             // Hide after x seconds
             if (this.verseToDisplay != null) {
-                setTimeout(() => {this.verseToDisplay = null}, this.displayTime * 1000)
+                setTimeout(() => {this.verseToDisplay = null }, this.displayTime * 1000);
             }
         },
     }
@@ -108,19 +107,15 @@ export default {
     left: 124px;
     top: 866px;
 }
-
 .verse-inner {
     padding: 18px 38px;
 }
-
 .slide-enter-active,
 .slide-leave-active {
     transition: opacity 1.3s, transform 1.3s;
 }
-
 .slide-enter, .slide-leave-to {
     opacity: 0;
     translateX: 10%;
 }
-
 </style>

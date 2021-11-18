@@ -75,6 +75,7 @@ export default {
         },
         async updateElement(){
             if (this.isCompleted) {
+                this.editableElement.publishedDate = Date.now();
                 await this.updateLiveVerse(this.editableElement);
                 this.editMode = false
             }

@@ -15,6 +15,7 @@ export default {
         additionalFeed: [],
         screenFeed: [],
         feedByEvent: [],
+        oldLatestFeed: [],
     },
     actions: {
         bindContributionsRef: firestoreAction(context => {
@@ -46,7 +47,7 @@ export default {
 
             return context.bindFirestoreRef('feedByEvent', db.collection(`events/${screenEvent.id}/feed-outgoing`));
         }),
-                   
+
         bindDeskRef: firestoreAction(context => {
             return context.bindFirestoreRef('desk', context.getters.deskRef.orderBy('date', 'desc'))
         }),
@@ -55,11 +56,13 @@ export default {
             return context.bindFirestoreRef('liveDesk', context.getters.feedRef.where("type", "==", 3).orderBy('publishedDate', 'desc'))
         }),
 
-        addToDeskRef: firestoreAction((context, entry) => {
-            return context.getters.deskRef.add(entry).then(function(docRef){docRef.update({id:`${docRef.id}`})});
+        addToDeskRef: firestoreAction(async (context, entry) => {
+            await context.getters.deskRef.add(entry).then(function(docRef){docRef.update({id:`${docRef.id}`})});
+            // return context.getters.deskRef.doc(entry.id).update({ wasLive: false })
         }),
         sendDeskToFeedRef: firestoreAction(async (context, entry) => {
             await context.getters.feedRef.doc(entry.id).set({ ...entry })
+            await context.getters.feedRef.doc(entry.id).update({ wasLive: false })
             return context.getters.deskRef.doc(entry.id).delete()
         }),
         updateContribsCount: firestoreAction(async (context, count) => {
@@ -89,6 +92,7 @@ export default {
         }),
         withdrawLiveVerse: firestoreAction(async (context, entry) => {
             await context.getters.deskRef.doc(entry.id).set({ ...entry })
+            await context.getters.deskRef.doc(entry.id).update({ wasLive: false })
             return context.getters.feedRef.doc(entry.id).delete()
         }),
         removeQueueElementRef: firestoreAction((context, entryId) => {
