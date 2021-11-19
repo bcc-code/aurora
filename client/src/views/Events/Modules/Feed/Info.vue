@@ -87,15 +87,10 @@ export default {
         await this.bindLiveDeskRef();
     },
     methods: {
-        ...mapActions('contributions', ['addToDeskRef']),
-        ...mapActions('contributions', ['bindDeskRef']),
-        ...mapActions('contributions', ['bindLiveDeskRef']),
+        ...mapActions('contributions', ['addToDeskRef', 'bindDeskRef', 'bindLiveDeskRef']),
         async addElement(){
             if (this.isCompleted) {
                 this.newDeskEntry.date = Date.now();
-                // if(this.newDeskEntry.verse.verse_to == undefined) {
-                //     this.newDeskEntry.verse.verse_to = this.newDeskEntry.verse.verse_from
-                // }
                 await this.addToDeskRef(this.newDeskEntry).then((result) => {
                     this.$toasted.success(this.$t('queue.element-added'));
                     const newDeskEntry = { type: 1 };
