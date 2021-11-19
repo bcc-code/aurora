@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
+	"cloud.google.com/go/firestore"
 	"github.com/gin-gonic/gin"
 	"go.bcc.media/bcco-api/firebase"
 	"go.bcc.media/bcco-api/log"
+	"go.bcc.media/bcco-api/mediabank"
 	"go.bcc.media/bcco-api/members"
 	"go.bcc.media/bcco-api/pubsub"
 )
@@ -65,4 +67,63 @@ func (s Server) MembersWebhook(c *gin.Context) {
 
 	// We have to return a 2xx code regardless of the actual success as we don't want to get the message again
 	c.Status(http.StatusNoContent)
+}
+
+// MediabankWebhookEventData accepts event data from mediabanken and
+// adds it to the current running event
+func (s Server) MediabankWebhookEventData(c *gin.Context) {
+	data := mediabank.EventData{}
+	err := c.BindJSON(&data)
+
+	if err != nil {
+		log.L.Info().
+			Err(err).
+			Msg("Malformed request")
+		c.JSON(http.StatusBadRequest, map[string]string{"message": "Malformed request"})
+		return
+	}
+
+	ctx := c.Request.Context()
+
+	configRaw, err := s.fs.Doc("configs/brunstadtv-app").Get(ctx)
+	if err != nil {
+		log.L.Info().
+			Err(err).
+			Msg("Firebase failed")
+		c.JSON(http.StatusServiceUnavailable, map[string]string{"message": "FB issues"})
+		return
+	}
+
+	config := firebase.BTVAppConfig{}
+	err = configRaw.DataTo(&config)
+	if err != nil {
+		log.L.Info().
+			Err(err).
+			Msg("Can't parse BTV config object")
+		c.JSON(http.StatusInternalServerError, map[string]string{"message": "FB issues"})
+		return
+	}
+
+	if config.CurrentEventPath == nil {
+		c.JSON(http.StatusNotFound, map[string]string{"message": "No BCCO Event in progress"})
+		return
+	}
+
+	_, err = config.CurrentEventPath.Update(ctx, []firestore.Update{
+		{Path: "mediabankID", Value: data.VidispineID},
+		{Path: "mediabankFileName", Value: data.Filename},
+	})
+
+	if err != nil {
+		log.L.Info().
+			Err(err).
+			Str("EventID", config.CurrentEventPath.ID).
+			Str("mediabankID", data.VidispineID).
+			Str("mediabankFileName", data.Filename).
+			Msg("Unable to update")
+		c.JSON(http.StatusInternalServerError, map[string]string{"message": "FB issues"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Updated event", "event_id": config.CurrentEventPath.ID})
 }

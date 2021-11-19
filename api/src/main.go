@@ -171,6 +171,9 @@ func main() {
 	webhooks := router.Group("webhooks")
 	webhooks.POST("members", server.MembersWebhook)
 
+	mediabankWebhooks := webhooks.Group("mediabank")
+	mediabankWebhooks.POST("event-data", server.MediabankWebhookEventData)
+
 	initTrace.End()
 
 	log.L.Info().Msg("About to listen to :8000")
