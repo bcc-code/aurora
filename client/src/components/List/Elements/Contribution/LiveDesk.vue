@@ -4,10 +4,10 @@
             <template v-if="!editMode">
                 <template>
                     <section class="w-full">
-                        <p class="text-grey-100 elType">{{ContributionTypesLabels[element.type]}}</p>
-                        <p class="text-white font-medium text-base w-full">{{element.content}}</p>
-                        <div class="text-grey-100 text-sm mb-2">{{element.author}}</div>
-                        <div class="text-grey-100 text-sm mb-2">{{date(element.date)}}</div>
+                        <p class="text-gray-100 elType">{{ContributionTypesLabels[element.type]}}</p>
+                        <p class="text-white font-medium text-base w-full ">{{element.content}}</p>
+                        <div class="text-gray-100 text-sm mb-2">{{element.author}}</div>
+                        <div class="text-gray-100 text-sm mb-2">{{date(element.date)}}</div>
                     </section>
                     <section class="overlay h-full">
                         <button class="h-10 mt-3 btn bg-bluewood" @click="withdrawElement">{{$t('queue.withdraw')}}</button>
@@ -19,9 +19,19 @@
                     <p class="text-grey-100 elType">{{ContributionTypesLabels[element.type]}}</p>
                     <BibleVerse v-model="editableElement" />
                 </template>
-                <button class="btn bg-bluewood" :class="{'disabled': isNotCompleted}" @click="updateElement">{{$t('actions.save')}}</button>
+                
+                <button class="btn bg-bluewood mr-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm1 = true">+1</button>
+                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm2 = true">+2</button>
+                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm3 = true">+3</button>
+                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm4 = true">+4</button>
+
+                <button class="btn bg-bluewood ml-1" :class="{'disabled': isNotCompleted}" @click="updateElement">{{$t('actions.save')}}</button>
             </section>
         </div>
+        <Confirm v-if="showRemoveConfirm1" @cancel="showRemoveConfirm1 = false" @confirm="extendVerse(1)" :message="$t('dialogs.confirm-extend-verse-1')" />
+        <Confirm v-if="showRemoveConfirm2" @cancel="showRemoveConfirm2 = false" @confirm="extendVerse(2)" :message="$t('dialogs.confirm-extend-verse-2')" />
+        <Confirm v-if="showRemoveConfirm3" @cancel="showRemoveConfirm3 = false" @confirm="extendVerse(3)" :message="$t('dialogs.confirm-extend-verse-3')" />
+        <Confirm v-if="showRemoveConfirm4" @cancel="showRemoveConfirm4 = false" @confirm="extendVerse(4)" :message="$t('dialogs.confirm-extend-verse-4')" />
     </li>
 </template>
 
@@ -32,8 +42,9 @@ import { ContributionTypes, ContributionTypesLabels } from '@/models/contributio
 import DateHelper from '@/mixins/date.js'
 import ClickOutside from 'vue-click-outside'
 import BibleVerse from '@/components/Forms/BibleVerse.vue'
+import Confirm from '@/components/Dialogs/Confirm.vue'
 export default {
-    components: { BibleVerse },
+    components: { BibleVerse, Confirm }, 
     props: {
         element: {
             type: Object,
@@ -44,6 +55,10 @@ export default {
         return {
             editMode: false,
             editableElement: this.element,
+            showRemoveConfirm1: false,
+            showRemoveConfirm2: false,
+            showRemoveConfirm3: false,
+            showRemoveConfirm4: false,
         }
     },
     computed: {
@@ -54,6 +69,7 @@ export default {
             return ContributionTypesLabels;
         },
         isCompleted(){
+
             if (this.editableElement.type == ContributionTypes.BIBLEVERSE && this.editableElement.author == "") {
                 return false;
             }
@@ -67,10 +83,9 @@ export default {
     },
     mixins: [DateHelper],
     methods: {
-        ...mapActions('contributions', ['updateLiveVerse', 'withdrawLiveVerse', 'removeWasLive']),
-
+        ...mapActions('contributions', ['updateLiveVerse', 'withdrawLiveVerse']),
+        
         async withdrawElement(){
-            await this.removeWasLive(this.element.id)
             await this.withdrawLiveVerse(this.element);
         },
         async updateElement(){
@@ -80,6 +95,22 @@ export default {
                 this.editMode = false
             }
         },
+        async extendVerse(extendBy){
+            if(this.editableElement.verse.verse_to == undefined) {
+                this.editableElement.verse.verse_to = this.editableElement.verse.verse_from
+                this.editableElement.verse.verse_to = this.editableElement.verse.verse_to + extendBy
+            } else {
+                this.editableElement.verse.verse_to = this.editableElement.verse.verse_to + extendBy
+            }
+            this.editableElement.publishedDate = Date.now();
+            await this.updateLiveVerse(this.editableElement);
+            this.editMode = false
+            this.showRemoveConfirm1 = false
+            this.showRemoveConfirm2 = false
+            this.showRemoveConfirm3 = false
+            this.showRemoveConfirm4 = false
+        },
+
         getProperty(property){
             return (property == null) ? null : property;
         }

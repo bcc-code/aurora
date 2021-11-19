@@ -58,11 +58,11 @@ export default {
 
         addToDeskRef: firestoreAction(async (context, entry) => {
             await context.getters.deskRef.add(entry).then(function(docRef){docRef.update({id:`${docRef.id}`})});
-            // return context.getters.deskRef.doc(entry.id).update({ wasLive: false })
+
         }),
         sendDeskToFeedRef: firestoreAction(async (context, entry) => {
             await context.getters.feedRef.doc(entry.id).set({ ...entry })
-            await context.getters.feedRef.doc(entry.id).update({ wasLive: false })
+
             return context.getters.deskRef.doc(entry.id).delete()
         }),
         updateContribsCount: firestoreAction(async (context, count) => {
@@ -92,7 +92,7 @@ export default {
         }),
         withdrawLiveVerse: firestoreAction(async (context, entry) => {
             await context.getters.deskRef.doc(entry.id).set({ ...entry })
-            await context.getters.deskRef.doc(entry.id).update({ wasLive: false })
+
             return context.getters.feedRef.doc(entry.id).delete()
         }),
         removeQueueElementRef: firestoreAction((context, entryId) => {
@@ -101,15 +101,6 @@ export default {
         removeLiveRef: firestoreAction((context, entry) => {
             return context.getters.feedRef.doc(entry.id).delete();
         }),
-
-        addWasLive: firestoreAction((context, id) => {
-            return context.getters.feedRef.doc(id).update({ wasLive: true })
-        }),
-        removeWasLive: firestoreAction((context, id) => {
-            return context.getters.feedRef.doc(id).update({ wasLive: false })
-        }),
-
-
     },
     getters: {
         contributionsRef: (_s, _g, _r, rootGetters) => {

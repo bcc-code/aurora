@@ -186,7 +186,11 @@
 		"are-you-sure": "Are you sure?",
 		"confirm-action": "Please confirm this action",
 		"confirm-delete-event": "All data related to this event will be deleted. This action is irreversible.",
-		"confirm-delete-contribution": "This contribution will be deleted permanently. This action is irreversible."
+		"confirm-delete-contribution": "This contribution will be deleted permanently. This action is irreversible.",
+		"confirm-extend-verse-1": "The verse will be extended by 1 verses and shown live again",
+		"confirm-extend-verse-2": "The verse will be extended by 2 verses and shown live again",
+		"confirm-extend-verse-3": "The verse will be extended by 3 verses and shown live again",
+		"confirm-extend-verse-4": "The verse will be extended by 4 verses and shown live again"
 	},
 	"profile-pictures": {
 		"thisWeek": "This week",
