@@ -95,6 +95,8 @@ func main() {
 	rudderstackKey := os.Getenv("RUDDERSTACK_KEY")
 	rudderstackURL := os.Getenv("RUDDERSTACK_URL")
 
+	mediabankWebhookPassword := os.Getenv("MEDIABANK_WEBHOOK_PASSWORD")
+
 	// A bit of misuse but K_REVISION is set by GCR and gives a lot of info
 	appBuild := os.Getenv("K_REVISION")
 	if appBuild == "" {
@@ -171,7 +173,12 @@ func main() {
 	webhooks := router.Group("webhooks")
 	webhooks.POST("members", server.MembersWebhook)
 
+	// Webhooks from MB.
+	// The systems there have bad support for adding headers so we use a password
 	mediabankWebhooks := webhooks.Group("mediabank")
+	mediabankWebhooks.Use(gin.BasicAuth(gin.Accounts{
+		"mediabank": mediabankWebhookPassword,
+	}))
 	mediabankWebhooks.POST("event-data", server.MediabankWebhookEventData)
 
 	initTrace.End()
