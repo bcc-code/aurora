@@ -28,7 +28,7 @@
                 <button class="btn bg-bluewood ml-1" :class="{'disabled': isNotCompleted}" @click="updateElement">{{$t('actions.save')}}</button>
             </section>
         </div>
-        <Confirm v-if="mediabank-webhook-passwordshowExtendConfirm1" @cancel="showExtendConfirm1 = false" @confirm="extendVerse(1)" :message="$t('dialogs.confirm-extend-verse-1')" />
+        <Confirm v-if="showExtendConfirm1" @cancel="showExtendConfirm1 = false" @confirm="extendVerse(1)" :message="$t('dialogs.confirm-extend-verse-1')" />
         <Confirm v-if="showExtendConfirm2" @cancel="showExtendConfirm2 = false" @confirm="extendVerse(2)" :message="$t('dialogs.confirm-extend-verse-2')" />
         <Confirm v-if="showExtendConfirm3" @cancel="showExtendConfirm3 = false" @confirm="extendVerse(3)" :message="$t('dialogs.confirm-extend-verse-3')" />
         <Confirm v-if="showExtendConfirm4" @cancel="showExtendConfirm4 = false" @confirm="extendVerse(4)" :message="$t('dialogs.confirm-extend-verse-4')" />
