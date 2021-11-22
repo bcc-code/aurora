@@ -20,18 +20,18 @@
                     <BibleVerse v-model="editableElement" />
                 </template>
 
-                <button class="btn bg-bluewood mr-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm1 = true">+1</button>
-                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm2 = true">+2</button>
-                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm3 = true">+3</button>
-                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm4 = true">+4</button>
+                <button class="btn bg-bluewood mr-1" :class="{'disabled': isNotCompleted}" @click.stop="showExtendConfirm1 = true">+1</button>
+                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showExtendConfirm2 = true">+2</button>
+                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showExtendConfirm3 = true">+3</button>
+                <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showExtendConfirm4 = true">+4</button>
 
                 <button class="btn bg-bluewood ml-1" :class="{'disabled': isNotCompleted}" @click="updateElement">{{$t('actions.save')}}</button>
             </section>
         </div>
-        <Confirm v-if="showRemoveConfirm1" @cancel="showRemoveConfirm1 = false" @confirm="extendVerse(1)" :message="$t('dialogs.confirm-extend-verse-1')" />
-        <Confirm v-if="showRemoveConfirm2" @cancel="showRemoveConfirm2 = false" @confirm="extendVerse(2)" :message="$t('dialogs.confirm-extend-verse-2')" />
-        <Confirm v-if="showRemoveConfirm3" @cancel="showRemoveConfirm3 = false" @confirm="extendVerse(3)" :message="$t('dialogs.confirm-extend-verse-3')" />
-        <Confirm v-if="showRemoveConfirm4" @cancel="showRemoveConfirm4 = false" @confirm="extendVerse(4)" :message="$t('dialogs.confirm-extend-verse-4')" />
+        <Confirm v-if="mediabank-webhook-passwordshowExtendConfirm1" @cancel="showExtendConfirm1 = false" @confirm="extendVerse(1)" :message="$t('dialogs.confirm-extend-verse-1')" />
+        <Confirm v-if="showExtendConfirm2" @cancel="showExtendConfirm2 = false" @confirm="extendVerse(2)" :message="$t('dialogs.confirm-extend-verse-2')" />
+        <Confirm v-if="showExtendConfirm3" @cancel="showExtendConfirm3 = false" @confirm="extendVerse(3)" :message="$t('dialogs.confirm-extend-verse-3')" />
+        <Confirm v-if="showExtendConfirm4" @cancel="showExtendConfirm4 = false" @confirm="extendVerse(4)" :message="$t('dialogs.confirm-extend-verse-4')" />
     </li>
 </template>
 
@@ -55,10 +55,10 @@ export default {
         return {
             editMode: false,
             editableElement: this.element,
-            showRemoveConfirm1: false,
-            showRemoveConfirm2: false,
-            showRemoveConfirm3: false,
-            showRemoveConfirm4: false,
+            showExtendConfirm1: false,
+            showExtendConfirm2: false,
+            showExtendConfirm3: false,
+            showExtendConfirm4: false,
         }
     },
     computed: {
@@ -105,10 +105,10 @@ export default {
             this.editableElement.publishedDate = Date.now();
             await this.updateLiveVerse(this.editableElement);
             this.editMode = false
-            this.showRemoveConfirm1 = false
-            this.showRemoveConfirm2 = false
-            this.showRemoveConfirm3 = false
-            this.showRemoveConfirm4 = false
+            this.showExtendConfirm1 = false
+            this.showExtendConfirm2 = false
+            this.showExtendConfirm3 = false
+            this.showExtendConfirm4 = false
         },
 
         getProperty(property){
