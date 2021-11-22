@@ -19,7 +19,7 @@
                     <p class="text-grey-100 elType">{{ContributionTypesLabels[element.type]}}</p>
                     <BibleVerse v-model="editableElement" />
                 </template>
-                
+
                 <button class="btn bg-bluewood mr-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm1 = true">+1</button>
                 <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm2 = true">+2</button>
                 <button class="btn bg-bluewood mx-1" :class="{'disabled': isNotCompleted}" @click.stop="showRemoveConfirm3 = true">+3</button>
@@ -44,7 +44,7 @@ import ClickOutside from 'vue-click-outside'
 import BibleVerse from '@/components/Forms/BibleVerse.vue'
 import Confirm from '@/components/Dialogs/Confirm.vue'
 export default {
-    components: { BibleVerse, Confirm }, 
+    components: { BibleVerse, Confirm },
     props: {
         element: {
             type: Object,
@@ -84,7 +84,7 @@ export default {
     mixins: [DateHelper],
     methods: {
         ...mapActions('contributions', ['updateLiveVerse', 'withdrawLiveVerse']),
-        
+
         async withdrawElement(){
             await this.withdrawLiveVerse(this.element);
         },
