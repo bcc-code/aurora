@@ -6,10 +6,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/bcc-code/mediabank-bridge/proto"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
+	"google.golang.org/grpc"
 
 	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/auth0"
@@ -57,6 +59,27 @@ func main() {
 	log.ConfigureGlobalLogger(zerolog.DebugLevel)
 	log.L.Debug().Msg("Seting up tracing")
 	tracedHTTPClient := mustSetupTracing()
+
+	provider, err := proto.NewCredentialsProvider("", "", log.L)
+	if err != nil {
+		log.L.Panic().Err(err)
+	}
+
+	conn, err := grpc.Dial("", grpc.WithPerRPCCredentials(provider))
+	if err != nil {
+		log.L.Panic().Err(err)
+	}
+	defer conn.Close()
+
+	mbClient := proto.NewMediabankBridgeClient(conn)
+	_, err = mbClient.CreateSubclip(ctx, &proto.CreateSubclipRequest{
+		In:      "91000",
+		Out:     "92001",
+		Title:   "From BCCO",
+		AssetId: "VX-396795",
+	})
+
+	log.L.Fatal().Err(err).Msgf("Done")
 
 	ctx, initTrace := trace.StartSpan(ctx, "init")
 
