@@ -44,7 +44,7 @@ export default {
     data: function () {
         return {
             icons: ['book', 'camera', 'cycling', 'explore', 'feed', 'fire', 'game', 'happy', 'heart', 'information', 'location', 'plus', 'post', 'question', 'running', 'support', 'survey', 'url', 'video'],
-            actions: ['post', 'feed', 'testimony', 'inquiry', 'quizz', 'url', 'deeplink', 'donation', 'worldwiderace'],
+            actions: ['post', 'feed', 'testimony', 'inquiry', 'quizz', 'url', 'deeplink', 'donation', 'wwr'],
             colors: [{ label: 'white', value: '#fff' }, { label: 'blue', value:'#6eb0e6' }, { label: 'red', value: '#e63c62' }]
         }
     },
