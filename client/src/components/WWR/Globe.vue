@@ -40,7 +40,7 @@ export default {
 			return document.getElementById("pointsCanvas");
 		},
 		steps() {
-			return this.churches.filter((el) => el.step == true).sort((a, b) => a.stepNumber - b.stepNumber);
+			return this.churches.filter((el) => el.step).sort((a, b) => a.stepNumber - b.stepNumber);
 		}
 	},
 	data: function(){
@@ -57,9 +57,9 @@ export default {
 		}
 	},
 	async mounted(){
-		window.onerror = (message, url, lineNumber) => {  
+		window.onerror = (message, url, lineNumber) => {
 			this.$toasted.error(message);
-		}; 
+		};
 		this.fetchWorld();
 		this.initializeMap();
 		this.bindDistanceShardsRef();
@@ -94,7 +94,7 @@ export default {
 			else {
 				this.$cron.stop("autoSpin");
 				this.initHandsGestures();
-			}	
+			}
 			this.render();
 			this.loaded = true;
 		},
@@ -166,7 +166,7 @@ export default {
 				var lines = []
 				var push = true
 				for (var t=1; t<=total; t++) {
-					coords2 = interpolate(t/total) 
+					coords2 = interpolate(t/total)
 					if (push) lines.push([coords1, coords2])
 					push = !push;
 					coords1 = coords2
@@ -178,7 +178,7 @@ export default {
 						coordinates: lines
 					}
 				});
-				this.ctx.stroke();				
+				this.ctx.stroke();
 			}
 		},
 		drawRoadProgress() {
@@ -208,6 +208,9 @@ export default {
 		},
 		drawMarkers() {
 			this.churches.forEach((marker) => {
+				if (!marker.coordinates) {
+					return
+				}
 				var color = (marker == this.hoveredMarker) ? "#a51414" : (marker.step) ? "#C54C32" : "#FDF3E2";
 				var showName = (marker == this.hoveredMarker || (this.selectedChurch != null && marker.name.toLowerCase() == this.selectedChurch.name.toLowerCase())) ? true : marker.step == true;
 				var size = marker.step ? marker.name.toLowerCase() == this.options.selectedMarker ? 3 : 1.5 : 0.8;
@@ -220,8 +223,8 @@ export default {
 			factor *= Math.max(0.2, Math.pow(0.8, factor));
 			size *= factor;
 			fontSize *= factor;
-			color = (this.selectedChurch != null && name == this.selectedChurch.name) 
-				? '#003366' 
+			color = (this.selectedChurch != null && name == this.selectedChurch.name)
+				? '#003366'
 				: color;
 			const center = [this.width * this.position[0], this.height * this.position[1]];
 			var coordinates = this.projection(coords)
@@ -236,7 +239,7 @@ export default {
 				this.ctx.lineTo(coordinates[0] + 1 * size, coordinates[1] + 1 * size);
 				this.ctx.lineTo(coordinates[0] - 1 * size, coordinates[1] + 1 * size);
 				this.ctx.fill();
-				
+
 				if (showName) {
 					this.ctx.font = `italic small-caps bold ${fontSize}px Barlow, sans-serif`;
 					this.ctx.textAlign = "start"
@@ -273,7 +276,9 @@ export default {
 			return null
 		},
 		coordsToArray(coordinates) {
-			return [coordinates.d_, coordinates.f_]
+            let x = [coordinates._long, coordinates._lat]
+            console.log(x, coordinates)
+            return x
 		},
 	},
 	watch: {

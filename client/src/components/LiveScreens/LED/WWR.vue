@@ -19,7 +19,7 @@
                 </div>
             </div>
         </div>
-	</section>	
+	</section>
 </template>
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
@@ -44,8 +44,8 @@ export default {
 				selectedContinent: this.competition.selectedContinent,
 				selectedChurch: this.options.selectedChurch,
 				selectedMarker: this.competition.selectedMarker,
-				x: this.options.x,
-				y: this.options.y,
+				x: this.options.x || 0,
+				y: this.options.y || 0,
 				zoom: this.options.zoom
 			}
 		},
