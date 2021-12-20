@@ -57,7 +57,9 @@ export class CompetitionModel {
             const entryData = entryDoc.data() as CompetitionUpdate
             update.distance = entryData.distance || 0
             update.distanceToBeApproved = entryData.distanceToBeApproved || 0
-            update.churchId = entryData.churchId
+            if (entryData.churchId) {
+                update.churchId = entryData.churchId
+            }
         } else {
             update.distance = 0
             update.distanceToBeApproved = 0
