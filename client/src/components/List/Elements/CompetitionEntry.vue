@@ -4,7 +4,7 @@
             <div class="px-4 py-3 flex flex-wrap">
                 <div class="font-semibold tracking-wide mb-2 w-3/4" v-html="highlight(firstAndLastName)"></div>
                 <div class="text-label-2 text-sm mb-2 w-1/4 text-right" v-html="highlight(entry.user == null ? '' : entry.user.churchName)"></div>
-                <div class="text-label-2 font-semibold tracking-wide mb-2 w-full">{{$t('competition.totalDistance')}}: {{entry.distanceToBeApproved + entry.distance}} kms</div>     
+                <div class="text-label-2 font-semibold tracking-wide mb-2 w-full">{{$t('competition.totalDistance')}}: {{entry.distanceToBeApproved + entry.distance}} kms</div>
                 <div class="text-label-2 text-sm mb-2 w-full">{{$t('competition.extraToApprove')}}: {{entry.distanceToBeApproved}} kms</div>
             </div>
             <div class="flex justify-evenly text-2xl px-6 py-2">
@@ -35,7 +35,7 @@ export default {
     },
     computed: {
         firstAndLastName(){
-            return this.entry.user == null ? '' : `${this.entry.user.firstName} ${this.entry.user.lastName}`;
+            return this.entry.user == null ? '' : `${this.entry.user.FirstName} ${this.entry.user.LastName}`;
         }
     },
     methods: {
@@ -47,8 +47,8 @@ export default {
             await this.rejectEntryRef(this.entry)
         },
         highlight(text){
-            return (this.searchQuery && this.searchQuery.trim()) 
-                ? text.replace(new RegExp(`(${this.searchQuery})`, "gi"), "<span class='bg-seagull rounded-sm'>\$1</span>") 
+            return (this.searchQuery && this.searchQuery.trim())
+                ? text.replace(new RegExp(`(${this.searchQuery})`, "gi"), "<span class='bg-seagull rounded-sm'>\$1</span>")
                 : text;
         }
     }
