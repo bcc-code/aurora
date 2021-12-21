@@ -78,6 +78,10 @@ func (c *Church) doGeocode() error {
 		return err
 	}
 
+	if len(res.Data) > 0 {
+		return nil
+	}
+
 	pos := &latlng.LatLng{}
 	pos.Latitude = res.Data[0].Latitude
 	pos.Longitude = res.Data[0].Longitude
