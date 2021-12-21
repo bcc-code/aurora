@@ -105,13 +105,14 @@ func (c Church) Upsert(ctx context.Context, client *firestore.Client) error {
 		}
 		_, err = fbChurch.Create(ctx, c)
 	}
-
-	if co, _ := fbChurchSnapshot.DataAt("coordinates"); co == nil {
-		err := c.doGeocode()
-		if err != nil {
-			return err
+	/*
+		if co, _ := fbChurchSnapshot.DataAt("coordinates"); co == nil {
+			err := c.doGeocode()
+			if err != nil {
+				return err
+			}
 		}
-	}
+	*/
 
 	_, err = fbChurch.Update(ctx, []firestore.Update{
 		{
