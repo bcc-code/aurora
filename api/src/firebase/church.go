@@ -44,7 +44,7 @@ type geocodeResponse struct {
 		Number             string  `json:"number"`
 		PostalCode         string  `json:"postal_code"`
 		Street             string  `json:"street"`
-		Confidence         int     `json:"confidence"`
+		Confidence         float32 `json:"confidence"`
 		Region             string  `json:"region"`
 		RegionCode         string  `json:"region_code"`
 		County             string  `json:"county"`
