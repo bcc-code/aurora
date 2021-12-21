@@ -78,7 +78,7 @@ func (c *Church) doGeocode() error {
 		return err
 	}
 
-	if len(res.Data) > 0 {
+	if len(res.Data) < 1 {
 		return nil
 	}
 
