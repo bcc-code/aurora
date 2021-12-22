@@ -113,8 +113,7 @@ func (c Church) Upsert(ctx context.Context, client *firestore.Client) error {
 			}
 		}
 	*/
-
-	_, err = fbChurch.Update(ctx, []firestore.Update{
+	updates := []firestore.Update{
 		{
 			Path:  "name",
 			Value: c.Name,
@@ -139,11 +138,16 @@ func (c Church) Upsert(ctx context.Context, client *firestore.Client) error {
 			Path:  "coordinates",
 			Value: c.Coordinates,
 		},
-		{
+	}
+
+	if c.Coordinates != nil {
+		updates = append(updates, firestore.Update{
 			Path:  "continent",
 			Value: c.Continent,
-		},
-	})
+		})
+	}
+
+	_, err = fbChurch.Update(ctx, updates)
 
 	return err
 
