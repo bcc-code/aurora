@@ -2,6 +2,7 @@
   "dependencies": {
     "@google-cloud/bigquery": "^5.6.0",
     "@google-cloud/firestore": "^4.14.2",
+    "csv-parser": "^3.0.0",
     "firebase": "^9.1.2",
     "lorem-ipsum": "^2.0.3",
     "random-name": "^0.1.2",
