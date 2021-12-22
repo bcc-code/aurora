@@ -277,7 +277,6 @@ export default {
 		},
 		coordsToArray(coordinates) {
             let x = [coordinates._long, coordinates._lat]
-            console.log(x, coordinates)
             return x
 		},
 	},

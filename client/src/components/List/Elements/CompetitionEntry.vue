@@ -35,13 +35,13 @@ export default {
     },
     computed: {
         firstAndLastName(){
-            return this.entry.user == null ? '' : `${this.entry.user.FirstName} ${this.entry.user.LastName}`;
+            return this.entry.user == null ? '' : `${this.entry.user.FirstName || this.entry.user.firstName} ${this.entry.user.LastName || this.entry.user.lastName}`;
         }
     },
     methods: {
         ...mapActions('competitions', ['approveEntrynRef', 'rejectEntryRef']),
         async approve(){
-            await Api.approveCompetitionEntry(this.competitionId, this.entry.user.personId, this.entry.distanceToBeApproved + this.entry.distance);
+            await Api.approveCompetitionEntry(this.competitionId, this.entry.user.personId || this.entry.user.PersonID, this.entry.distanceToBeApproved + this.entry.distance);
         },
         async reject(){
             await this.rejectEntryRef(this.entry)

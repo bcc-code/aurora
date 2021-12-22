@@ -2,9 +2,11 @@
   "dependencies": {
     "@google-cloud/bigquery": "^5.6.0",
     "@google-cloud/firestore": "^4.14.2",
+    "axios": "^0.21.4",
     "csv-parser": "^3.0.0",
     "firebase": "^9.1.2",
     "lorem-ipsum": "^2.0.3",
+    "node-fetch": "^2.6.2",
     "random-name": "^0.1.2",
     "random-picture": "^4.0.4",
     "ts-node": "^9.1.1",

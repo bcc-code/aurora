@@ -27,7 +27,7 @@ export class CompetitionModel {
     }
 
     user(personId: string): FirebaseFirestore.DocumentReference {
-        return this.db.collection(n.users).doc(personId)
+        return this.db.collection("users").doc(personId)
     }
 
     async updateEntry(
@@ -38,7 +38,6 @@ export class CompetitionModel {
         log.debug(
             `POST /competition/entry?competitionId=${this.competitionId}, personId: ${personId}, distance: ${distance}, overrideMax: ${overrideMax}`
         )
-
         const entryDoc = await this.entry(personId).get()
 
         log.info(
