@@ -40,7 +40,8 @@ export default {
 			return document.getElementById("pointsCanvas");
 		},
 		steps() {
-			return this.churches.filter((el) => el.step).sort((a, b) => a.stepNumber - b.stepNumber);
+			let x = this.churches.filter((el) => el.step).sort((a, b) => a.stepNumber - b.stepNumber);
+            return x
 		}
 	},
 	data: function(){
@@ -64,10 +65,11 @@ export default {
 		this.initializeMap();
 		this.bindDistanceShardsRef();
 		this.bindChurchesRef();
+        this.bindCheckpointsRef();
 	},
 	mixins: [world, crono],
 	methods: {
-		...mapActions('competitions', ['bindDistanceShardsRef', 'bindChurchesRef']),
+		...mapActions('competitions', ['bindDistanceShardsRef', 'bindChurchesRef', 'bindCheckpointsRef']),
 		render() {
 			this.resetWorld();
 			this.resetElements();
@@ -185,14 +187,16 @@ export default {
 		},
 		drawRoadProgress() {
 			var over = false
+            let soFar = 0
 			for (var i=0; i < this.steps.length && !over; i++) {
 				this.ctx.beginPath();
 				var coords1 = this.coordsToArray(this.steps[i].coordinates);
 				var coords2 = this.coordsToArray(this.steps[(i+1)%this.steps.length].coordinates)
-				if (this.doneDistance < this.steps[i].nextDistance) {
+                    soFar += this.steps[i].nextDistance
+				if (this.doneDistance < soFar) {
 					over = true;
-					var offset = (i==0) ? this.steps[i].nextDistance : this.steps[i].nextDistance - this.steps[i-1].nextDistance;
-					var prog = (i==0) ? this.doneDistance : this.doneDistance - this.steps[i-1].nextDistance;
+					var offset = this.steps[i].nextDistance
+					var prog = soFar - this.doneDistance;
 					var coords2 = d3.geoInterpolate(coords1, coords2)(prog/offset)
 				}
 				this.pathGenerator({
