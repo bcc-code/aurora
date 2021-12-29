@@ -9,6 +9,7 @@ export default {
         distanceShards: [],
         distancesPerChurch: [],
         churches: [],
+        checkpoints: [],
     },
     actions: {
         bindCompetitionsRef: firestoreAction(context => {
@@ -25,6 +26,9 @@ export default {
         }),
         bindChurchesRef: firestoreAction(context => {
             return context.bindFirestoreRef('churches', db.collection('churches').orderBy('name'))
+        }),
+        bindCheckpointsRef: firestoreAction(context => {
+            return context.bindFirestoreRef('checkpoints', db.collection('churches').where("step", "==", true).orderBy('stepNumber'))
         }),
         rejectEntryRef: firestoreAction((context, entry) => {
             return context.getters.entriesRef.doc(entry.id).update({ distanceToBeApproved: 0 })
@@ -100,7 +104,7 @@ export default {
             return church
         },
         checkpoints: (state) => {
-            return state.churches.filter((church) => church.step == true).sort((a,b) => a.nextDistance - b.nextDistance)
+            return state.checkpoints
         }
     }
 }

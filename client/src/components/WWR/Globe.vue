@@ -162,12 +162,14 @@ export default {
 				var coords1 = this.coordsToArray(this.steps[i].coordinates);
 				var coords2 = this.coordsToArray(this.steps[(i+1)%this.steps.length].coordinates)
 				var interpolate = d3.geoInterpolate(coords1, coords2)
-				var total = Math.round(((i==0) ? this.steps[i].nextDistance : this.steps[i].nextDistance - this.steps[i-1].nextDistance) / 75)
+				var total = this.steps[i].nextDistance / 15
 				var lines = []
 				var push = true
 				for (var t=1; t<=total; t++) {
 					coords2 = interpolate(t/total)
-					if (push) lines.push([coords1, coords2])
+                    if (push) {
+                        lines.push([coords1, coords2])
+                    }
 					push = !push;
 					coords1 = coords2
 				}
