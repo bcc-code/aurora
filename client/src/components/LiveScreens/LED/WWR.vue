@@ -50,7 +50,7 @@ export default {
 			}
 		},
 		focusedChurch() {
-			return this.options.selectedChurch && this.statsByChurchId(this.options.selectedChurch.id) || this.selectedChurch;
+			return this.options.selectedChurch && this.statsByChurchId(this.options.selectedChurch.churchId) || this.selectedChurch;
 		}
 	},
 	data: function(){
@@ -76,7 +76,7 @@ export default {
 			}
 			var selectRandomChurch = (list) => {
 				var randomIndex = Math.floor(Math.random()*list.length)
-				return this.statsByChurchId(list[randomIndex].id)
+				return this.statsByChurchId(list[randomIndex].churchId)
 			}
 			this.selectedChurch = this.selectTop10 ? selectRandomChurch(this.top10) : selectRandomChurch(this.rankedChurches)
 			this.selectTop10 = !this.selectTop10;
