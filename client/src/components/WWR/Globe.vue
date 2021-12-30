@@ -1,8 +1,8 @@
 <template>
-    <section>
-        <canvas class="world-canvas" id="worldCanvas" :width="`${width}px`" :height="`${height}px`"></canvas>
+	<section>
+		<canvas class="world-canvas" id="worldCanvas" :width="`${width}px`" :height="`${height}px`"></canvas>
 		<canvas id="pointsCanvas" :width="`${width}px`" :height="`${height}px`"></canvas>
-    </section>
+	</section>
 </template>
 <script>
 import * as d3 from "d3";
@@ -41,7 +41,7 @@ export default {
 		},
 		steps() {
 			let x = this.churches.filter((el) => el.step).sort((a, b) => a.stepNumber - b.stepNumber);
-            return x
+			return x
 		}
 	},
 	data: function(){
@@ -65,7 +65,7 @@ export default {
 		this.initializeMap();
 		this.bindDistanceShardsRef();
 		this.bindChurchesRef();
-        this.bindCheckpointsRef();
+		this.bindCheckpointsRef();
 	},
 	mixins: [world, crono],
 	methods: {
@@ -169,9 +169,9 @@ export default {
 				var push = true
 				for (var t=1; t<=total; t++) {
 					coords2 = interpolate(t/total)
-                    if (push) {
-                        lines.push([coords1, coords2])
-                    }
+					if (push) {
+						lines.push([coords1, coords2])
+					}
 					push = !push;
 					coords1 = coords2
 				}
@@ -187,18 +187,19 @@ export default {
 		},
 		drawRoadProgress() {
 			var over = false
-            let soFar = 0
+			let doneLeftOver = this.doneDistance
 			for (var i=0; i < this.steps.length && !over; i++) {
 				this.ctx.beginPath();
 				var coords1 = this.coordsToArray(this.steps[i].coordinates);
 				var coords2 = this.coordsToArray(this.steps[(i+1)%this.steps.length].coordinates)
-                    soFar += this.steps[i].nextDistance
-				if (this.doneDistance < soFar) {
+				var offset = this.steps[i].nextDistance
+
+				if (doneLeftOver < offset) {
 					over = true;
-					var offset = this.steps[i].nextDistance
-					var prog = soFar - this.doneDistance;
-					var coords2 = d3.geoInterpolate(coords1, coords2)(prog/offset)
+					var coords2 = d3.geoInterpolate(coords1, coords2)(doneLeftOver/offset)
 				}
+
+				doneLeftOver -= offset
 				this.pathGenerator({
 					type: 'Feature',
 					geometry: {
@@ -282,8 +283,8 @@ export default {
 			return null
 		},
 		coordsToArray(coordinates) {
-            let x = [coordinates._long, coordinates._lat]
-            return x
+			let x = [coordinates._long, coordinates._lat]
+			return x
 		},
 	},
 	watch: {
@@ -304,10 +305,10 @@ export default {
 		}
 	},
 	cron: {
-        time: 20,
-        method: "autoSpin",
-        autoStart: false
-    }
+		time: 20,
+		method: "autoSpin",
+		autoStart: false
+	}
 }
 </script>
 <style scoped>
