@@ -92,6 +92,7 @@ export default {
 			this.selectTop10 = !this.selectTop10;
 		},
 		initializeCron(){
+			return;
 			if (this.options.autoSpin) this.$cron.start("autoSwitchChurch")
 			else this.$cron.stop("autoSwitchChurch")
 		}
