@@ -15,7 +15,7 @@ export class CompetitionModel {
     competitionId: string
 
     entry(personId: string): firestore.DocumentReference {
-        return this.competition.collection(n.entries).doc(personId)
+        return this.competition.collection(n.entries).doc(`${personId}`)
     }
 
     distanceShard(shardId: number): firestore.DocumentReference {

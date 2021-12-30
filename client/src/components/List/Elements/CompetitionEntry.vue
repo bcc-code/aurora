@@ -41,7 +41,7 @@ export default {
     methods: {
         ...mapActions('competitions', ['approveEntrynRef', 'rejectEntryRef']),
         async approve(){
-            await Api.approveCompetitionEntry(this.competitionId, this.entry.user.personId || this.entry.user.PersonID, this.entry.distanceToBeApproved + this.entry.distance);
+            await Api.approveCompetitionEntry(this.competitionId, this.entry.user.personId || this.entry.user.PersonId, this.entry.distanceToBeApproved + this.entry.distance);
         },
         async reject(){
             await this.rejectEntryRef(this.entry)
