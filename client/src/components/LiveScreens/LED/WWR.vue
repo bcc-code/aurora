@@ -6,13 +6,21 @@
                 <Title />
                 <div class="relative">
                     <transition-group name="fade">
-                        <ChurchDetails class="absolute top-0 h-full w-full px-12" key="detail"
+                        <ChurchDetails class="absolute top-0 h-full w-full px-12"
+							key="detail"
                             v-if="focusedChurch != null"
                             @close="selectedChurch = null"
                             :church="focusedChurch" />
-                        <Leaderboard class="absolute top-0 h-full w-full px-12" key="top"
-                            v-show="focusedChurch == null"
+                        <Leaderboard class="absolute top-0 h-full w-full px-12"
+							key="top10"
+                            v-show="(options.leaderboardType === 'top10' || options.leaderboardType === '') && focusedChurch == null"
                             ranking="top10"
+							TV
+                            @selectChurch="(church) => selectedChurch = church" />
+                        <LeaderboardTop50 class="absolute top-0 h-full w-full px-12"
+							key="top50"
+                            v-show="options.leaderboardType === 'top50' && focusedChurch == null"
+                            ranking="top50"
 							TV
                             @selectChurch="(church) => selectedChurch = church" />
                     </transition-group>
@@ -27,12 +35,14 @@ import { crono } from 'vue-crono'
 import Globe from '@/components/WWR/Globe'
 import ChurchDetails from '@/components/WWR/ChurchDetails'
 import Leaderboard from '@/components/WWR/Leaderboard'
+import LeaderboardTop50 from '@/components/WWR/LeaderboardTop50'
 import Title from '@/components/WWR/Title'
 export default {
 	components: {
         Globe,
 		ChurchDetails,
 		Leaderboard,
+		LeaderboardTop50,
 		Title
 	},
 	props: ['options'],

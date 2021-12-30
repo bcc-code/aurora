@@ -4,7 +4,7 @@
             <tr>
                 <th colspan="6">
                     <p class="italic font-bold text-3xl text-center" :class="TV ? 'md:text-6xl' : 'md:text-4xl'">
-                        <template v-if="ranking != null">TOP 10</template>
+                        <template v-if="ranking != null">TOP 50</template>
                         <template v-else>LEADERBOARD</template>
                     </p>
                 </th>
@@ -17,10 +17,10 @@
                 </th>
             </tr>
         </thead>
-        <transition-group name="flip-list" tag="tbody">
+        <transition-group name="flip-list" tag="tbody" v-if="leaderboard">
             <tr class="leading-normal" :class="TV ? 'md:text-4xl' : 'md:text-2xl'" v-for="(church, index) in leaderboard.map((el) => statsByChurchId(el.id))" :key="church.id" @click.stop="$emit('select-church', statsByChurchId(church.id))">
                 <td class="md:pl-4 font-italic" colspan="1">
-                    #{{index + 1}}
+                    #{{index + 1 + page*10}}
                 </td>
                 <td colspan="1" >
                     <CountryFlag v-if="church.country != null" rounded :country="getCode(church.country)" class="-my-2 mt-1" />
@@ -46,9 +46,20 @@ export default {
         return {
             rankings: [ 'total', 'average'],
             selectedRanking: 'total',
+            page: 0,
         }
     },
     async mounted () {
+        this.page = 0;
+        console.log("test")
+        setInterval(() => {
+        console.log("test2")
+            if(this.page == this.top50.length-1) {
+                this.page = 0
+            } else {
+                this.page++
+            }
+        }, 8000)
         await this.bindDistancesPerChurchRef();
 		await this.bindChurchesRef();
     },
@@ -57,7 +68,7 @@ export default {
         TV: { type: Boolean, default: false }
     },
     computed: {
-        ...mapGetters('competitions', ['top10', 'rankedChurches', 'rankedChurchesTotalDistance', 'statsByChurchId']),
+        ...mapGetters('competitions', ['top10', 'top50', 'rankedChurches', 'rankedChurchesTotalDistance', 'statsByChurchId']),
         leaderboard() {
 			switch(this.ranking || this.selectedRanking) {
                 case 'total':
@@ -66,6 +77,8 @@ export default {
                     return this.rankedChurches
                 case 'top10':
                     return this.top10
+                case 'top50':
+                    return this.top50[this.page % this.top50.length]
                 default:
                     return this.rankedChurches
             }
@@ -102,6 +115,20 @@ export default {
 
 table.WWR tr:nth-child(odd) {
   @apply bg-white-15;
+}
+
+.flip-list-enter-active{
+  transition: opacity 1s ease;
+}
+.flip-list-leave-active {
+  transition: none;
+}
+.flip-list-enter{
+  opacity: 0;
+}
+
+.flip-list-leave-to {
+  opacity: 0;
 }
 
 .flip-list-move {
