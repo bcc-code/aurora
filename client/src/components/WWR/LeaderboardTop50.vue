@@ -51,9 +51,9 @@ export default {
     },
     async mounted () {
         this.page = 0;
-        console.log("test")
+        console.log("mounted")
         setInterval(() => {
-        console.log("test2")
+        console.log("interval")
             if(this.page == this.top50.length-1) {
                 this.page = 0
             } else {

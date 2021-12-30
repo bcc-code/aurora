@@ -98,7 +98,6 @@ export default {
             for (var i=0; i<original.length; i+=size) {
                 arrayOfArrays.push(original.slice(i,i+size));
             }
-            console.log(arrayOfArrays);
             return arrayOfArrays
         },
         statsByChurchId: (state, getters) => (churchId) => {
