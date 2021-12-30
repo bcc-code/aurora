@@ -47,21 +47,27 @@ export default {
             rankings: [ 'total', 'average'],
             selectedRanking: 'total',
             page: 0,
+            interval: null,
         }
     },
     async mounted () {
         this.page = 0;
         console.log("mounted")
-        setInterval(() => {
-        console.log("interval")
-            if(this.page == this.top50.length-1) {
+        this.interval = setInterval(() => {
+            console.log("interval")
+            if (this.page >= this.top50.length-1) {
                 this.page = 0
             } else {
                 this.page++
             }
-        }, 8000)
+        }, 12000)
         await this.bindDistancesPerChurchRef();
 		await this.bindChurchesRef();
+    },
+    destroyed() {
+        if(this.interval) {
+            clearInterval(this.interval)
+        }
     },
     props: {
         ranking: { type: String, required: false },

@@ -8,12 +8,12 @@
                     <transition-group name="fade">
                         <ChurchDetails class="absolute top-0 h-full w-full px-12"
 							key="detail"
-                            v-if="focusedChurch != null"
+                            v-show="options.leaderboardType !== 'top50' && focusedChurch != null"
                             @close="selectedChurch = null"
                             :church="focusedChurch" />
                         <Leaderboard class="absolute top-0 h-full w-full px-12"
 							key="top10"
-                            v-show="(options.leaderboardType === 'top10' || options.leaderboardType === '') && focusedChurch == null"
+                            v-show="options.leaderboardType === 'top10' && focusedChurch == null"
                             ranking="top10"
 							TV
                             @selectChurch="(church) => selectedChurch = church" />
@@ -85,8 +85,18 @@ export default {
 				return;
 			}
 			var selectRandomChurch = (list) => {
-				var randomIndex = Math.floor(Math.random()*list.length)
-				return this.statsByChurchId(list[randomIndex].churchId)
+				let stats;
+				for (let i = 0; i < 40; i++) {
+					var randomIndex = Math.floor(Math.random()*list.length)
+					stats = this.statsByChurchId(list[randomIndex].id);
+					if (stats.distance !== 0) {
+						break;
+					}
+				}
+				if (stats.distance === 0) {
+					return null;
+				}
+				return this.statsByChurchId(list[randomIndex].id)
 			}
 			this.selectedChurch = this.selectTop10 ? selectRandomChurch(this.top10) : selectRandomChurch(this.rankedChurches)
 			this.selectTop10 = !this.selectTop10;
@@ -106,7 +116,7 @@ export default {
 		}
 	},
 	cron: {
-        time: 5000,
+        time: 12000,
         method: "autoSwitchChurch",
         autoStart: false
     }
