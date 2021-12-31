@@ -84,7 +84,8 @@ export const generateResizedImage = async (
     )
 
     if (object.name) {
-        await bucket.file(object.name).copy(bucket.file("originals/"+object.name))
+        await bucket.file(filePath).copy(bucket.file(filePath + ".original.png"))
+        console.log("done copying")
     }
 
     const objectMetadata = object
