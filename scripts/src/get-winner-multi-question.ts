@@ -2,14 +2,14 @@ import * as firebase from 'firebase-admin'
 import * as crypto from 'crypto'
 
 //var serviceAccount = require("../firebase-key.json");
-//var serviceAccount = require("../firebase-key.prod.json");
-var serviceAccount = require("../firebase-key.sta.json");
+var serviceAccount = require("../firebase-key.prod.json");
+//var serviceAccount = require("../firebase-key.sta.json");
 
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
-  //databaseURL: "https://brunstadtv-online.firebaseio.com"
+  databaseURL: "https://brunstadtv-online.firebaseio.com"
   //databaseURL: "https://brunstadtv-online-dev.firebaseio.com",
-  databaseURL: "https://staging-bcc-online.firebaseio.com",
+  //databaseURL: "https://staging-bcc-online.firebaseio.com",
 });
 
 const db = firebase.firestore();
@@ -42,8 +42,21 @@ async function main(eventId : string, minCorrect : number) : Promise<void> {
         filteredScores.push(k)
     })
 
-    console.log(filteredScores)
+    let personKm = new Map<string, number>()
+    promises = filteredScores.map(async (v) => {
+        let e = await db.doc(`competitions/wwr-winter-2021/entries/${v}`).get()
+        let d = e.data()
+        if (d) {
+            personKm.set(v, d.distance)
+        } else {
+            personKm.set(v, 0)
+        }
+    })
+    await Promise.all(promises)
+
+    let sortedUsersMap = new Map([...personKm.entries()].sort((a, b) => b[1] - a[1]))
+    console.log(sortedUsersMap)
 }
 
 
-main('1040', 0)
+main('44133', 5)
