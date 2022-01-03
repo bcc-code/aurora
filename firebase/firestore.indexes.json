@@ -41,7 +41,35 @@
           "order": "ASCENDING"
         }
       ]
-    }
+    },
+	{
+		"collectionGroup": "feed-outgoing",
+		"queryScope": "COLLECTION",
+		"fields": [
+			{
+				"fieldPath": "type",
+				"order": "ASCENDING"
+			},
+			{
+				"fieldPath": "publishedDate",
+				"order": "DESCENDING"
+			}
+		]
+	},
+	{
+		"collectionGroup": "feed-outgoing",
+		"queryScope": "COLLECTION",
+		"fields": [
+			{
+				"fieldPath": "type",
+				"order": "ASCENDING"
+			},
+			{
+				"fieldPath": "date",
+				"order": "DESCENDING"
+			}
+		]
+	}
   ],
   "fieldOverrides": [
     {
