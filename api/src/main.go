@@ -181,6 +181,9 @@ func main() {
 	}))
 	mediabankWebhooks.POST("event-data", server.MediabankWebhookEventData)
 
+	// Use if you need to debug fetching members from API
+	// webhooks.POST("singlemember", server.UpdatePersonFromMembers)
+
 	initTrace.End()
 
 	log.L.Info().Msg("About to listen to :8000")

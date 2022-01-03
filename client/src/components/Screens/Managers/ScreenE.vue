@@ -66,6 +66,7 @@ export default {
                 wwr: {
                     autoSpin: null,
                     selectedChurch: null,
+                    leaderboardType: null,
                     x: null,
                     y: null,
                     zoom: null

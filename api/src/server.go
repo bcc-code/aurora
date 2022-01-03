@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"cloud.google.com/go/firestore"
@@ -58,32 +59,98 @@ func NewServer(c ServerConfig) *Server {
 	}
 }
 
-// UpdatePersonRequest for parsing the PubSub message
-type UpdatePersonRequest struct {
-	PersonID string `json:"person_id"`
-}
-
-// UpdatePersonFromMembers handles the pubsub notification
+// MembersWebhook handles the pubsub notification
 // StatusNoContent is used to ACK messages that we do not want retried even if the
 // actual staus is a permanent error
-func (s Server) UpdatePersonFromMembers(c *gin.Context) {
+func (s Server) MembersWebhook(c *gin.Context) {
 	msg, err := pubsub.MessageFromCtx(c)
 	if err != nil {
 		data, _ := c.GetRawData()
 		log.L.Info().
 			Str("body", string(data)).
+			Err(err).
 			Msg("Malformed request")
-		c.JSON(http.StatusNoContent, map[string]string{"message": "Malformed request"})
+		c.JSON(http.StatusNoContent, map[string]string{"message": "Malformed request 1"})
 		return
 	}
 
-	req := &UpdatePersonRequest{}
-	err = msg.ExtractDataInto(req)
+	if !msg.Validate(s.membersWebhookSecret) {
+		log.L.Debug().
+			Str("data", msg.Message.Data).
+			Str("msg", fmt.Sprintf("%+v", msg)).
+			Msg("Invalid HMAC")
+		c.JSON(http.StatusOK, gin.H{"error": "Message not signed correctly"})
+		return
+	}
+
+	updatedMemebers := []members.Member{}
+	err = msg.ExtractDataInto(&updatedMemebers)
 	if err != nil {
 		log.L.Info().
+			Err(err).
 			Str("data", msg.Message.Data).
 			Msg("Malformed request")
-		c.JSON(http.StatusNoContent, map[string]string{"message": "Malformed request"})
+		c.JSON(http.StatusOK, map[string]string{"message": "Malformed request 2"})
+		return
+	}
+
+	seenChurches := map[int]bool{}
+
+	for i, person := range updatedMemebers {
+		err = firebase.UpdateOrCreateUser(c.Request.Context(), s.fs, &person)
+
+		if err != nil {
+			log.L.Error().
+				Err(err).
+				Int("person_id", person.PersonID).
+				Int("i", i).
+				Msg("Error when updating user")
+			continue
+			// We just log the errors, for now as it it unlikely that we will be able to do
+			// better in a retry
+		}
+
+		log.L.Debug().
+			Int("person_id", person.PersonID).
+			Msg("Updated person")
+
+		// Do not update too many times. There will still be multiple updates, but
+		// at least not in a single request
+		if _, ok := seenChurches[person.Church.Org.ChurchID]; !ok {
+			seenChurches[person.Church.Org.ChurchID] = true
+			ch := firebase.Church{}
+			ch = ch.UpdateFromMembers(&person.Church.Org)
+			err = ch.Upsert(c.Request.Context(), s.fs)
+
+			// Good to know but we should not delay because of that. Not an integral part
+			if err != nil {
+				log.L.Warn().
+					Err(err).
+					Str("churchId", person.Church.ID).
+					Msg("Error when updating church")
+			}
+		}
+	}
+
+	// We have to return a 2xx code regardless of the actual success as we don't want to get the message again
+	c.Status(http.StatusNoContent)
+}
+
+// UpdatePersonRequest for parsing the PubSub message
+type UpdatePersonRequest struct {
+	PersonID string `json:"person_id"`
+}
+
+// UpdatePersonFromMembers fetches data from members API and updates the member.
+// No auth so should currently only be used locally for testing and debugging purposes
+func (s Server) UpdatePersonFromMembers(c *gin.Context) {
+	req := &UpdatePersonRequest{}
+	err := c.BindJSON(req)
+	if err != nil {
+		log.L.Info().
+			Err(err).
+			Msg("Malformed request")
+		c.JSON(http.StatusBadRequest, map[string]string{"message": "Malformed request"})
 		return
 	}
 
@@ -95,7 +162,7 @@ func (s Server) UpdatePersonFromMembers(c *gin.Context) {
 		// This is used to ack a PubSub message, that's why the response has to be 2xx
 		// Since we do not want this message replayed. We still provide a meningful response
 		// if this is accessed in any other way.
-		c.JSON(http.StatusNoContent, map[string]string{"message": "Unknown user"})
+		c.JSON(http.StatusNotFound, map[string]string{"message": "Unknown user"})
 		return
 	}
 
@@ -117,6 +184,16 @@ func (s Server) UpdatePersonFromMembers(c *gin.Context) {
 			Msg("Error when updating user")
 		c.JSON(500, map[string]string{"message": "Unable to update user"})
 		return
+	}
+
+	ch := firebase.Church{}
+	ch = ch.UpdateFromMembers(&person.Church.Org)
+	err = ch.Upsert(c.Request.Context(), s.fs)
+	if err != nil {
+		log.L.Warn().
+			Err(err).
+			Str("churchId", person.Church.ID).
+			Msg("Error when updating church")
 	}
 
 	c.Status(http.StatusNoContent)

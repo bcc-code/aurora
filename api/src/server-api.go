@@ -63,6 +63,9 @@ func (s Server) GetCollectionResults(c *gin.Context) {
 			c.AbortWithStatus(http.StatusGatewayTimeout)
 			return
 		}
+	} else {
+		bodyBytes, _ = ioutil.ReadAll(res.Body)
+		log.L.Error().Int("Status", res.StatusCode).Str("body", string(bodyBytes)).Msg("Bad status")
 	}
 
 	c.Data(http.StatusOK, "application/json; charset=utf-8", bodyBytes)

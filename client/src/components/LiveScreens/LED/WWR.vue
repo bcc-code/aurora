@@ -6,20 +6,28 @@
                 <Title />
                 <div class="relative">
                     <transition-group name="fade">
-                        <ChurchDetails class="absolute top-0 h-full w-full px-12" key="detail"
-                            v-if="focusedChurch != null"
+                        <ChurchDetails class="absolute top-0 h-full w-full px-12"
+							key="detail"
+                            v-show="options.leaderboardType !== 'top50' && focusedChurch != null"
                             @close="selectedChurch = null"
                             :church="focusedChurch" />
-                        <Leaderboard class="absolute top-0 h-full w-full px-12" key="top"
-                            v-show="focusedChurch == null"
+                        <Leaderboard class="absolute top-0 h-full w-full px-12"
+							key="top10"
+                            v-show="options.leaderboardType === 'top10' && focusedChurch == null"
                             ranking="top10"
+							TV
+                            @selectChurch="(church) => selectedChurch = church" />
+                        <LeaderboardTop50 class="absolute top-0 h-full w-full px-12"
+							key="top50"
+                            v-show="options.leaderboardType === 'top50' && focusedChurch == null"
+                            ranking="top50"
 							TV
                             @selectChurch="(church) => selectedChurch = church" />
                     </transition-group>
                 </div>
             </div>
         </div>
-	</section>	
+	</section>
 </template>
 <script>
 import { mapState, mapActions, mapGetters } from 'vuex'
@@ -27,12 +35,14 @@ import { crono } from 'vue-crono'
 import Globe from '@/components/WWR/Globe'
 import ChurchDetails from '@/components/WWR/ChurchDetails'
 import Leaderboard from '@/components/WWR/Leaderboard'
+import LeaderboardTop50 from '@/components/WWR/LeaderboardTop50'
 import Title from '@/components/WWR/Title'
 export default {
 	components: {
         Globe,
 		ChurchDetails,
 		Leaderboard,
+		LeaderboardTop50,
 		Title
 	},
 	props: ['options'],
@@ -44,13 +54,13 @@ export default {
 				selectedContinent: this.competition.selectedContinent,
 				selectedChurch: this.options.selectedChurch,
 				selectedMarker: this.competition.selectedMarker,
-				x: this.options.x,
-				y: this.options.y,
+				x: this.options.x || 0,
+				y: this.options.y || 0,
 				zoom: this.options.zoom
 			}
 		},
 		focusedChurch() {
-			return this.options.selectedChurch && this.statsByChurchId(this.options.selectedChurch.id) || this.selectedChurch;
+			return this.options.selectedChurch && this.statsByChurchId(this.options.selectedChurch.churchId) || this.selectedChurch;
 		}
 	},
 	data: function(){
@@ -75,13 +85,24 @@ export default {
 				return;
 			}
 			var selectRandomChurch = (list) => {
-				var randomIndex = Math.floor(Math.random()*list.length)
+				let stats;
+				for (let i = 0; i < 40; i++) {
+					var randomIndex = Math.floor(Math.random()*list.length)
+					stats = this.statsByChurchId(list[randomIndex].id);
+					if (stats.distance !== 0) {
+						break;
+					}
+				}
+				if (stats.distance === 0) {
+					return null;
+				}
 				return this.statsByChurchId(list[randomIndex].id)
 			}
 			this.selectedChurch = this.selectTop10 ? selectRandomChurch(this.top10) : selectRandomChurch(this.rankedChurches)
 			this.selectTop10 = !this.selectTop10;
 		},
 		initializeCron(){
+			return;
 			if (this.options.autoSpin) this.$cron.start("autoSwitchChurch")
 			else this.$cron.stop("autoSwitchChurch")
 		}
@@ -95,7 +116,7 @@ export default {
 		}
 	},
 	cron: {
-        time: 5000,
+        time: 12000,
         method: "autoSwitchChurch",
         autoStart: false
     }

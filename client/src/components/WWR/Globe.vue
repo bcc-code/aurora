@@ -1,8 +1,8 @@
 <template>
-    <section>
-        <canvas class="world-canvas" id="worldCanvas" :width="`${width}px`" :height="`${height}px`"></canvas>
+	<section>
+		<canvas class="world-canvas" id="worldCanvas" :width="`${width}px`" :height="`${height}px`"></canvas>
 		<canvas id="pointsCanvas" :width="`${width}px`" :height="`${height}px`"></canvas>
-    </section>
+	</section>
 </template>
 <script>
 import * as d3 from "d3";
@@ -40,7 +40,8 @@ export default {
 			return document.getElementById("pointsCanvas");
 		},
 		steps() {
-			return this.churches.filter((el) => el.step == true).sort((a, b) => a.stepNumber - b.stepNumber);
+			let x = this.churches.filter((el) => el.step).sort((a, b) => a.stepNumber - b.stepNumber);
+			return x
 		}
 	},
 	data: function(){
@@ -57,17 +58,18 @@ export default {
 		}
 	},
 	async mounted(){
-		window.onerror = (message, url, lineNumber) => {  
+		window.onerror = (message, url, lineNumber) => {
 			this.$toasted.error(message);
-		}; 
+		};
 		this.fetchWorld();
 		this.initializeMap();
 		this.bindDistanceShardsRef();
 		this.bindChurchesRef();
+		this.bindCheckpointsRef();
 	},
 	mixins: [world, crono],
 	methods: {
-		...mapActions('competitions', ['bindDistanceShardsRef', 'bindChurchesRef']),
+		...mapActions('competitions', ['bindDistanceShardsRef', 'bindChurchesRef', 'bindCheckpointsRef']),
 		render() {
 			this.resetWorld();
 			this.resetElements();
@@ -94,7 +96,7 @@ export default {
 			else {
 				this.$cron.stop("autoSpin");
 				this.initHandsGestures();
-			}	
+			}
 			this.render();
 			this.loaded = true;
 		},
@@ -162,12 +164,14 @@ export default {
 				var coords1 = this.coordsToArray(this.steps[i].coordinates);
 				var coords2 = this.coordsToArray(this.steps[(i+1)%this.steps.length].coordinates)
 				var interpolate = d3.geoInterpolate(coords1, coords2)
-				var total = Math.round(((i==0) ? this.steps[i].nextDistance : this.steps[i].nextDistance - this.steps[i-1].nextDistance) / 75)
+				var total = this.steps[i].nextDistance / 15
 				var lines = []
 				var push = true
 				for (var t=1; t<=total; t++) {
-					coords2 = interpolate(t/total) 
-					if (push) lines.push([coords1, coords2])
+					coords2 = interpolate(t/total)
+					if (push) {
+						lines.push([coords1, coords2])
+					}
 					push = !push;
 					coords1 = coords2
 				}
@@ -178,21 +182,24 @@ export default {
 						coordinates: lines
 					}
 				});
-				this.ctx.stroke();				
+				this.ctx.stroke();
 			}
 		},
 		drawRoadProgress() {
 			var over = false
+			let doneLeftOver = this.doneDistance
 			for (var i=0; i < this.steps.length && !over; i++) {
 				this.ctx.beginPath();
 				var coords1 = this.coordsToArray(this.steps[i].coordinates);
 				var coords2 = this.coordsToArray(this.steps[(i+1)%this.steps.length].coordinates)
-				if (this.doneDistance < this.steps[i].nextDistance) {
+				var offset = this.steps[i].nextDistance
+
+				if (doneLeftOver < offset) {
 					over = true;
-					var offset = (i==0) ? this.steps[i].nextDistance : this.steps[i].nextDistance - this.steps[i-1].nextDistance;
-					var prog = (i==0) ? this.doneDistance : this.doneDistance - this.steps[i-1].nextDistance;
-					var coords2 = d3.geoInterpolate(coords1, coords2)(prog/offset)
+					var coords2 = d3.geoInterpolate(coords1, coords2)(doneLeftOver/offset)
 				}
+
+				doneLeftOver -= offset
 				this.pathGenerator({
 					type: 'Feature',
 					geometry: {
@@ -208,6 +215,9 @@ export default {
 		},
 		drawMarkers() {
 			this.churches.forEach((marker) => {
+				if (!marker.coordinates) {
+					return
+				}
 				var color = (marker == this.hoveredMarker) ? "#a51414" : (marker.step) ? "#C54C32" : "#FDF3E2";
 				var showName = (marker == this.hoveredMarker || (this.selectedChurch != null && marker.name.toLowerCase() == this.selectedChurch.name.toLowerCase())) ? true : marker.step == true;
 				var size = marker.step ? marker.name.toLowerCase() == this.options.selectedMarker ? 3 : 1.5 : 0.8;
@@ -220,8 +230,8 @@ export default {
 			factor *= Math.max(0.2, Math.pow(0.8, factor));
 			size *= factor;
 			fontSize *= factor;
-			color = (this.selectedChurch != null && name == this.selectedChurch.name) 
-				? '#003366' 
+			color = (this.selectedChurch != null && name == this.selectedChurch.name)
+				? '#003366'
 				: color;
 			const center = [this.width * this.position[0], this.height * this.position[1]];
 			var coordinates = this.projection(coords)
@@ -236,7 +246,7 @@ export default {
 				this.ctx.lineTo(coordinates[0] + 1 * size, coordinates[1] + 1 * size);
 				this.ctx.lineTo(coordinates[0] - 1 * size, coordinates[1] + 1 * size);
 				this.ctx.fill();
-				
+
 				if (showName) {
 					this.ctx.font = `italic small-caps bold ${fontSize}px Barlow, sans-serif`;
 					this.ctx.textAlign = "start"
@@ -273,7 +283,8 @@ export default {
 			return null
 		},
 		coordsToArray(coordinates) {
-			return [coordinates.d_, coordinates.f_]
+			let x = [coordinates._long, coordinates._lat]
+			return x
 		},
 	},
 	watch: {
@@ -294,10 +305,10 @@ export default {
 		}
 	},
 	cron: {
-        time: 20,
-        method: "autoSpin",
-        autoStart: false
-    }
+		time: 20,
+		method: "autoSpin",
+		autoStart: false
+	}
 }
 </script>
 <style scoped>

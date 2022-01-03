@@ -16,13 +16,6 @@
                         <td v-for="(c, i) in formattedCheckpoints" :key="i" :class="c.percentDone <= percent ? 'text-white' : 'text-white-30'">{{ c.name }}</td>
                     </tr>
                 </tbody>
-                <tfoot>
-                    <tr>
-                        <td colspan="3">Brunstad</td>
-                        <td></td>
-                        <td colspan="3" class="text-right">Brunstad</td>
-                    </tr>
-                </tfoot>
                 <svg class="absolute top-0" :style="{
                 'margin-top': '-42px',
                 'margin-left': '-2px',
@@ -59,8 +52,14 @@ export default {
             ]
         },
     },
+    data: function() {
+        return {
+            visibleDistance: 0,
+            visibleDoneDistance: 0,
+        }
+    },
     methods: {
-        ...mapActions('competitions', ['bindDistanceShardsRef', 'bindChurchesRef']),
+        ...mapActions('competitions', ['bindDistanceShardsRef', 'bindChurchesRef', 'bindCheckpointsRef']),
         km(n) {
             let num = Number(n).toLocaleString()
             while (num.length < 5 || (n > 999 && num.length < 6)) num = '0'+num
@@ -69,6 +68,7 @@ export default {
     },
     mounted: async function() {
         await this.bindChurchesRef();
+        await this.bindCheckpointsRef();
         await this.bindDistanceShardsRef();
     },
     computed: {
@@ -76,23 +76,48 @@ export default {
         total() {
             if (this.checkpoints == null || this.checkpoints.length == 0)
                 return 0;
-            return this.checkpoints[this.checkpoints.length - 1].nextDistance;
+            return this.checkpoints.reduce((acc, c) => acc + c.nextDistance, 0)
+        },
+        visibleGoals() {
+            let lastPassedGoal = 0
+            let subDistance = 0
+            let nextDistance = 0
+
+            let max = this.checkpoints.length - 5
+
+            for (let i in this.checkpoints) {
+                let c = this.checkpoints[i]
+                if (subDistance + c.nextDistance >= this.doneDistance || lastPassedGoal >= max) {
+                    break;
+                }
+
+                lastPassedGoal++
+                subDistance += c.nextDistance
+                nextDistance = c.nextDistance
+            }
+
+            let visibleGoals = this.checkpoints.slice(lastPassedGoal, lastPassedGoal + 5)
+            this.visibleDistance = visibleGoals.reduce((acc, x) => acc + x.nextDistance, 0)
+            this.visibleDoneDistance = this.doneDistance - subDistance
+
+            return visibleGoals
         },
         formattedCheckpoints() {
             var temp = 0
             var result = []
-            this.checkpoints.forEach((el, index) => {
+
+            this.visibleGoals.forEach((el, index) => {
                 var clone = Object.assign({}, el)
-                if (index == 0) delete clone.name
-                clone.percentDone = temp / this.total * 100
-                clone.percentToNext = (clone.nextDistance - temp) / this.total * 100
+                clone.percentDone = temp / this.visibleDistance* 100
+                clone.percentToNext = (clone.nextDistance - temp) / this.visibleDistance* 100
                 temp = clone.nextDistance
                 result.push(clone)
             })
             return result;
         },
+
         percent() {
-            return Math.min(this.doneDistance / this.total, 1) * 100
+            return Math.min(this.visibleDoneDistance/ this.visibleDistance, 1) * 100
         }
     }
 }

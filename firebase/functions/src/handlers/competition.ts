@@ -27,7 +27,7 @@ export async function submitCompetitionEntry(
             .end()
     }
 
-    if ((body.distance ?? -1) <= 0) {
+    if ((body.distance ?? -1) <= 0 && (body.overrideMaxDistance ?? -1) <= 1) {
         return res
             .status(400)
             .send({

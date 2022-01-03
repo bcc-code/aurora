@@ -15,7 +15,7 @@ export class CompetitionModel {
     competitionId: string
 
     entry(personId: string): firestore.DocumentReference {
-        return this.competition.collection(n.entries).doc(personId)
+        return this.competition.collection(n.entries).doc(`${personId}`)
     }
 
     distanceShard(shardId: number): firestore.DocumentReference {
@@ -27,7 +27,7 @@ export class CompetitionModel {
     }
 
     user(personId: string): FirebaseFirestore.DocumentReference {
-        return this.db.collection(n.users).doc(personId)
+        return this.db.collection("users").doc(personId)
     }
 
     async updateEntry(
@@ -38,7 +38,6 @@ export class CompetitionModel {
         log.debug(
             `POST /competition/entry?competitionId=${this.competitionId}, personId: ${personId}, distance: ${distance}, overrideMax: ${overrideMax}`
         )
-
         const entryDoc = await this.entry(personId).get()
 
         log.info(
@@ -57,7 +56,9 @@ export class CompetitionModel {
             const entryData = entryDoc.data() as CompetitionUpdate
             update.distance = entryData.distance || 0
             update.distanceToBeApproved = entryData.distanceToBeApproved || 0
-            update.churchId = entryData.churchId
+            if (entryData.churchId) {
+                update.churchId = entryData.churchId
+            }
         } else {
             update.distance = 0
             update.distanceToBeApproved = 0
