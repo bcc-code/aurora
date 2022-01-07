@@ -43,9 +43,9 @@ type Address struct {
 	Address2   string      `json:"address2"`
 	Address3   interface{} `json:"address3"`
 	Address4   interface{} `json:"address4"`
-	City       interface{} `json:"city"`
+	City       string `json:"city"`
 	Country    Country     `json:"country"`
-	PostalCode interface{} `json:"postalCode"`
+	PostalCode string `json:"postalCode"`
 }
 
 type Org struct {

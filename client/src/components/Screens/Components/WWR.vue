@@ -6,6 +6,7 @@
         </div>
         <Field name="selectedChurch" type="select" :options="churches" allowEmpty select-label="name" />
         <Field name="autoSpin" label="world.autoSpin" inline type="boolean" />
+        <Field name="leaderboardType" label="leaderboardType" inline type="select" :options="leaderboardTypes"/>
     </Form>
 </template>
 <script>
@@ -19,6 +20,11 @@ export default {
     },
     methods: {
         ...mapActions('competitions', ['bindChurchesRef']),
+    },
+    data() {
+        return {
+            leaderboardTypes: ['','top10', 'top50']
+        }
     },
     async mounted() {
         EventBus.$on('WWR_GLOBE_MOVE', (position) => { this.model = { ...this.model, ...position }});

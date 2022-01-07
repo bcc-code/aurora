@@ -16,6 +16,7 @@ import (
 type User struct {
 	Birthdate     string
 	ChurchName    string
+	ChurchId      int
 	CountryName   string
 	DisplayName   string
 	FirstName     string
@@ -35,6 +36,7 @@ func (u User) UpdateWithMember(member *members.Member) (User, bool) {
 	// TODO: Skip if changed date is in the past and return false
 	u.Birthdate = member.BirthDate.Format(time.RFC3339)
 	u.ChurchName = member.Church.Org.Name
+	u.ChurchId = member.ChurchID
 	u.CountryName = member.Church.Org.VisitingAddress.Country.NameEn
 	u.FirstName = member.FirstName
 	u.LastName = member.LastName

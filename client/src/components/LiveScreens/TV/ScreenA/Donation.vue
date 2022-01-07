@@ -24,7 +24,7 @@
                 <p class="uppercase font-semibold text-3xl pb-2">Status</p>
                 <div class="h-48 w-full bg-black bg-opacity-25 rounded-xl text-4xl leading-tight text-center pt-12">
                     <div class="">
-                        <p class="font-semibold">{{collected.toLocaleString('nb-NO')}}</p>
+                        <p class="font-semibold">{{collected}}</p>
                         <p>NOK</p>
                     </div>
                 </div>
@@ -61,7 +61,7 @@ export default {
     methods: {
         async updateCollected() {
             await Api.collectionResults().then((result) => {
-                this.collected = result.data
+                this.collected = result;
             })
         }
     },

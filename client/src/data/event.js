@@ -74,7 +74,7 @@ export const NewScreen = (id, order) => {
         case 'E':
             newScreen.options.worldMap = { showCheckinsNumber: true }
             newScreen.options.question = { question: null, view: null, viewType: null }
-            newScreen.options.wwr = { autoSpin: null, selectedChurch: null }
+            newScreen.options.wwr = { autoSpin: null, selectedChurch: null, leaderboardType: null }
             newScreen.options.feedPictures = { view: null, columns: null }
             newScreen.options.component = Components.WORLDMAP
             newScreen.options.bukGames = { game: null }

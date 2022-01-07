@@ -30,12 +30,12 @@ export async function newFeedPost(
         const churchId = currentUser.ChurchId || currentUser.churchId || null
         if (churchId !== null) {
             const churchDoc = await userModel
-                .churchRef((currentUser.churchId ?? '').toString())
+                .churchRef((churchId ?? '').toString())
                 .get()
             if (churchDoc.exists) {
                 const data = churchDoc.data()!
-                currentUser.churchName = data.name
-                currentUser.countryName = data.country
+                currentUser.ChurchName = data.name
+                currentUser.CountryName = data.country
             }
         }
 

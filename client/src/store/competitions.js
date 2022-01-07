@@ -9,6 +9,7 @@ export default {
         distanceShards: [],
         distancesPerChurch: [],
         churches: [],
+        checkpoints: [],
     },
     actions: {
         bindCompetitionsRef: firestoreAction(context => {
@@ -25,6 +26,9 @@ export default {
         }),
         bindChurchesRef: firestoreAction(context => {
             return context.bindFirestoreRef('churches', db.collection('churches').orderBy('name'))
+        }),
+        bindCheckpointsRef: firestoreAction(context => {
+            return context.bindFirestoreRef('checkpoints', db.collection('churches').where("step", "==", true).orderBy('stepNumber'))
         }),
         rejectEntryRef: firestoreAction((context, entry) => {
             return context.getters.entriesRef.doc(entry.id).update({ distanceToBeApproved: 0 })
@@ -87,6 +91,15 @@ export default {
         top10: (state, getters) => {
             return getters.rankedChurches.slice(0, 10)
         },
+        top50: (state, getters) => {
+            var size = 10;
+            var arrayOfArrays = [];
+            var original = getters.rankedChurches.slice(0,50);
+            for (var i=0; i<original.length; i+=size) {
+                arrayOfArrays.push(original.slice(i,i+size));
+            }
+            return arrayOfArrays
+        },
         statsByChurchId: (state, getters) => (churchId) => {
             var church = Object.assign({}, state.churches.find((church) => church.id == churchId))
             var churchStats = state.distancesPerChurch.find((el) => el.id == churchId)
@@ -100,7 +113,7 @@ export default {
             return church
         },
         checkpoints: (state) => {
-            return state.churches.filter((church) => church.step == true).sort((a,b) => a.nextDistance - b.nextDistance)
+            return state.checkpoints
         }
     }
 }
