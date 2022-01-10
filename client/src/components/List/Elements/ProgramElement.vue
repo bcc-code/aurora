@@ -8,6 +8,7 @@
             </div>
             <div v-if="$can('update', programElement)" class="overlay">
                 <button v-if="!isLive" class="btn btn-green" @click.stop="setAsCurrent">{{$t('queue.push')}}</button>
+                <button v-if="programElement.start && programElement.end" class="btn btn-blue" @click.stop="pushToMB">Push to MB</button>
                 <span class="btn btn-delete" @click.stop="removeProgramElement"><i class="fa fa-times"></i></span>
             </div>
         </div>
@@ -18,6 +19,8 @@
 import { mapActions, mapGetters } from 'vuex'
 import { ProgramElementTypeLabel } from '@/models/program.js'
 import Translations from '@/mixins/translation.js'
+import api from '@/utils/api.js'
+
 export default {
     props: {
         programElement: {
@@ -32,6 +35,7 @@ export default {
     mixins: [Translations],
     computed: {
         ...mapGetters('program', ['currentProgramElement']),
+        ...mapGetters('events', ['selectedEventRef']),
         text() {
             var text = this.inLanguage(this.programElement, this.language);
             return (this.searchQuery && this.searchQuery.trim())
@@ -53,6 +57,15 @@ export default {
         },
         async setAsCurrent(){
             await this.setAsCurrentRef(this.programElement);
+        },
+        async pushToMB(){
+            let event = await this.selectedEventRef.get()
+            if (!event.data().mediabankID) {
+                // Missing mediabankID. Can't proceed
+                return
+            }
+
+            await api.createSubclip(event.data().mediabankID, this.programElement.text, "91000", "92001") //TODO in out times
         },
     }
 }

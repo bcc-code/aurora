@@ -6,12 +6,11 @@ import (
 	"os"
 	"strings"
 
-	"github.com/bcc-code/mediabank-bridge/proto"
+	mbBridge "github.com/bcc-code/mediabank-bridge/proto"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/logger"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/zerolog"
-	"google.golang.org/grpc"
 
 	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/auth0"
@@ -60,27 +59,17 @@ func main() {
 	log.L.Debug().Msg("Seting up tracing")
 	tracedHTTPClient := mustSetupTracing()
 
-	provider, err := proto.NewCredentialsProvider("", "", log.L)
-	if err != nil {
-		log.L.Panic().Err(err)
-	}
+	/*
+		mbClient := proto.NewMediabankBridgeClient(conn)
+		_, err = mbClient.CreateSubclip(ctx, &proto.CreateSubclipRequest{
+			In:      "91000",
+			Out:     "92001",
+			Title:   "From BCCO",
+			AssetId: "VX-396795",
+		})
 
-	conn, err := grpc.Dial("", grpc.WithPerRPCCredentials(provider))
-	if err != nil {
-		log.L.Panic().Err(err)
-	}
-	defer conn.Close()
-
-	mbClient := proto.NewMediabankBridgeClient(conn)
-	_, err = mbClient.CreateSubclip(ctx, &proto.CreateSubclipRequest{
-		In:      "91000",
-		Out:     "92001",
-		Title:   "From BCCO",
-		AssetId: "VX-396795",
-	})
-
-	log.L.Fatal().Err(err).Msgf("Done")
-
+		log.L.Fatal().Err(err).Msgf("Done")
+	*/
 	ctx, initTrace := trace.StartSpan(ctx, "init")
 
 	log.L.Debug().Msg("Fetching ENV vars")
@@ -120,6 +109,10 @@ func main() {
 
 	mediabankWebhookPassword := os.Getenv("MEDIABANK_WEBHOOK_PASSWORD")
 
+	mbBridgeURL := os.Getenv("MEDIABANK_BRIDGE_URL")
+	mbBridgeClientID := os.Getenv("MEDIABANK_BRIDGE_CLIENTID")
+	mbBridgeSecret := os.Getenv("MEDIABANK_BRIDGE_CLIENTSECRET")
+
 	// A bit of misuse but K_REVISION is set by GCR and gives a lot of info
 	appBuild := os.Getenv("K_REVISION")
 	if appBuild == "" {
@@ -137,16 +130,22 @@ func main() {
 	log.L.Debug().Msg("Creating members client")
 	membersClient := members.NewClient(tracedHTTPClient, membersDomain, membersKey, log.L)
 
+	mbBridgeClient, err := mbBridge.NewClient(ctx, mbBridgeURL, mbBridgeClientID, mbBridgeSecret, log.L, false)
+	if err != nil {
+		log.L.Panic().Err(err)
+	}
+
 	log.L.Debug().Msg("Creating server")
 	server := NewServer(ServerConfig{
-		MembersWebhookSecret: membersWebhookSecret,
-		FirestoreClient:      fsClient,
-		MembersClient:        membersClient,
-		HTTPClient:           tracedHTTPClient,
-		CollectionAPIKey:     collectionAPIKey,
-		CollectionBaseURL:    collectionBaseURL,
-		AnalyticsClient:      analyticsClient,
-		AnalitycsIDSecret:    analyticsSecret,
+		MembersWebhookSecret:  membersWebhookSecret,
+		FirestoreClient:       fsClient,
+		MembersClient:         membersClient,
+		HTTPClient:            tracedHTTPClient,
+		CollectionAPIKey:      collectionAPIKey,
+		CollectionBaseURL:     collectionBaseURL,
+		AnalyticsClient:       analyticsClient,
+		AnalitycsIDSecret:     analyticsSecret,
+		MediaBankBridgeClient: mbBridgeClient,
 	})
 
 	router := gin.Default()
@@ -157,7 +156,7 @@ func main() {
 	router.Use(cors.New(cors.Config{
 		AllowOrigins:  []string{"*"},
 		AllowMethods:  []string{"GET", "POST"},
-		AllowHeaders:  []string{"Origin", "audience", "authorization", HeaderXApiKey, HeaderXApiToken, HeaderXPersonID},
+		AllowHeaders:  []string{"Origin", "audience", "authorization", "content-type", HeaderXApiKey, HeaderXApiToken, HeaderXPersonID},
 		ExposeHeaders: []string{"Content-Length"},
 	}))
 
@@ -185,6 +184,7 @@ func main() {
 	))
 	apiGrp.GET("analyticsid", server.GenerateAnalyticsID)
 	apiGrp.GET("donationstatus", server.GetCollectionResults)
+	apiGrp.POST("subclip", server.CreateSubclip)
 
 	// /analytics/ is protected by a (set) of API keys. It is meant to be used by the
 	// transformers in rudderstack
