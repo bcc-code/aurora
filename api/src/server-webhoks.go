@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"cloud.google.com/go/firestore"
 	"github.com/gin-gonic/gin"
@@ -130,9 +131,22 @@ func (s Server) MediabankWebhookEventData(c *gin.Context) {
 		return
 	}
 
+	data.StartTime, err = time.Parse(time.RFC3339, data.StartTimeISO)
+
+	if err != nil {
+		log.L.Info().
+			Err(err).
+			Str("IsoTimeStart", data.StartTimeISO).
+			Msg("Unable to parse time")
+		c.JSON(http.StatusInternalServerError, map[string]string{"message": "Bad time format. Please adhere to RFC3339"})
+		return
+	}
+
 	_, err = config.CurrentEventPath.Update(ctx, []firestore.Update{
 		{Path: "mediabankID", Value: data.VidispineID},
 		{Path: "mediabankFileName", Value: data.Filename},
+		{Path: "mediabankStartTime", Value: data.StartTime},
+		{Path: "mediabankFps", Value: data.Fps},
 	})
 
 	if err != nil {
@@ -141,6 +155,8 @@ func (s Server) MediabankWebhookEventData(c *gin.Context) {
 			Str("EventID", config.CurrentEventPath.ID).
 			Str("mediabankID", data.VidispineID).
 			Str("mediabankFileName", data.Filename).
+			Time("mediabankStartTimestamp", data.StartTime).
+			Str("mediabankFps", data.Fps).
 			Msg("Unable to update")
 		c.JSON(http.StatusInternalServerError, map[string]string{"message": "FB issues"})
 		return
