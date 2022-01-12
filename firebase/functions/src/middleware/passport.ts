@@ -19,6 +19,7 @@ const strategy = new Auth0Strategy(
         clientID: config.auth0.clientId,
         clientSecret: config.auth0.clientSecret,
         callbackURL: config.api.baseUrl + 'firebase/callback',
+        algorithms: ["RS256"],
     },
     (
         _accessToken: string,

@@ -14,7 +14,6 @@ import { exportData, importData, listExports } from './handlers/impex'
 import { config } from './utils'
 import { eventList, getEventData } from './handlers/event'
 import {
-    generatePoll,
     submitPollResponse,
     pickWinner,
     updatePollStats,
