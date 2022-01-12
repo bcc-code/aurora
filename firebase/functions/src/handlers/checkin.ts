@@ -43,7 +43,7 @@ export async function checkin(
     const eventModel = new EventModel(db, eventId)
     await eventModel.checkin.checkin(personId)
     const updatedStatus = await eventModel.checkin.getCheckinStatus(personId)
-    return res.json(updatedStatus).end()
+    res.json(updatedStatus).end()
 }
 
 export async function checkinStateless(
@@ -66,14 +66,16 @@ export async function checkinStateless(
     }
 
     if (!personId) {
-        return res.status(401).end()
+        res.status(401).end()
+       return
     }
 
     let eventId : string | undefined = checkinCache.get(EVENTID)
     if (!eventId || disableCache) {
         const config = (await db.collection('/configs').doc('brunstadtv-app').get()).data()
         if (!config) {
-            return res.status(500).end()
+            res.status(500).end()
+            return
         }
 
         const currentEvent = config.currentEventPath as firestore.DocumentReference
@@ -87,7 +89,8 @@ export async function checkinStateless(
     }
 
     if (eventId === NO_EVENT) {
-        return res.status(204).end()
+        res.status(204).end()
+        return
     }
 
     const q = req.query as Record<string,string|undefined>
@@ -96,5 +99,5 @@ export async function checkinStateless(
     const eventModel = new EventModel(db, eventId);
     await eventModel.checkin.checkin(personId, platform)
     const updatedStatus = await eventModel.checkin.getCheckinStatus(personId)
-    return res.json(updatedStatus).end()
+    res.json(updatedStatus).end()
 }
