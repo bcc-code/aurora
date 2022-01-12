@@ -76,7 +76,7 @@
 		"node-fetch": "^2.6.1",
 		"parcel": "^2.0.0-nightly.720",
 		"passport": "^0.4.1",
-		"passport-auth0": "^1.4.0",
+		"passport-auth0": "^1.4.1",
 		"uuid": "^7.0.3"
 	},
 	"devDependencies": {
