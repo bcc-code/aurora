@@ -10,9 +10,8 @@ require (
 	firebase.google.com/go v3.13.0+incompatible
 	github.com/araddon/dateparse v0.0.0-20210429162001-6b43995a97de
 	github.com/aws/aws-sdk-go v1.40.13 // indirect
-	github.com/bcc-code/mediabank-bridge/proto v0.0.2
+	github.com/bcc-code/mediabank-bridge v1.1.1
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
-	github.com/davecgh/go-spew v1.1.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/logger v0.0.3
 	github.com/gin-gonic/gin v1.7.1
@@ -26,7 +25,6 @@ require (
 	github.com/tidwall/gjson v1.9.1 // indirect
 	github.com/xtgo/uuid v0.0.0-20140804021211-a0b114877d4c // indirect
 	go.opencensus.io v0.23.0
-	golang.org/x/sys v0.0.0-20211025201205-69cdffdb9359 // indirect
 	google.golang.org/api v0.52.0 // indirect
 	google.golang.org/genproto v0.0.0-20211118181313-81c1377c94b1
 	google.golang.org/grpc v1.42.0
