@@ -32,5 +32,3 @@ require (
 	google.golang.org/grpc v1.42.0
 	gopkg.in/guregu/null.v4 v4.0.0
 )
-
-replace github.com/bcc-code/mediabank-bridge/proto => ../../../mediabank_bridge/proto
