@@ -29,7 +29,8 @@ export async function getToken(req: Request, res: Response) : Promise<void> {
             .createCustomToken(personId, req.params.userClaims)
         const userModel = new UserModel(firebaseAdmin.firestore())
         const userRole = await userModel.role(personId)
-        return res.send({ firebaseToken, userRole }).end()
+        res.send({ firebaseToken, userRole }).end()
+        return
     } catch (err) {
         log.error(err)
         res
@@ -43,16 +44,15 @@ export async function getToken(req: Request, res: Response) : Promise<void> {
     }
 }
 
-export async function login(req: Request, res: Response, next: NextFunction) : Promise<void> {
+export function login(req: Request, res: Response, next: NextFunction) : Promise<void> {
     const authOptions: AuthenticateOptions = {
         scope: 'openid email profile church country',
-        algorithms: ['RS256'],
-
         // @ts-ignore this is valid according to the docs
         audience: config.auth0.apiAudience,
     }
 
-    return passport.authenticate('auth0', authOptions)(req, res, next)
+    const authFunc = passport.authenticate('auth0', authOptions)
+    authFunc(req, res, next)
 }
 
 export function processLoginCallback(
@@ -95,7 +95,7 @@ export async function getIdToken(req: Request, res: Response) : Promise<void> {
             method: 'POST',
             url: `https://identitytoolkit.googleapis.com/v1/accounts:signInWithCustomToken?key=${config.api.key}`,
             data: {
-                token: req.body.token,
+                token: req.body.token as string,
                 returnSecureToken: true,
             },
         })
@@ -107,7 +107,7 @@ export async function getIdToken(req: Request, res: Response) : Promise<void> {
         }
 
         if (result.status === 200 && data.idToken) {
-            return res
+            res
                 .send({
                     idToken: data.idToken,
                     refreshToken: data.refreshToken,
@@ -115,6 +115,7 @@ export async function getIdToken(req: Request, res: Response) : Promise<void> {
                         Date.now() + parseInt(data.expiresIn) * 1000,
                 })
                 .end()
+            return
         }
 
         res.status(500)

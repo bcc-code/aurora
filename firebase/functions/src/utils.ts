@@ -17,6 +17,7 @@ interface Config {
 
     api: {
         baseUrl: string,
+        key: string,
     };
 
     app: {
