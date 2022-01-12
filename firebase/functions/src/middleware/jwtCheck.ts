@@ -51,7 +51,7 @@ export const jwtCheck = (req: Request, res: Response, next: NextFunction) : void
         secret,
         audience: audience,
         issuer: `https://${config.auth0.domain}/`,
-        algorithm: 'RS256',
+        algorithms: ["RS256"],
     })(req, res, (err : string) => {
         if (err) {
             log.error(`Error in jwtCheck: ${err}`)

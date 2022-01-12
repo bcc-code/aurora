@@ -13,12 +13,14 @@ const log = logger('handler/firebaseToken')
 export async function getToken(req: Request, res: Response) : Promise<void> {
     const personId = getPersonId(req)
     if (!personId) {
-        return res
+        res
             .status(400)
             .send({
                 message: 'Unknown user',
             })
             .end()
+
+        return
     }
 
     try {
@@ -30,19 +32,21 @@ export async function getToken(req: Request, res: Response) : Promise<void> {
         return res.send({ firebaseToken, userRole }).end()
     } catch (err) {
         log.error(err)
-        return res
+        res
             .status(500)
             .send({
                 message: 'Something went wrong acquiring a Firebase token.',
                 error: err,
             })
             .end()
+        return
     }
 }
 
 export async function login(req: Request, res: Response, next: NextFunction) : Promise<void> {
     const authOptions: AuthenticateOptions = {
         scope: 'openid email profile church country',
+        algorithms: ['RS256'],
 
         // @ts-ignore this is valid according to the docs
         audience: config.auth0.apiAudience,
