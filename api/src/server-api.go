@@ -7,6 +7,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/bcc-code/mediabank-bridge/proto"
 	"github.com/gin-gonic/gin"
 	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/log"
@@ -69,4 +70,25 @@ func (s Server) GetCollectionResults(c *gin.Context) {
 	}
 
 	c.Data(http.StatusOK, "application/json; charset=utf-8", bodyBytes)
+}
+
+// CreateSubclip in mediabanken
+func (s Server) CreateSubclip(c *gin.Context) {
+	req := &proto.CreateSubclipRequest{}
+	err := c.BindJSON(req)
+	if err != nil {
+		log.L.Error().Err(err).Msg("CreateSubclip")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	res, err := s.mediaBankBridgeClient.CreateSubclip(c.Request.Context(), req)
+	if err != nil {
+		log.L.Error().Err(err).Msg("CreateSubclip")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	log.L.Debug().Str("Message", res.Message).Msg("Response from MB bridge")
+	c.AbortWithStatus(http.StatusNoContent)
 }

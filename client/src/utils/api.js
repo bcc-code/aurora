@@ -89,6 +89,17 @@ async function collectionResults() {
     return total.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
+async function createSubclip(assetId, title, tsin, tsout) {
+    let results = await sendRequestRaw("POST", `${keys.API.BASE_PATH_V2}api/subclip`, {
+        in: tsin,
+        out: tsout,
+        title,
+        assetId
+    });
+
+    console.error(results);
+}
+
 /**
  * Intercept the 401 response
  */
@@ -121,4 +132,5 @@ export default {
     updateResponsesStats,
     updateUserCount,
     sendRequestRaw,
+    createSubclip,
 };
