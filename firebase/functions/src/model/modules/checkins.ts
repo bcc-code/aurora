@@ -19,6 +19,12 @@ interface CheckinDoc {
     platform: string
 }
 
+interface CheckinCounter {
+    count: number
+    lastCountUpdate: number
+    updatePending: boolean
+}
+
 export class CheckinStatus {
     canCheckin: boolean
     checkedIn: boolean
@@ -124,7 +130,7 @@ export class CheckinModule extends Module {
         void this.updateCheckinCount()
     }
 
-    async updateCheckinCount(): Promise<{ checkedInUsers: number }> {
+    async updateCheckinCount(): Promise<{ count: number }> {
         // This whole thing should be handled by a single function that is processing
         // pubsub messages. This would allow us to for sure process all checkins, while
         // maintaining a 1/s write frequency.
@@ -133,14 +139,18 @@ export class CheckinModule extends Module {
         // this function completes execution.
 
         const evt = (await this.event.get()).data() as Record<string, number>
-        if (!evt) {
+
+        const counterRef = this.event.collection("counters").doc("checkins")
+        const counter = (await counterRef.get()).data() as CheckinCounter
+
+        if (!counter) {
             log.error("Unable to get event data")
-            return { checkedInUsers: 0 }
+            return { count: 0 }
         }
 
-        if (evt.lastCountUpdate && evt.lastCountUpdate - Date.now() > -1000 ) {
-            if (evt.updatePending) {
-                return { checkedInUsers: evt.checkedInUsers }
+        if (counter.lastCountUpdate && counter.lastCountUpdate - Date.now() > -1000 ) {
+            if (counter.updatePending) {
+                return { count: counter.count }
             }
 
             await this.event.update({updatePending: true})
@@ -157,12 +167,15 @@ export class CheckinModule extends Module {
             : 1
         count = Math.round(count * checkinFactor)
         count += extraCheckins
+
         const docUpdate = {
-            checkedInUsers: count,
+            count,
             lastCountUpdate: Date.now(),
             updatePending: false,
         }
-        await this.event.update(docUpdate)
+
+        await counterRef.set(docUpdate)
+        console.error(docUpdate)
         return docUpdate
     }
 

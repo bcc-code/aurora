@@ -30,7 +30,7 @@ export async function userCount(
     const { eventId } = req.query
     const eventModel = new EventModel(db, eventId as string)
     const result = await eventModel.checkin.updateCheckinCount()
-    res.status(200).send(result).end()
+    res.status(200).send({ checkedInCount: result.count }).end()
 }
 
 export async function checkin(

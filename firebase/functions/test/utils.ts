@@ -90,6 +90,11 @@ export async function generateUser(db : firestore.Firestore) : Promise<string> {
 export async function generateEvent(db : firestore.Firestore) : Promise<string> {
     const id = randomBytes(20).toString('hex')
     const event = db.collection("events").doc(id)
+    await event.collection("counters").doc("checkins").set({
+            count: 0,
+            lastCountUpdate: Date.now(),
+            updatePending: false,
+    })
     await event.set(NewEvent("Event", 1))
     return id;
 }

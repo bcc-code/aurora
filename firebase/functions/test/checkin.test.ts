@@ -58,19 +58,20 @@ test("Stateless checkin, event, bad user", async t => {
     const res = createResponse()
     try {
         await checkinStateless(db, req, res, true)
+        await delay(1000)
     } catch(e) {
         t.pass(e);
     }
 
     t.true(res._isEndCalled())
 
-    const data = (await db.collection("events").doc(eventId).get()).data()
+    const data = (await db.doc(`events/${eventId}/counters/checkins`).get()).data()
     if (!data) {
         t.fail("Could not get event data")
         return;
     }
 
-    t.is(data.checkedInUsers, 0)
+    t.is(data.count, 0)
 });
 
 test("Stateless checkin, event", async t => {
@@ -87,18 +88,18 @@ test("Stateless checkin, event", async t => {
     )
     const res = createResponse()
     await checkinStateless(db, req, res, true)
-    await delay(500)
+    await delay(1000)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 200)
 
-    const data = (await db.collection("events").doc(eventId).get()).data()
+    const data = (await db.doc(`events/${eventId}/counters/checkins`).get()).data()
     if (!data) {
         t.fail("Could not get event data")
         return;
     }
 
-    t.is(data.checkedInUsers, 1)
+    t.is(data.count, 1)
 });
 
 test("Stateless checkin, event, custom agent", async t => {
@@ -118,18 +119,18 @@ test("Stateless checkin, event, custom agent", async t => {
     )
     const res = createResponse()
     await checkinStateless(db, req, res, true)
-    await delay(500)
+    await delay(1000)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 200)
 
-    const data = (await db.collection("events").doc(eventId).get()).data()
+    const data = (await db.doc(`events/${eventId}/counters/checkins`).get()).data()
     if (!data) {
         t.fail("Could not get event data")
         return;
     }
 
-    t.is(data.checkedInUsers, 1)
+    t.is(data.count, 1)
 
 
     const ciData = (await db.collection(`events/${eventId}/checkins`).doc(userId).get()).data()
@@ -155,7 +156,7 @@ test("Stateless checkin, event, validate Status", async t => {
     )
     const res = createResponse()
     await checkinStateless(db, req, res, true)
-    await delay(500)
+    await delay(1000)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 200)
@@ -171,13 +172,13 @@ test("Stateless checkin, event, validate Status", async t => {
       linkedUsers: [],
     })
 
-    const data = (await db.collection("events").doc(eventId).get()).data()
+    const data = (await db.doc(`events/${eventId}/counters/checkins`).get()).data()
     if (!data) {
         t.fail("Could not get event data")
         return;
     }
 
-    t.is(data.checkedInUsers, 1)
+    t.is(data.count, 1)
 });
 
 test("Stateless checkin, event, API call", async t => {
@@ -195,18 +196,18 @@ test("Stateless checkin, event, API call", async t => {
     })
     const res = createResponse()
     await checkinStateless(db, req, res, true)
-    await delay(500)
+    await delay(1000)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 200)
 
-    const data = (await db.collection("events").doc(eventId).get()).data()
+    const data = (await db.doc(`events/${eventId}/counters/checkins`).get()).data()
     if (!data) {
         t.fail("Could not get event data")
         return;
     }
 
-    t.is(data.checkedInUsers, 1)
+    t.is(data.count, 1)
 });
 
 test("Stateless checkin, event, API call, no user", async t => {
@@ -220,16 +221,55 @@ test("Stateless checkin, event, API call, no user", async t => {
     })
     const res = createResponse()
     await checkinStateless(db, req, res, true)
-    await delay(500)
+    await delay(1000)
 
     t.true(res._isEndCalled())
     t.is(res.statusCode, 401)
 
-    const data = (await db.collection("events").doc(eventId).get()).data()
+    const data = (await db.doc(`events/${eventId}/counters/checkins`).get()).data()
     if (!data) {
         t.fail("Could not get event data")
         return;
     }
 
-    t.is(data.checkedInUsers, 0)
+    t.is(data.count, 0)
+});
+
+test("Stateless checkin validate counts", async t => {
+    const db = getAuthedFirestore()
+    await generateConfig(db);
+    const userId = await generateUser(db);
+    const userId2 = await generateUser(db);
+    const eventId = await generateEvent(db);
+    await setEventInProgress(db, eventId)
+
+    const req = createRequest({
+        headers: { 'x-api-token': "BLAH" },
+        body: {
+            personId: userId,
+        }
+    })
+    const res = createResponse()
+    await checkinStateless(db, req, res, true)
+
+    const req2= createRequest({
+        headers: { 'x-api-token': "BLAH" },
+        body: {
+            personId: userId2,
+        }
+    })
+    const res2 = createResponse()
+    await checkinStateless(db, req2, res2, true)
+    await delay(1000)
+
+    t.true(res._isEndCalled())
+    t.is(res.statusCode, 200)
+
+    const data = (await db.doc(`events/${eventId}/counters/checkins`).get()).data()
+    if (!data) {
+        t.fail("Could not get counter")
+        return;
+    }
+
+    t.is(data.count, 2)
 });
