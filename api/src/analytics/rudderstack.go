@@ -1,6 +1,7 @@
 package analytics
 
 import (
+	"fmt"
 	"time"
 
 	rs "github.com/rudderlabs/analytics-go"
@@ -32,13 +33,14 @@ func MustSetupAnalytics(url, rudderstackKey, sharedSecret, appVersion, appBuild 
 	return c
 }
 
-func (c Client) init() {
-	c.rsClient, _ = rs.NewWithConfig(c.rsKey, c.rsURL,
+func (c *Client) init() {
+	client, _ := rs.NewWithConfig(c.rsKey, c.rsURL,
 		rs.Config{
 			Interval:  1 * time.Second,
 			BatchSize: 100,
 			Verbose:   true,
 		})
+	c.rsClient = client
 }
 
 // GetID for analytics use based on the personID
@@ -52,6 +54,29 @@ func (c Client) Close() {
 	if err != nil {
 		log.L.Warn().Err(err).Stack().Msg("Error closing RS Client")
 	}
+}
+
+// Identify updates users data in RS
+func (c Client) Identify(personID float64) {
+	if c.rsClient == nil {
+		log.L.Warn().Stack().Msg("Analytics is not set up yet")
+		return
+	}
+
+	t := rs.NewTraits()
+	t.Set("personId", fmt.Sprintf("%.0f", personID))
+	anonID := c.GetID(personID)
+
+	c.rsClient.Enqueue(rs.Identify{
+		AnonymousId: anonID,
+		UserId:      anonID,
+		Traits:      t,
+		Context: &rs.Context{
+			App: rs.AppInfo{
+				Name: "Aurora Backend",
+			},
+		},
+	})
 }
 
 // Track an event, automatically adding context

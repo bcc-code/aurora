@@ -12,6 +12,7 @@ require (
 	github.com/aws/aws-sdk-go v1.40.13 // indirect
 	github.com/bcc-code/mediabank-bridge v1.1.1
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/logger v0.0.3
 	github.com/gin-gonic/gin v1.7.1

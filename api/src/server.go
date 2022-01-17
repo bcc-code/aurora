@@ -113,6 +113,8 @@ func (s Server) UpdatePersonFromMembers(c *gin.Context) {
 		return
 	}
 
+	go s.analyticsClient.Identify(float64(person.PersonID))
+
 	ch := firebase.Church{}
 	ch = ch.UpdateFromMembers(&person.Church.Org)
 	err = ch.Upsert(c.Request.Context(), s.fs)

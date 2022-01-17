@@ -69,6 +69,8 @@ func (s Server) MembersWebhook(c *gin.Context) {
 			Int("person_id", person.PersonID).
 			Msg("Updated person")
 
+		go s.analyticsClient.Identify(float64(person.PersonID))
+
 		// Do not update too many times. There will still be multiple updates, but
 		// at least not in a single request
 		if _, ok := seenChurches[person.Church.Org.ChurchID]; !ok {
