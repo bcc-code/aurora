@@ -14,7 +14,7 @@
 			"baseUrl": "http://localhost:8080",
 			"sharedApiKey": "<REPLACE>",
 			"impexBucket": "bcco-impex",
-			"id": "bcc-online",
+			"id": "aurora-app",
 			"name": "<REPLACE>",
 			"donationsApiKey": "<REPLACE>",
 			"donationsUrl": "<REPLACE>"

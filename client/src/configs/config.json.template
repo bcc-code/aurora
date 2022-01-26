@@ -10,7 +10,7 @@
   },
   "app": {
     "baseUrl": "http://localhost:8080",
-    "name": "BCC Online | LOCAL",
+    "name": "Aurora | LOCAL",
     "id": "bcc-online"
   },
   "firebase": {

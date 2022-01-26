@@ -13,7 +13,7 @@ export const NewEvent = (name, order) => {
         isActive: false,
         checkedInUsers: 0,
 
-        /* ONLY USED IN BCC ONLINE */
+        /* ONLY USED IN Bcc Media Aurora*/
         canSendInquiries: false,
         feed: {
             autoPush: false,

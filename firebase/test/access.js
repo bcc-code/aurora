@@ -85,7 +85,7 @@ after(async () => {
 const user = { uid: "2@person.id", personId: 2, email: "user@example.com" };
 const adminUser = { uid: "1@person.id", personId: 1, email: "admin@example.com" };
 
-describe("BCC.online", () => {
+describe("Aurora Auth", () => {
     it("new collections permitted only for admins", async () => {
         let db = getAuthedFirestore(user);
         var notExists = db.collection("i-dont-exist").doc("alice");

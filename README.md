@@ -1,15 +1,15 @@
-# BCC Online
+# BCC Media Aurora System
 
-Changelog can be found at [https://doc.bcc.online/changelog](https://doc.bcc.online/changelog)
+Changelog can be found at [https://doc.aurora.bcc.media/changelog](https://doc.aurora.bcc.media/changelog)
 
 ## Getting started
 
-* In `./client/` 
+* In `./client/`
   ```bash
    npm install
    npm run server
    ```
-* In `./firebase/` 
+* In `./firebase/`
   * Run the following commands
    ```bash
     npm install

@@ -1,5 +1,4 @@
 import * as firebase from 'firebase-admin'
-import * as crypto from 'crypto'
 
 //var serviceAccount = require("../firebase-key.json");
 var serviceAccount = require("../firebase-key.prod.json");
