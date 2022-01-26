@@ -73,7 +73,7 @@
 		"lodash": "^4.17.21",
 		"luxon": "^2.0.1",
 		"node-cache": "^5.1.2",
-		"node-fetch": "^2.6.1",
+		"node-fetch": "^2.6.7",
 		"parcel": "^2.0.0-nightly.720",
 		"passport": "^0.4.1",
 		"passport-auth0": "^1.4.1",
