@@ -14,6 +14,16 @@ const log = logger('model/modules/poll')
 type Answers = { [i: string]: QueryDocumentSnapshot[] }
 type ShardData = { total: number }
 
+function ageFromDate(d : Date) : number {
+    const today = new Date()
+    const age = today.getFullYear() - d.getFullYear();
+    const m = today.getMonth() - d.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < d.getDate())) {
+        return age-1;
+    }
+    return age;
+}
+
 export class PollModule extends Module {
     db: firestore.Firestore
     userModel: UserModel
@@ -152,17 +162,14 @@ export class PollModule extends Module {
         if (!userData) {
             throw new Error('User not provided')
         }
-
         const personId = userData.PersonId as number
         // make sure we don't already have a response for this personId + qustionId
         const responseDoc = await this.response(personId.toFixed(), questionId).get()
         const questionDoc = await this.question(questionId).get()
-
         if (responseDoc.exists && !questionDoc.data()?.canChangeAnswer) {
             log.error(`Multiple responses attempted for ${personId}, Q: ${questionId}, R: ${responseDoc.ref.path}`)
             throw new Error('Multiple poll responses are not permitted.')
         }
-
         const previousAnswers = responseDoc.exists
             ? responseDoc.data()?.selected as Array<string>
             : []
@@ -174,10 +181,16 @@ export class PollModule extends Module {
         // no existing response
         const batch = this.db.batch()
 
+        let age = -1
+        try {
+            age = ageFromDate(new Date(userData.Birthdate))
+        } catch(e) {} // Ignore if user has no birthdate
+
         const response = {
             personId: personId,
             question: questionId,
             selected: selectedAnswers,
+            personAge: age,
             submittedBy
         }
 
@@ -383,7 +396,8 @@ export class PollModule extends Module {
             }
 
             intTotal += shardData.total;
-            if (answer.data().correct === true) {
+            const answerData = answer.data()
+            if (answerData.correct === true) {
                 intTotalCorrect += shardData.total;
             }
 

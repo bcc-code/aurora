@@ -22,12 +22,17 @@ export async function submitPollResponse(
     res: Response
 ): Promise<void> {
     log.debug("submitPollResponse")
+    if (!req.query.eventId) {
+        res.status(404).json({"message": "missing event id"}).end()
+        return
+    }
     const eventModel = new EventModel(db, req.query.eventId)
     const userModel = new UserModel(db)
 
     const authPersonId = getPersonId(req)
     if (!authPersonId) {
-        return res.status(401).end()
+        res.status(401).end()
+        return
     }
 
     let answeringPersonId = authPersonId;
@@ -39,7 +44,8 @@ export async function submitPollResponse(
     const userData = userDoc.data() as IUser|null
 
     if (!userData) {
-        return res.status(404).json({"message": "user not found"}).end()
+        res.status(404).json({"message": "user not found"}).end()
+        return
     }
 
     // Is Person answering for themselves?
@@ -50,7 +56,8 @@ export async function submitPollResponse(
 
         // Neither of the guardians is the authenticated person
         if (g1 !== authPersonId && g2 !== authPersonId) {
-            return res.status(403).end()
+            res.status(403).end()
+            return
         }
     }
 
@@ -66,7 +73,8 @@ export async function submitPollResponse(
         res.sendStatus(400).end()
         return
     }
-    return res.sendStatus(200).end()
+
+    res.sendStatus(200).end()
 }
 
 export async function pickWinner(
