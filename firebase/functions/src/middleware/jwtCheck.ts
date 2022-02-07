@@ -1,7 +1,7 @@
 import jwt from 'express-jwt'
 import jwks from 'jwks-rsa'
 import { NextFunction, Request, Response } from 'express'
-import config from '../configs/config.json'
+import { config } from '../utils';
 import { logger } from '../log'
 import firebase from 'firebase-admin'
 import {get} from '@google-cloud/trace-agent'
@@ -23,7 +23,8 @@ export const jwtCheckFull = async (admin: firebase.app.App,req: Request, res: Re
         req.userClaims = claims;
     } catch(e) {
         console.error(e)
-        return res.status(401).end()
+        res.status(401).end()
+        return
     }
 
     t.endSpan()

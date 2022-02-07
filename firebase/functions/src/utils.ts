@@ -1,5 +1,5 @@
 import * as googleServiceKey from '../firebase-key.json'
-import configRaw from './configs/config.json'
+import * as functions from 'firebase-functions'
 
 interface Config {
     firebaseServiceAccount?: {
@@ -34,14 +34,27 @@ interface Config {
     }
 }
 
+const auroraConfig = functions.config().aurora as Record<string, unknown>
+if (!auroraConfig) {
+    throw new Error("Config not present")
+}
+
+const rawConfigString = auroraConfig.functionconfig as string
+if (!rawConfigString) {
+    throw new Error("Config not present")
+}
+
+export const config = JSON.parse(rawConfigString) as Config
+
 export const firebaseServiceAccount = {
     projectId: googleServiceKey.project_id,
     clientEmail: googleServiceKey.client_email,
     privateKey: googleServiceKey.private_key.replace(/\\n/g, '\n'),
 }
 
-export const config : Config = configRaw as Config;
 config.firebaseServiceAccount = firebaseServiceAccount;
+
+console.log(config)
 
 export function delay(ms: number) : Promise<void> {
     return new Promise( resolve => setTimeout(resolve, ms) );
