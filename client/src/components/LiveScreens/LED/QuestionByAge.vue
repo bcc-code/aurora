@@ -11,12 +11,12 @@
 
                         <div v-if="isHorizontal" key="wrapper" class="h-full flex items-center w-5/6 relative">
                             <p class="text-2xl absolute px-4" :style="{left: `${ageStats.over*100}%`}">{{ (ageStats.over*100).toFixed(2) }}%</p>
-                            <div :key="`barOver`" class="bar h-12" :style="{backgroundColor: '#3662a6', width: `${ageStats.over*100}%`}"></div>
+                            <div :key="`barOver`" class="bar h-12" :style="{backgroundColor: '#08234B', width: `${ageStats.over*100}%`}"></div>
                         </div>
                         <template v-else>
                             <div key="wrapper" class="wrapper flex flex-col items-center justify-end flex-1 h-full order-1 relative">
                                 <p class="text-2xl absolute w-full text-center py-2" :style="{bottom: `${ageStats.over*100}%`}">{{ ageStats.over*100 }}%</p>
-                                <div :key="`barOver`" class="bar w-12" :style="{backgroundColor: '#3662a6', height: `${ageStats.over*100}%`}"></div>
+                                <div :key="`barOver`" class="bar rounded-full w-12" :style="{backgroundColor: '#08234B', height: `${ageStats.over*100}%`}"></div>
                             </div>
                         </template>
                     </div>
@@ -25,12 +25,12 @@
                         <p class="font-medium p-4" :class="isHorizontal ? 'text-3xl w-1/6' : `text-4xl w-full text-center order-2 h-40`">U18</p>
                         <div v-if="isHorizontal" key="wrapper" class="h-full flex items-center w-5/6 relative">
                             <p class="text-2xl absolute px-4" :style="{left: `${ageStats.under*100}%`}">{{ ageStats.under*100 }}%</p>
-                            <div :key="`barUnder`" class="bar h-12" :style="{backgroundColor: '#3662a6', width: `${ageStats.under*100}%`}"></div>
+                            <div :key="`barUnder`" class="bar rounded-full h-12" :style="{backgroundColor: '#08234B', width: `${ageStats.under*100}%`}"></div>
                         </div>
                         <template v-else>
                             <div key="wrapper" class="wrapper flex flex-col items-center justify-end flex-1 h-full order-1 relative">
                                 <p class="text-2xl absolute w-full text-center py-2" :style="{bottom: `${ageStats.under*100}%`}">{{ (ageStats.under*100).toFixed(2) }}%</p>
-                                <div :key="`barUnder`" class="bar w-12" :style="{backgroundColor: '#3662a6', height: `${ageStats.under*100}%`}"></div>
+                                <div :key="`barUnder`" class="bar rounded-full w-12" :style="{backgroundColor: '#08234B', height: `${ageStats.under*100}%`}"></div>
                             </div>
                         </template>
                     </div>
