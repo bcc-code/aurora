@@ -1,6 +1,7 @@
 import { firestoreAction } from 'vuexfire'
 import { db } from '@/data/db'
 import Api from '@/utils/api';
+
 export default {
     namespaced: true,
     state: {
@@ -8,6 +9,8 @@ export default {
         questions: [],
         answers: [],
         stats: {},
+        ageStats: {},
+        eventId: null,
     },
     mutations: {
         setSelectedQuestionId: (state, value) => {
@@ -78,7 +81,11 @@ export default {
         }),
         bindStatsRef: firestoreAction(context => {
             return context.bindFirestoreRef('stats', context.getters.statsRef)
-        })
+        }),
+        bindAgeStatsRef: firestoreAction((context, eventID) => {
+            context.state.eventId = eventID
+            return context.bindFirestoreRef('ageStats', context.getters.ageStatsRef)
+        }),
     },
     getters: {
         questionsRef: (_s, _g, _r, rootGetters) => {
@@ -118,6 +125,13 @@ export default {
         },
         statsRef: (_s, _g, _r, rootGetters) => {
             return rootGetters['events/eventRef'].collection('gameboard').doc('pollSummary')
+        },
+        ageStatsRef: (state, _g, _r) => {
+            let r = db.doc(`events/${state.eventId}/stats/poll-by-age`)
+            return r
+        },
+        ageStats: (state, _g, _r, _rootGetters) => {
+            return state.ageStats;
         },
     }
 }

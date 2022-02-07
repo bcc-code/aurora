@@ -89,6 +89,15 @@ async function collectionResults() {
     return total.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 }
 
+async function updateAgeBasedPollResults(eventID) {
+    let results = await sendRequestRaw("GET", `${keys.API.BASE_PATH_V2}api/updatepollstatsbyage?EventID=${eventID}`);
+    if (results.status != 200) {
+        console.error(results);
+        return
+    }
+}
+
+
 async function createSubclip(assetId, title, tsin, tsout) {
     let results = await sendRequestRaw("POST", `${keys.API.BASE_PATH_V2}api/subclip`, {
         in: tsin,
@@ -122,15 +131,16 @@ axios.interceptors.response.use(
 export default {
     approveCompetitionEntry,
     collectionResults,
+    createSubclip,
     deleteEvent,
     deleteQuestion,
     exportData,
     importData,
     listExports,
     pickWinner,
+    sendRequestRaw,
     startPoll,
+    updateAgeBasedPollResults,
     updateResponsesStats,
     updateUserCount,
-    sendRequestRaw,
-    createSubclip,
 };

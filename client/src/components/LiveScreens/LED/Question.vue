@@ -131,8 +131,8 @@ export default {
         async updateStats() {
             await Api.updateResponsesStats(this.event.id, this.options.question.id)
                 .then((result) => {
-                    this.stats = result.data;
-                });
+                        this.stats = result.data;
+                        });
         },
         answerStats(answerId) {
             var answer = this.stats;

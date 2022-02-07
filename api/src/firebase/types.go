@@ -13,3 +13,6 @@ type BTVAppConfig struct {
 	MinAppVersion          string                 `firestore:"minAppVersion"`
 	ShowMaintenanceMessage bool                   `firestore:"showMaintenanceMessage"`
 }
+
+// TranslatedText in firebase
+type TranslatedText map[string]string
