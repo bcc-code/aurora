@@ -39,12 +39,10 @@ if (!auroraConfig) {
     throw new Error("Config not present")
 }
 
-const rawConfigString = auroraConfig.functionconfig as string
-if (!rawConfigString) {
+export const config = auroraConfig.functionconfig as Config
+if (!config) {
     throw new Error("Config not present")
 }
-
-export const config = JSON.parse(rawConfigString) as Config
 
 export const firebaseServiceAccount = {
     projectId: googleServiceKey.project_id,
