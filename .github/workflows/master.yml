@@ -102,10 +102,9 @@ jobs:
       working-directory: ./firebase/functions
       run: |
         cp -v "example.runtimeconfig.json" ".runtimeconfig.json"
-        npm i
-        npm test
-        rm firebase/functions/.runtimeconfig.json
         npm ci
+        npm test
+        rm .runtimeconfig.json
         npm run build
     - name: deploy to firebase
       uses: w9jds/firebase-action@master
