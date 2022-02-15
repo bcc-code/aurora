@@ -4,9 +4,6 @@ on:
   push:
     branches: [ develop, master ]
     tags: [ v* ]
-    #    paths:
-    # - 'firebase/**'
-    # - 'client/**'
 
 jobs:
   client:
