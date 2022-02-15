@@ -26,8 +26,10 @@ func (s Server) UpdatePollStatsByAge(c *gin.Context) {
 		return
 	}
 
+	cutoff := 18
+
 	ctx := c.Request.Context()
-	under, over, err := firebase.GetAgePercentages(ctx, s.fs, q.EventID, 18)
+	under, over, err := firebase.GetAgePercentages(ctx, s.fs, q.EventID, cutoff)
 
 	if err != nil {
 		log.L.Error().
@@ -38,12 +40,12 @@ func (s Server) UpdatePollStatsByAge(c *gin.Context) {
 		return
 	}
 
-	err = firebase.WritePollAgeStats(ctx, s.fs, "1001", 18, over, under)
+	err = firebase.WritePollAgeStats(ctx, s.fs, q.EventID, cutoff, over, under)
 	if err != nil {
 		fmt.Printf("%+v", err)
 		log.L.Error().
 			Err(err).
-			Str("EventId", "1001").
+			Str("EventId", q.EventID).
 			Msg("Error saving data")
 		c.AbortWithStatus(http.StatusInternalServerError)
 	}
