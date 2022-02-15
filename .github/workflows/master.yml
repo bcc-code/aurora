@@ -35,8 +35,6 @@ jobs:
         target: "client/src/configs/config.json"
     - name: Grant write permissions to config file
       run: |
-        sudo chmod 777 firebase/functions/src/configs/config.json
-        sudo chmod 777 firebase/functions/firebase-key.json
         sudo chmod 777 client/src/configs/config.json
     - name: Replace config tokens
       uses: microsoft/variable-substitution@v1
