@@ -55,11 +55,7 @@ const withBucket = (db: firebaseAdmin.firestore.Firestore, bucket: Bucket, f : H
 }
 
 const log = logger('index')
-
-const firebaseApp = firebaseAdmin.initializeApp({
-    credential: firebaseAdmin.credential.cert(config.firebaseServiceAccount),
-    databaseURL: `https://${config.firebaseServiceAccount.projectId}.firebaseio.com`,
-})
+const firebaseApp = firebaseAdmin.initializeApp({})
 
 const impExBucket = firebaseApp.storage().bucket(config.app.impexBucket);
 

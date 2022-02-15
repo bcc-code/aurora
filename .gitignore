@@ -18,3 +18,5 @@ coverage
 
 tmp
 .env
+
+.runtimeconfig.json
