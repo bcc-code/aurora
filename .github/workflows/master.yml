@@ -61,6 +61,19 @@ jobs:
         files: "**/firebase.json"
       env:
         hosting.site: ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
+    - name: Copy client config file
+      uses: canastro/copy-action@0.0.2
+      with:
+        source: "firebase/functions/example.runtimeconfig.json"
+        target: "firebase/functions/.runtimeconfig.json"
+    - name: Run tests
+      working-directory: ./firebase/functions
+      run: |
+        npm i
+        npm test
+    - name: Grant write permissions to config file
+      run: |
+        rm firebase/functions/.runtimeconfig.json
     - name: npm install and build (client)
       working-directory: ./client
       run: |
