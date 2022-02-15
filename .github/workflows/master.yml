@@ -4,9 +4,12 @@ on:
   push:
     branches: [ develop, master ]
     tags: [ v* ]
+    #    paths:
+    # - 'firebase/**'
+    # - 'client/**'
 
 jobs:
-  build:
+  client:
     runs-on: ubuntu-latest
     env:
       ENV: DEV
@@ -30,7 +33,6 @@ jobs:
         echo "ENVIRONMENT=PROD" >> $GITHUB_ENV
     - name: Fix up files for CI
       run: |
-        cp -v "firebase/functions/example.runtimeconfig.json" "firebase/functions/.runtimeconfig.json"
         cp -v "client/src/configs/config.json.template" "client/src/configs/config.json"
         sudo chmod 0666 client/src/configs/config.json
     - name: Replace config tokens
@@ -58,28 +60,60 @@ jobs:
         files: "**/firebase.json"
       env:
         hosting.site: ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
-    - name: Run tests
-      working-directory: ./firebase/functions
-      run: |
-        npm i
-        npm test
-    - name: Grant write permissions to config file
-      run: |
-        rm firebase/functions/.runtimeconfig.json
     - name: npm install and build (client)
       working-directory: ./client
-      run: |
-        npm ci
-        npm run build
-    - name: npm install and build (functions)
-      working-directory: ./firebase/functions
       run: |
         npm ci
         npm run build
     - name: deploy to firebase
       uses: w9jds/firebase-action@master
       with:
-        args: deploy --project ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
+        args: deploy --project ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }} --only hosting
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+        PROJECT_PATH: ./firebase
+
+  functions:
+    runs-on: ubuntu-latest
+    env:
+      ENV: DEV
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js 12.x
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+    - name: Set ENV to DEV
+      if: endsWith(github.ref, '/develop')
+      run: |
+        echo "ENVIRONMENT=DEV" >> $GITHUB_ENV
+    - name: Set ENV to STAGE
+      if: endsWith(github.ref, '/master')
+      run: |
+        echo "ENVIRONMENT=STAGE" >> $GITHUB_ENV
+    - name: Set ENV to PROD
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        echo "ENVIRONMENT=PROD" >> $GITHUB_ENV
+    - name: Replace firebase.json tokens
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: "**/firebase.json"
+      env:
+        hosting.site: ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
+    - name: Run tests
+      working-directory: ./firebase/functions
+      run: |
+        cp -v "firebase/functions/example.runtimeconfig.json" "firebase/functions/.runtimeconfig.json"
+        npm i
+        npm test
+        rm firebase/functions/.runtimeconfig.json
+        npm ci
+        npm run build
+    - name: deploy to firebase
+      uses: w9jds/firebase-action@master
+      with:
+        args: deploy --only functions --project ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
       env:
         FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
         PROJECT_PATH: ./firebase
