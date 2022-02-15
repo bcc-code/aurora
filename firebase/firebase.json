@@ -51,6 +51,7 @@
 		"ignore": [
 			"firebase-key.json",
 			"firebase.json",
+			".runtimeconfig.json",
 			"**/.*",
 			"**/node_modules/**"
 		]

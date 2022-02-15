@@ -1,4 +1,3 @@
-import * as googleServiceKey from '../firebase-key.json'
 import * as functions from 'firebase-functions'
 
 interface Config {
@@ -43,14 +42,6 @@ export const config = auroraConfig.functionconfig as Config
 if (!config) {
     throw new Error("Config not present")
 }
-
-export const firebaseServiceAccount = {
-    projectId: googleServiceKey.project_id,
-    clientEmail: googleServiceKey.client_email,
-    privateKey: googleServiceKey.private_key.replace(/\\n/g, '\n'),
-}
-
-config.firebaseServiceAccount = firebaseServiceAccount;
 
 export function delay(ms: number) : Promise<void> {
     return new Promise( resolve => setTimeout(resolve, ms) );

@@ -1,0 +1,31 @@
+{
+  "aurora": {
+    "functionconfig": {
+      "auth0": {
+        "apiAudience": "<REPLACE>",
+        "domain": "login.bcc.no",
+        "clientSecret": "<REPLACE>",
+        "clientId": "<REPLACE>"
+      },
+      "api": {
+        "baseUrl": "http://localhost:5001/brunstadtv-online-dev/europe-west1/",
+        "baseUrlV2": "http://localhost:8000/",
+        "key": "<REPLACE>"
+      },
+      "app": {
+        "donationsUrl": "<REPLACE>",
+        "baseUrl": "http://localhost:8080/",
+        "instance": "LOCAL",
+        "name": "Aurora | LOCAL",
+        "donationsApiKey": "<REPLACE>",
+        "impexBucket": "<REPLACE>",
+        "id": "aurora-app",
+        "sharedApiKey": "<REPLACE>"
+      },
+      "firebase": {"REPLACE": "OBJECT"},
+      "members": {
+        "apiKey": "<REPLACE>"
+      }
+    }
+  }
+}

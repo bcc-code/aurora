@@ -49,6 +49,9 @@ service cloud.firestore {
     }
     match /events/{eventId} {
       allow get: if isLoggedIn();
+      match /stats/{statsId=**} {
+        allow list, get: if isServiceAccount();
+	  }
       match /checkins/{checkinId} {
         allow get: if isPerson(checkinId) || isPerson(resource.data.checkedInBy) || resource == null;
         allow list: if isServiceAccount();
