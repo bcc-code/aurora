@@ -28,14 +28,11 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/v')
       run: |
         echo "ENVIRONMENT=PROD" >> $GITHUB_ENV
-    - name: Copy client config file
-      uses: canastro/copy-action@0.0.2
-      with:
-        source: "client/src/configs/config.json.template"
-        target: "client/src/configs/config.json"
-    - name: Grant write permissions to config file
+    - name: Fix up files for CI
       run: |
-        sudo chmod 777 client/src/configs/config.json
+        cp -v "firebase/functions/example.runtimeconfig.json" "firebase/functions/.runtimeconfig.json"
+        cp -v "client/src/configs/config.json.template" "client/src/configs/config.json"
+        sudo chmod 0666 client/src/configs/config.json
     - name: Replace config tokens
       uses: microsoft/variable-substitution@v1
       with:
@@ -61,11 +58,6 @@ jobs:
         files: "**/firebase.json"
       env:
         hosting.site: ${{ secrets[format('{0}_FIREBASE_PROJECT_ID', env.ENVIRONMENT)] }}
-    - name: Copy client config file
-      uses: canastro/copy-action@0.0.2
-      with:
-        source: "firebase/functions/example.runtimeconfig.json"
-        target: "firebase/functions/.runtimeconfig.json"
     - name: Run tests
       working-directory: ./firebase/functions
       run: |
