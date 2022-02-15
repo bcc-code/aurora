@@ -101,7 +101,7 @@ jobs:
     - name: Run tests
       working-directory: ./firebase/functions
       run: |
-        cp -v "firebase/functions/example.runtimeconfig.json" "firebase/functions/.runtimeconfig.json"
+        cp -v "example.runtimeconfig.json" ".runtimeconfig.json"
         npm i
         npm test
         rm firebase/functions/.runtimeconfig.json
