@@ -1,17 +1,8 @@
 import test from "ava"
-import { firestore, initializeApp } from "firebase-admin"
 import { checkinStateless } from "../src/handlers/checkin"
 import { createResponse, createRequest } from "node-mocks-http";
-import { randomBytes } from "crypto";
-import { generateConfig, generateEvent, generateUser, setEventInProgress } from "./utils"
+import { generateConfig, generateEvent, generateUser, setEventInProgress, getAuthedFirestore  } from "./utils"
 import { delay } from "../src/utils"
-
-function getAuthedFirestore() {
-    const appId = randomBytes(20).toString('hex')
-    const projectId = randomBytes(20).toString('hex')
-    const app = initializeApp({projectId}, appId)
-    return firestore(app)
-}
 
 const user = { 'https://login.bcc.no/claims/personId': '123' }
 

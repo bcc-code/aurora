@@ -9,35 +9,44 @@ import { IUser } from '../types/user'
 
 const log = logger('pollHandler')
 
-interface submitPollResponseReq {
-    eventId: string,
-    startAfter: string,
-    limit: string,
-    answeringPersonId?: string,
+interface submitPollBody {
+    questionId: string,
+    selectedAnswers: string[],
 }
 
 export async function submitPollResponse(
     db: firestore.Firestore,
-    req: Request<ParamsDictionary, ParamsDictionary, ParamsDictionary, submitPollResponseReq>,
-    res: Response
+    req: Request,
+    res: Response,
 ): Promise<void> {
     log.debug("submitPollResponse")
     if (!req.query.eventId) {
         res.status(404).json({"message": "missing event id"}).end()
         return
     }
-    const eventModel = new EventModel(db, req.query.eventId)
-    const userModel = new UserModel(db)
 
-    const authPersonId = getPersonId(req)
-    if (!authPersonId) {
+    let authPersonId : string
+    try {
+        authPersonId =  getPersonId(req)
+    } catch(e) {
+        console.warn(e)
         res.status(401).end()
         return
     }
 
+    const body = req.body as submitPollBody;
+    if (!body.questionId || !body.selectedAnswers) {
+        res.json({"message": "Missing questionId or selectedAnswers"})
+            .status(400).end()
+        return
+    }
+
+    const eventModel = new EventModel(db, req.query.eventId as string)
+    const userModel = new UserModel(db)
+
     let answeringPersonId = authPersonId;
     if (req.query.answeringPersonId) {
-        answeringPersonId = req.query.answeringPersonId
+        answeringPersonId = req.query.answeringPersonId as string
     }
 
     const userDoc = await userModel.userRef(answeringPersonId).get()
@@ -61,12 +70,13 @@ export async function submitPollResponse(
         }
     }
 
+
     try {
         log.debug(`Recording answer for answeringPersonId: ${answeringPersonId}, authPersonId: ${authPersonId}`);
         await eventModel.poll.setPollResponse(
             userDoc,
-            req.body.questionId,
-            req.body.selectedAnswers as unknown as string[],
+            body.questionId,
+            body.selectedAnswers,
         )
     } catch (err) {
         log.error(err)
@@ -85,7 +95,8 @@ export async function pickWinner(
     log.debug("pickWinner")
     const eventModel = new EventModel(db, req.query.eventId as string)
     const result = await eventModel.poll.pickRandomWinner(req.query.questionId as string)
-    return res.json(result).end()
+    res.json(result).end()
+    return
 }
 
 export async function updatePollStats(
@@ -95,16 +106,17 @@ export async function updatePollStats(
 ): Promise<void> {
     log.debug("updatePollStats")
     if (req.query.questionId === null) {
-        return res
+        res
             .status(400)
             .send({ message: "Required parameter 'questionId' not specified." })
             .end()
+        return
     }
 
     const eventModel = new EventModel(db, req.query.eventId as string)
     console.log(eventModel.eventRef.id);
     const result = await eventModel.poll.updatePollStats(req.query.questionId as string)
-    return res.json(result).end()
+    res.json(result).end()
 }
 
 export async function startPoll(
@@ -114,16 +126,17 @@ export async function startPoll(
 ): Promise<void> {
     log.debug("startPoll")
     if (req.body.questionIds === null) {
-        return res
+        res
             .status(400)
             .send({
                 message: "Required parameter 'questionIds' not specified.",
             })
             .end()
+        return
     }
     const eventModel = new EventModel(db, req.query.eventId as string)
     const result = await eventModel.poll.startPolls(req.body.questionIds as unknown as string[])
-    return res.json(result).end()
+    res.json(result).end()
 }
 
 export async function pollClearAll(
@@ -134,5 +147,5 @@ export async function pollClearAll(
     log.debug("pollClearAll")
     const eventModel = new EventModel(db, req.query.eventId as string)
     const result = await eventModel.poll.pollClearAll()
-    return res.json(result).end()
+    res.json(result).end()
 }

@@ -1,5 +1,13 @@
-import { firestore } from "firebase-admin"
+import { firestore, initializeApp } from "firebase-admin"
 import { randomBytes } from "crypto";
+
+export function getAuthedFirestore() : FirebaseFirestore.Firestore {
+    const appId = randomBytes(20).toString('hex')
+    const projectId = randomBytes(20).toString('hex')
+    const app = initializeApp({projectId}, appId)
+    return firestore(app)
+}
+
 
 export async function generateConfig(db : firestore.Firestore) : Promise<void> {
     await db.collection('configs').doc('brunstadtv-app').set({
@@ -80,6 +88,22 @@ function NewUser(id : number) {
     }
 }
 
+function NewMultipleChoiceQuestion(id : number, allowChanges: boolean) {
+    return {
+        canChangeAnswer: allowChanges,
+        defaultAnswer: null,
+        defaultAnswerId: null,
+        id: id.toFixed(),
+        initialized: true,
+        order: 6,
+        slider: {},
+        texts: {
+            "no": "Cillum nulla Lorem consectetur ad et fugiat consectetur aliquip sint sit laborum. Nostrud magna nostrud commodo nisi quis occaecat in esse est reprehenderit."
+        },
+        type: "multiple-choice"
+    }
+}
+
 export async function generateUser(db : firestore.Firestore) : Promise<string> {
     const id = randInt()
     const userDoc = db.collection("users").doc(id.toFixed());
@@ -103,4 +127,12 @@ export async function setEventInProgress(db : firestore.Firestore, eventId : str
     const config = db.collection("configs").doc("brunstadtv-app")
     const event = await db.collection("events").doc(eventId).get()
     await config.update({ currentEventPath: event.ref })
+}
+
+export async function generateMultipleChoiceQuestion(db : firestore.Firestore, eventId: string, allowChanges = false) : Promise<string> {
+    const id = randInt()
+    const questionDoc = db.collection(`events/${eventId}/questions`).doc(id.toFixed());
+    const q = NewMultipleChoiceQuestion(id, allowChanges)
+    await questionDoc.set(q)
+    return id.toFixed()
 }
