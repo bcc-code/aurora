@@ -204,3 +204,92 @@ test("submitPollResponse double submission ok", async t => {
 
 })
 
+test("submitPollResponse on Behalf fail", async t => {
+    // TODO: Should we check for the existance of a question.
+    // Could data inserted in this way mess with some stats or something?
+
+    const db = getAuthedFirestore()
+    const event = await generateEvent(db)
+    const u = await generateUser(db)
+    const q = await generateMultipleChoiceQuestion(db, event)
+
+    const req = createRequest(
+        {
+            user: { 'https://login.bcc.no/claims/personId': u },
+            query: {
+                eventId: event,
+                answeringPersonId: "123332",
+            },
+            body: {
+                questionId: q,
+                selectedAnswers: ["1", "2"],
+            }
+        },
+    )
+    const res = createResponse()
+    await submitPollResponse(db, req, res)
+
+    t.true(res._isEndCalled())
+    t.is(res.statusCode, 404)
+})
+
+test("submitPollResponse on Behalf fail2", async t => {
+    // TODO: Should we check for the existance of a question.
+    // Could data inserted in this way mess with some stats or something?
+
+    const db = getAuthedFirestore()
+    const event = await generateEvent(db)
+    const u = await generateUser(db)
+    const u2 = await generateUser(db)
+    const q = await generateMultipleChoiceQuestion(db, event)
+
+    const req = createRequest(
+        {
+            user: { 'https://login.bcc.no/claims/personId': u },
+            query: {
+                eventId: event,
+                answeringPersonId: u2,
+            },
+            body: {
+                questionId: q,
+                selectedAnswers: ["1", "2"],
+            }
+        },
+    )
+    const res = createResponse()
+    await submitPollResponse(db, req, res)
+
+    t.true(res._isEndCalled())
+    t.is(res.statusCode, 403)
+})
+
+test("submitPollResponse on Behalf ok", async t => {
+    // TODO: Should we check for the existance of a question.
+    // Could data inserted in this way mess with some stats or something?
+
+    const db = getAuthedFirestore()
+    const event = await generateEvent(db)
+    const u = await generateUser(db)
+    const u2 = await generateUser(db, Number(u))
+    const q = await generateMultipleChoiceQuestion(db, event)
+
+    const req = createRequest(
+        {
+            user: { 'https://login.bcc.no/claims/personId': u },
+            query: {
+                eventId: event,
+                answeringPersonId: u2,
+            },
+            body: {
+                questionId: q,
+                selectedAnswers: ["1", "2"],
+            }
+        },
+    )
+    const res = createResponse()
+    await submitPollResponse(db, req, res)
+
+    t.true(res._isEndCalled())
+    t.is(res.statusCode, 200)
+    //TODO: Check the actual data
+})

@@ -69,7 +69,7 @@ function randInt() : number {
     return Math.floor(Math.random() * 10000)
 }
 
-function NewUser(id : number) {
+function NewUser(id : number, parentId : number|null) {
     return {
         Birthdate: "1960-03-10T00:00:00",
         ChurchId: 9999,
@@ -78,7 +78,7 @@ function NewUser(id : number) {
         DisplayName: "Alien Alieno",
         FirstName: "Alient",
         GenderId: 1,
-        Guardian1Id: id,
+        Guardian1Id: parentId ?? id,
         Guardian2Id: 0,
         HasMembership: true,
         LastName: "Alieno",
@@ -104,10 +104,10 @@ function NewMultipleChoiceQuestion(id : number, allowChanges: boolean) {
     }
 }
 
-export async function generateUser(db : firestore.Firestore) : Promise<string> {
+export async function generateUser(db : firestore.Firestore, parentId: number|null = null) : Promise<string> {
     const id = randInt()
     const userDoc = db.collection("users").doc(id.toFixed());
-    await userDoc.set(NewUser(id))
+    await userDoc.set(NewUser(id, parentId))
     return id.toFixed()
 }
 
