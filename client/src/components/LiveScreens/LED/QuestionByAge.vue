@@ -64,7 +64,6 @@ export default {
         },
     },
     async mounted(){
-        await this.updateStats();
         await this.bindAgeStatsRef(this.event.id);
         console.log(this.ageStats);
         this.loaded = true
