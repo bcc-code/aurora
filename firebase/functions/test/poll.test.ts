@@ -270,7 +270,7 @@ test("submitPollResponse on Behalf ok", async t => {
     const db = getAuthedFirestore()
     const event = await generateEvent(db)
     const u = await generateUser(db)
-    const u2 = await generateUser(db, Number(u))
+    const u2 = await generateUser(db, false, Number(u))
     const q = await generateMultipleChoiceQuestion(db, event)
 
     const req = createRequest(

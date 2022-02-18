@@ -69,9 +69,9 @@ function randInt() : number {
     return Math.floor(Math.random() * 10000)
 }
 
-function NewUser(id : number, parentId : number|null) {
+function NewUser(id : number, parentId : number|null, Birthdate = "1960-03-10T00:00:00") {
     return {
-        Birthdate: "1960-03-10T00:00:00",
+        Birthdate,
         ChurchId: 9999,
         ChurchName: "New Mars",
         CountryName: "New Center",
@@ -104,11 +104,30 @@ function NewMultipleChoiceQuestion(id : number, allowChanges: boolean) {
     }
 }
 
-export async function generateUser(db : firestore.Firestore, parentId: number|null = null) : Promise<string> {
+export async function generateUser(db : firestore.Firestore, u18 = false, parentId: number|null = null) : Promise<string> {
     const id = randInt()
     const userDoc = db.collection("users").doc(id.toFixed());
-    await userDoc.set(NewUser(id, parentId))
+    await userDoc.set(NewUser(
+        id,
+        parentId,
+        u18 ? "2020-03-10T00:00:00" : "1960-03-10T00:00:00",
+    ))
+    if (parentId) {
+        await addLinkedUsers(db, parentId.toFixed(), [id])
+    }
     return id.toFixed()
+}
+
+export async function addLinkedUsers(db : firestore.Firestore, parentId: string, linkedUsers: number[]) : Promise<void> {
+    const parentRef = db.doc(`users/${parentId}`)
+    const parentDoc = await parentRef.get()
+    const d = parentDoc.data()
+
+    if (d) {
+        linkedUsers = linkedUsers.concat(d.LinkedUserIds)
+    }
+
+    await parentRef.update({LinkedUserIds: linkedUsers})
 }
 
 export async function generateEvent(db : firestore.Firestore) : Promise<string> {

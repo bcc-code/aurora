@@ -15,14 +15,29 @@ export async function updateProfileImage(
     const userModel = new UserModel(db)
     const personId: string | null = getPersonId(req)
     if (!personId) {
-        return res.sendStatus(404).end()
+        res.sendStatus(404).end()
+        return
     }
+
+    const body = req.body as {
+        url?: string,
+        thumbnailUrl?: string
+    }
+
+    if (!body.url) {
+        res.sendStatus(400)
+            .json({message: "missing url"})
+            .end()
+        return
+    }
+
     await userModel.updateProfileImageUrl(
         personId,
-        req.body.url,
-        req.body.thumbnailUrl
+        body.url,
+        body.thumbnailUrl
     )
-    return res.sendStatus(200).end()
+
+    res.sendStatus(200).end()
 }
 
 export async function getProfileImage(
@@ -34,13 +49,25 @@ export async function getProfileImage(
     const userModel = new UserModel(db)
     const personId: string | null = getPersonId(req)
     if (!personId) {
-        return res.sendStatus(404).end()
+        res.sendStatus(404).end()
+        return
     }
 
     const personData = await userModel.userRef(personId).get()
     const profileImageUrl = personData.data()?.ProfilePicture ?? '' // TODO: Placeholder
     log.debug("getProfileImage - end")
-    return res.status(200).send({ profilePictureUrl: profileImageUrl }).end()
+    res.status(200).send({ profilePictureUrl: profileImageUrl }).end()
+}
+
+function getAge(dateString : string) : number{
+    const today = new Date();
+    const birthDate = new Date(dateString);
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const  m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        return age - 1;
+    }
+    return age;
 }
 
 export async function getLinkedUsers(
@@ -51,18 +78,23 @@ export async function getLinkedUsers(
     log.debug("getLinkedUsers - start")
     const personId = getPersonId(req)
     if (!personId) {
-        return res.sendStatus(404).end()
+        res.sendStatus(404).end()
+        return
     }
 
     const userModel = new UserModel(db)
     const personData = (await userModel.userRef(personId).get()).data() as IUser
     if (!personData.LinkedUserIds) {
-        return res.status(200).json({LinkedUsers: []}).end()
+        res.status(200).json({LinkedUsers: []}).end()
+        return
     }
 
-    const linkedUsers : Array<IUser> = await Promise.all(personData.LinkedUserIds.map(
+    let linkedUsers : Array<IUser> = await Promise.all(personData.LinkedUserIds.map(
         async (linkedId) => ((await userModel.userRef(linkedId.toFixed()).get()).data() as IUser)
     ))
+
+    linkedUsers = linkedUsers.filter(u => getAge(u.Birthdate || "") < 18)
     log.debug("getLinkedUsers - end")
-    return res.status(200).json({linkedUsers}).end()
+    res.status(200).json({linkedUsers}).end()
+    return
 }
