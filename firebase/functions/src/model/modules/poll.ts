@@ -186,11 +186,17 @@ export class PollModule extends Module {
             age = ageFromDate(new Date(userData.Birthdate))
         } catch(e) {} // Ignore if user has no birthdate
 
+        let churchId = -1
+        try {
+            churchId = userData.ChurchId as number
+        } catch(e) {/* ignore errors */}
+
         const response = {
             personId: personId,
             question: questionId,
             selected: selectedAnswers,
             personAge: age,
+            churchId,
             submittedBy
         }
 
