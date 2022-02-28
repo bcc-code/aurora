@@ -186,6 +186,7 @@ func main() {
 	apiGrp.GET("donationstatus", server.GetCollectionResults)
 	apiGrp.POST("subclip", server.CreateSubclip)
 	apiGrp.GET("updatepollstatsbyage", server.UpdatePollStatsByAge)
+	apiGrp.GET("updatepollstatsbychurch", server.UpdatePollStatsByChurch)
 
 	// /analytics/ is protected by a (set) of API keys. It is meant to be used by the
 	// transformers in rudderstack

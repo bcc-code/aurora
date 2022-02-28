@@ -51,3 +51,41 @@ func (s Server) UpdatePollStatsByAge(c *gin.Context) {
 	}
 	c.AbortWithStatus(http.StatusNoContent)
 }
+
+// UpdatePollStatsByChurch regenerates stats based on the church
+func (s Server) UpdatePollStatsByChurch(c *gin.Context) {
+	q := eventIDQuery{}
+	err := c.ShouldBindQuery(&q)
+
+	if err != nil {
+		log.L.Error().
+			Err(err).
+			Msg("Error binding")
+		c.AbortWithStatus(http.StatusBadRequest)
+		return
+	}
+
+	ctx := c.Request.Context()
+	stats, err := firebase.GetPollChurchPercentages(ctx, s.fs, q.EventID)
+
+	if err != nil {
+		log.L.Error().
+			Err(err).
+			Str("EventId", q.EventID).
+			Msg("Error calculating percentages")
+		c.AbortWithStatus(http.StatusInternalServerError)
+		return
+	}
+
+	top10 := 10
+	err = firebase.WritePollChurchesStats(ctx, s.fs, q.EventID, top10, stats)
+	if err != nil {
+		fmt.Printf("%+v", err)
+		log.L.Error().
+			Err(err).
+			Str("EventId", q.EventID).
+			Msg("Error saving data")
+		c.AbortWithStatus(http.StatusInternalServerError)
+	}
+	c.AbortWithStatus(http.StatusNoContent)
+}

@@ -3,6 +3,7 @@ package firebase
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	"cloud.google.com/go/firestore"
 	"github.com/ansel1/merry/v2"
@@ -15,6 +16,7 @@ type PollResponse struct {
 	PersonID  int      `firestore:"personId"`
 	Question  string   `firestore:"question"`
 	Selected  []string `firestore:"selected"`
+	ChurchID  int      `firestore:"churchId"`
 }
 
 // PollQuestion represents a FB poll question
@@ -202,6 +204,108 @@ func WritePollAgeStats(ctx context.Context, client *firestore.Client, eventID st
 	}
 	doc := client.Doc(fmt.Sprintf("events/%s/stats/poll-by-age", eventID))
 	_, err := doc.Set(ctx, data)
+	err = merry.Wrap(err)
+	return err
+}
+
+type chruchStats struct {
+	Correct   int
+	Total     int
+	Percetage float64
+	ChurchID  int
+}
+
+func (s *chruchStats) IncTotal() {
+	s.Total++
+}
+
+func (s *chruchStats) IncCorrect() {
+	s.Correct++
+}
+
+func (s *chruchStats) CalculatePercentage() float64 {
+	if s.Total == 0 {
+		s.Percetage = 0
+	} else {
+		s.Percetage = float64(s.Correct) / float64(s.Total)
+	}
+	return s.Percetage
+}
+
+func (s chruchStats) ToMap() map[string]interface{} {
+	return map[string]interface{}{
+		"total":     s.Total,
+		"correct":   s.Correct,
+		"churchId":  s.ChurchID,
+		"percetage": s.Percetage,
+	}
+}
+
+// GetPollChurchPercentages calculates how many responses were correct by church
+func GetPollChurchPercentages(ctx context.Context, client *firestore.Client, eventID string) (map[int]*chruchStats, error) {
+	responses, err := getAllResponsesForEvent(ctx, client, eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	answers, err := GetCorrectAnswersMap(ctx, client, eventID)
+	if err != nil {
+		return nil, err
+	}
+
+	stats := map[int]*chruchStats{}
+
+	for _, r := range responses {
+		if len(r.Selected) != 1 {
+			// This stats makes no sense if you can select more than 1 answer
+			continue
+		}
+
+		if _, ok := stats[r.ChurchID]; !ok {
+			stats[r.ChurchID] = &chruchStats{
+				ChurchID: r.ChurchID,
+			}
+		}
+
+		stats[r.ChurchID].IncTotal()
+		if _, ok := answers[r.Question]; ok {
+			stats[r.ChurchID].IncCorrect()
+		}
+	}
+
+	return stats, nil
+}
+
+// WritePollChurchesStats into firebase
+func WritePollChurchesStats(ctx context.Context, client *firestore.Client, eventID string, topHowMany int, stats map[int]*chruchStats) error {
+	if stats == nil {
+		return nil
+	}
+
+	toSort := []*chruchStats{}
+
+	for _, s := range stats {
+		s.CalculatePercentage()
+		toSort = append(toSort, s)
+	}
+
+	sort.Slice(toSort, func(i, j int) bool {
+		return toSort[i].Percetage < toSort[j].Percetage
+	})
+
+	if len(toSort) < topHowMany {
+		topHowMany = len(toSort)
+	}
+
+	topX := toSort[0:topHowMany]
+
+	asMap := map[string]interface{}{}
+	for i, s := range topX {
+		asMap[fmt.Sprintf("%d", i)] = s.ToMap()
+	}
+
+	doc := client.Doc(fmt.Sprintf("events/%s/stats/poll-by-church", eventID))
+	_, err := doc.Set(ctx, asMap)
 	err = merry.Wrap(err)
 	return err
 }
