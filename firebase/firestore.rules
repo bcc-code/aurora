@@ -11,15 +11,15 @@ service cloud.firestore {
     function isGuardianOf() {
       return
         (
-        "guardian1Id" in get(/databases/$(database)/documents/users/$(resource.data.personId)).data &&
-        get(/databases/$(database)/documents/users/$(resource.data.personId)).data.guardian1Id == request.auth.token.personId
+        "Guardian1Id" in get(/databases/$(database)/documents/users/$(resource.data.personId)).data &&
+        string(get(/databases/$(database)/documents/users/$(resource.data.personId)).data.Guardian1Id) == request.auth.token.personId
         ) || (
-        "guardian2Id" in get(/databases/$(database)/documents/users/$(resource.data.personId)).data &&
-        get(/databases/$(database)/documents/users/$(resource.data.personId)).data.guardian2Id == request.auth.token.personId
+        "Guardian2Id" in get(/databases/$(database)/documents/users/$(resource.data.personId)).data &&
+        string(get(/databases/$(database)/documents/users/$(resource.data.personId)).data.Guardian2Id) == request.auth.token.personId
         )
     }
     function isPerson(personId) {
-      return request.auth.token.personId == personId;
+      return request.auth.token.personId == string(personId);
     }
     function isLoggedIn() {
       return request.auth != null;
@@ -89,9 +89,9 @@ service cloud.firestore {
       }
       match /responses/{responseId=**} {
         allow read: if isServiceAccount()
+                    || resource == null
                     || isPerson(resource.data.personId)
-                    || isGuardianOf()
-                    || resource == null;
+                    || isGuardianOf();
       }
       match /screens/{screenId=**} {
         allow read, write: if isServiceAccount();
