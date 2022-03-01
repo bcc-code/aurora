@@ -10,6 +10,7 @@ import FeedPicturesGrid from '@/components/LiveScreens/LED/FeedPicturesGrid'
 import WorldMap from '@/components/LiveScreens/LED/World'
 import Question from '@/components/LiveScreens/LED/Question'
 import QuestionResultsByAge from '@/components/LiveScreens/LED/QuestionByAge'
+import QuestionResultsByChurch from '@/components/LiveScreens/LED/QuestionByChurch'
 import Inquiry from '@/components/LiveScreens/LED/Inquiry'
 import BukGames from '@/components/LiveScreens/LED/BUKGames/Leaderboard'
 import Wwr from '@/components/LiveScreens/LED/WWR'
@@ -31,6 +32,7 @@ export default {
         ProfilePictures,
         Question,
         QuestionResultsByAge,
+        QuestionResultsByChurch,
         WorldMap,
         Wwr,
     },
@@ -64,6 +66,11 @@ export default {
             if (this.screen.options.question.view == 'responses_by_age') {
                 return "QuestionResultsByAge"
             }
+
+            if (this.screen.options.question.view == 'responses_by_church') {
+                return "QuestionResultsByChurch"
+            }
+
             return `${component}${showView && this.options && this.options.view ? '-' + this.options.view : ''}`;
         }
     },

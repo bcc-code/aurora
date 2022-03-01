@@ -91,7 +91,15 @@ async function collectionResults() {
 
 async function updateAgeBasedPollResults(eventID) {
     let results = await sendRequestRaw("GET", `${keys.API.BASE_PATH_V2}api/updatepollstatsbyage?EventID=${eventID}`);
-    if (results.status != 200) {
+    if (results.status < 200 || results.status > 299 ) {
+        console.error(results);
+        return
+    }
+}
+
+async function updateChurchBasedPollResults(eventID) {
+    let results = await sendRequestRaw("GET", `${keys.API.BASE_PATH_V2}api/updatepollstatsbychurch?EventID=${eventID}`);
+    if (results.status < 200 || results.status > 299 ) {
         console.error(results);
         return
     }
@@ -141,6 +149,7 @@ export default {
     sendRequestRaw,
     startPoll,
     updateAgeBasedPollResults,
+    updateChurchBasedPollResults,
     updateResponsesStats,
     updateUserCount,
 };

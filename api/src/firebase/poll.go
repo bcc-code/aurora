@@ -234,10 +234,10 @@ func (s *chruchStats) CalculatePercentage() float64 {
 
 func (s chruchStats) ToMap() map[string]interface{} {
 	return map[string]interface{}{
-		"total":     s.Total,
-		"correct":   s.Correct,
-		"churchId":  s.ChurchID,
-		"percetage": s.Percetage,
+		"total":      s.Total,
+		"correct":    s.Correct,
+		"churchId":   s.ChurchID,
+		"percentage": s.Percetage,
 	}
 }
 
@@ -266,9 +266,8 @@ func GetPollChurchPercentages(ctx context.Context, client *firestore.Client, eve
 				ChurchID: r.ChurchID,
 			}
 		}
-
 		stats[r.ChurchID].IncTotal()
-		if _, ok := answers[r.Question]; ok {
+		if aid, ok := answers[r.Question]; ok && r.Selected[0] == aid {
 			stats[r.ChurchID].IncCorrect()
 		}
 	}
@@ -290,7 +289,8 @@ func WritePollChurchesStats(ctx context.Context, client *firestore.Client, event
 	}
 
 	sort.Slice(toSort, func(i, j int) bool {
-		return toSort[i].Percetage < toSort[j].Percetage
+		return toSort[i].Percetage > toSort[j].Percetage || (toSort[i].Percetage == toSort[j].Percetage &&
+			toSort[i].ChurchID < toSort[j].ChurchID)
 	})
 
 	if len(toSort) < topHowMany {

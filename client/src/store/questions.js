@@ -10,6 +10,7 @@ export default {
         answers: [],
         stats: {},
         ageStats: {},
+        churchStats: {},
         eventId: null,
     },
     mutations: {
@@ -86,6 +87,10 @@ export default {
             context.state.eventId = eventID
             return context.bindFirestoreRef('ageStats', context.getters.ageStatsRef)
         }),
+        bindChurchStatsRef: firestoreAction((context, eventID) => {
+            context.state.eventId = eventID
+            return context.bindFirestoreRef('churchStats', context.getters.churchStatsStatsRef)
+        }),
     },
     getters: {
         questionsRef: (_s, _g, _r, rootGetters) => {
@@ -132,6 +137,13 @@ export default {
         },
         ageStats: (state, _g, _r, _rootGetters) => {
             return state.ageStats;
+        },
+        churchStatsStatsRef: (state, _g, _r) => {
+            let r = db.doc(`events/${state.eventId}/stats/poll-by-church`)
+            return r
+        },
+        churchStats: (state, _g, _r, _rootGetters) => {
+            return state.churchStats;
         },
     }
 }

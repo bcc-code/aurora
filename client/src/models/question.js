@@ -3,6 +3,7 @@ export const LEDQuestionViews = {
     RESPONSES: 'responses',
     WINNER: 'winner',
     RESPONSES_BY_AGE: 'responses_by_age',
+    RESPONSES_BY_CHURCH: 'responses_by_church',
 }
 
 export const ScreenAQuestionViews = {
