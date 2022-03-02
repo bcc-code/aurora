@@ -1,15 +1,15 @@
 export default {
     methods: {
         churchAndCountry(user) {
-            return `${user.churchName}${this.hasChurchAndCountry(user) ? ', ' : ''}${user.countryName}`
+            return `${user.ChurchName}${this.hasChurchAndCountry(user) ? ', ' : ''}${user.CountryName}`
         },
         hasChurchAndCountry(user){
-            return user.churchName != null && user.countryName != null && user.countryName.length > 0
+            return user.ChurchName != null && user.CountryName != null && user.CountryName.length > 0
         },
         displayName(user){
-            return user.displayName == null 
-                ? `${user.firstName} ${user.lastName}`
-                : user.displayName
+            return user.DisplayName == null
+                ? `${user.FirstName} ${user.LastName}`
+                : user.DisplayName
         },
     }
 }

@@ -11,7 +11,7 @@
                         <div class="flex-1 flex items-center h-full w-full absolute inset-0">
                             <div class="w-full flex items-center justify-start h-full">
                                 <div class="absolute inset-y-0 left-0 flex items-center">
-                                    <p class="text-5xl p-8">Winner: {{options.question.winner.displayName}}</p>
+                                    <p class="text-5xl p-8">Winner: {{options.question.winner.DisplayName}}</p>
                                 </div>
                             </div>
                         </div>
