@@ -70,14 +70,17 @@ func getAllResponsesForEvent(ctx context.Context, client *firestore.Client, even
 	return out, nil
 }
 
+// AnswerMap between question ID and correct answer IDs
+type AnswerMap map[string](map[string]bool)
+
 // GetCorrectAnswersMap returns a map of QuestionID => CorrectAnswerID for quickly validating if
 // answers and qustion ID combos are correct.
-func GetCorrectAnswersMap(ctx context.Context, client *firestore.Client, eventID string) (map[string]string, error) {
+func GetCorrectAnswersMap(ctx context.Context, client *firestore.Client, eventID string) (AnswerMap, error) {
 	if eventID == "" {
 		return nil, merry.Errorf("Empty event ID")
 	}
 
-	out := map[string]string{}
+	out := AnswerMap{}
 	questions := client.Collection(fmt.Sprintf("events/%s/questions", eventID)).Documents(ctx)
 	defer questions.Stop()
 
@@ -96,24 +99,26 @@ func GetCorrectAnswersMap(ctx context.Context, client *firestore.Client, eventID
 			return nil, err
 		}
 
-		answerID, err := GetCorrectAnswerID(ctx, client, eventID, pq.ID)
+		correctAnswers, err := GetCorrectAnswerID(ctx, client, eventID, pq.ID)
 		if err != nil {
 			return nil, err
 		}
 
-		out[pq.ID] = answerID
+		out[pq.ID] = correctAnswers
 	}
 
 	return out, nil
 }
 
 // GetCorrectAnswerID for the specified question
-func GetCorrectAnswerID(ctx context.Context, client *firestore.Client, eventID, questionID string) (string, error) {
+func GetCorrectAnswerID(ctx context.Context, client *firestore.Client, eventID, questionID string) (map[string]bool, error) {
 	if eventID == "" {
-		return "", merry.Errorf("Empty event ID")
+		return nil, merry.Errorf("Empty event ID")
 	}
 
 	answers := client.Collection(fmt.Sprintf("events/%s/questions/%s/answers", eventID, questionID)).Documents(ctx)
+
+	correctAnswers := map[string]bool{}
 
 	for {
 		a, err := answers.Next()
@@ -121,21 +126,21 @@ func GetCorrectAnswerID(ctx context.Context, client *firestore.Client, eventID, 
 			break
 		}
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		pad := PollAnswerData{}
 		err = a.DataTo(&pad)
 		if err != nil {
-			return "", err
+			return nil, err
 		}
 
 		if pad.Correct {
-			return pad.ID, nil
+			correctAnswers[pad.ID] = true
 		}
 	}
 
-	return "", nil
+	return correctAnswers, nil
 }
 
 // GetAgePercentages returns the percetage of correct answers across all questions in the event
@@ -166,14 +171,14 @@ func GetAgePercentages(ctx context.Context, client *firestore.Client, eventID st
 		}
 
 		if aid, ok := answers[r.Question]; ok {
-			if r.PersonAge > cutoff {
+			if r.PersonAge >= cutoff {
 				totalOver++
-				if r.Selected[0] == aid {
+				if _, ok := aid[r.Selected[0]]; ok {
 					correctOver++
 				}
 			} else {
 				totalUnder++
-				if r.Selected[0] == aid {
+				if _, ok := aid[r.Selected[0]]; ok {
 					correctUnder++
 				}
 			}
@@ -267,8 +272,10 @@ func GetPollChurchPercentages(ctx context.Context, client *firestore.Client, eve
 			}
 		}
 		stats[r.ChurchID].IncTotal()
-		if aid, ok := answers[r.Question]; ok && r.Selected[0] == aid {
-			stats[r.ChurchID].IncCorrect()
+		if aid, ok := answers[r.Question]; ok {
+			if _, ok := aid[r.Selected[0]]; ok {
+				stats[r.ChurchID].IncCorrect()
+			}
 		}
 	}
 
