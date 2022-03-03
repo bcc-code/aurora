@@ -153,7 +153,7 @@ export class CheckinModule extends Module {
                 return { count: counter.count }
             }
 
-            await this.event.update({updatePending: true})
+            await counterRef.update({updatePending: true})
             await delay(700)
         }
 
