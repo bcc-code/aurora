@@ -80,8 +80,8 @@ export default {
             });
             return batch.commit()
         }),
-        bindStatsRef: firestoreAction(context => {
-            return context.bindFirestoreRef('stats', context.getters.statsRef)
+        bindStatsRef: firestoreAction(async context => {
+            return context.bindFirestoreRef('stats', await context.getters.statsRef)
         }),
         bindAgeStatsRef: firestoreAction((context, eventID) => {
             context.state.eventId = eventID
@@ -102,13 +102,13 @@ export default {
         selectedQuestion: (state) => {
             return state.questions.find(question => question.id == state.selectedQuestionId)
         },
-        answersByQuestionId: (_s, _g, _r, rootGetters) => (questionId) => {
-            return rootGetters['events/eventRef'].collection('questions').doc(questionId).collection('answers').orderBy('order').get().then(snapshot => {
+        answersByQuestionId: (_s, _g, _r, rootGetters) => async (questionId) => {
+            return (await rootGetters['events/screenEventRef']).collection('questions').doc(questionId).collection('answers').orderBy('order').get().then(snapshot => {
                 return snapshot.docs.map(doc => doc.data())
             });
         },
         responsesByQuestionId: (_s, _g, _r, rootGetters) => (questionId, limit) => {
-            var query = rootGetters['events/eventRef'].collection('responses')
+            var query = rootGetters['events/screenEventRef'].collection('responses')
                 .where("question", "==", questionId);
             if (limit != null) {
                 query = query.limit(limit);
@@ -118,7 +118,7 @@ export default {
             });
         },
         responsesByQuestionIdAndAnswerIds: (_s, _g, _r, rootGetters) => (questionId, answerIds, limit) => {
-            var query = rootGetters['events/eventRef'].collection('responses')
+            var query = rootGetters['events/screenEventRef'].collection('responses')
                 .where("question", "==", questionId)
                 .where("selected", "array-contains-any", answerIds);
             if (limit != null) {
@@ -128,8 +128,8 @@ export default {
                 return snapshot.docs.map(doc => doc.data())
             });
         },
-        statsRef: (_s, _g, _r, rootGetters) => {
-            return rootGetters['events/eventRef'].collection('gameboard').doc('pollSummary')
+        statsRef: async (_s, _g, _r, rootGetters) => {
+            return (await rootGetters['events/screenEventRef']).collection('gameboard').doc('pollSummary')
         },
         ageStatsRef: (state, _g, _r) => {
             let r = db.doc(`events/${state.eventId}/stats/poll-by-age`)
