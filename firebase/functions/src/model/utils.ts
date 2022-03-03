@@ -74,19 +74,22 @@ async function deleteQueryBatch(
 interface reqWithUser {
     user?: {[i: string]: string}
 }
+
 export const getPersonId = (req: Request): string => {
     // HACK: This is a fairly bad solution that kind of removes the point of typing,
     // but the only way at the moment that I found to make the compiler happy without
     // rewriting a lot of the auth code.
     const requ = req as unknown
     const req2 = requ as reqWithUser
+
+    console.log(req2.userClaims)
     const personId = req2.user?.['https://login.bcc.no/claims/personId'] as number|undefined
     if (personId) {
         return personId.toString()
     }
 
     if (req.userClaims) {
-        return req.userClaims.personId
+        return req.userClaims.personId as string
     }
 
     throw new Error(`Unable to find personId: ${personId ?? '<null>'}`)
