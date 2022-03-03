@@ -5,7 +5,7 @@
                 <thead>
                     <tr>
                         <th colspan="3">
-                            <h1 class="text-5xl">RESULTATER TOP 10</h1>
+                            <h1 class="text-5xl">RESULTATER TOPP 10</h1>
                         </th>
                     </tr>
                 </thead>
