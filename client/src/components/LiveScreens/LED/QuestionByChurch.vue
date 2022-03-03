@@ -10,7 +10,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr :class="[rowColor(i)]" v-for="(r, i) in churchStats" :key="r.churchId">
+                    <tr :class="[rowColor(i)]" class="text-3xl" v-for="(r, i) in churchStats" :key="r.churchId">
                         <td class="rounded">#{{ 1+(i*1) }}</td>
                         <td class="text-left pl-20">BUK {{ churchMap[r.churchId] }}</td>
                         <td>{{ (r.percentage*100).toFixed(2) }}%</td>
