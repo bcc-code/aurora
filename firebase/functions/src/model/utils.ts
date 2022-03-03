@@ -82,7 +82,6 @@ export const getPersonId = (req: Request): string => {
     const requ = req as unknown
     const req2 = requ as reqWithUser
 
-    console.log(req2.userClaims)
     const personId = req2.user?.['https://login.bcc.no/claims/personId'] as number|undefined
     if (personId) {
         return personId.toString()
