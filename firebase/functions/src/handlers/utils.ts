@@ -41,7 +41,7 @@ export async function getSignedRedirect(
     const personId: string | null = getPersonId(req)
     const data = req.query["data"];
 
-    res.status(200).send({url: `https://bcc.no/?personId=${personId}&data=${data}`})
+    res.status(200).json(`https://bcc.no/?personId=${personId}&data=${data}`)
 
     log.debug("getSignedRedirect - end")
 }
