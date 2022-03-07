@@ -9,7 +9,7 @@ import { generateResizedImage } from './middleware/generateThumbnails'
 import { jwtCheck, jwtCheckMiddleware } from './middleware/jwtCheck'
 import { syncUserAndClaims } from './middleware/syncUserAndClaims'
 import { checkin, checkinStateless, checkinStatus, userCount } from './handlers/checkin'
-import { getDonationURL } from './handlers/utils'
+import { getDonationURL, getSignedRedirect } from './handlers/utils'
 import { exportData, importData, listExports } from './handlers/impex'
 import { config } from './utils'
 import { eventList, getEventData } from './handlers/event'
@@ -30,7 +30,11 @@ import {
 import { logger } from './log'
 import { submitCompetitionEntry } from './handlers/competition'
 import { deleteEvent, deleteQuestion } from './handlers/delete'
-import { getLinkedUsers, getProfileImage, updateProfileImage } from './handlers/user'
+import {
+    getLinkedUsers,
+    getProfileImage,
+    updateProfileImage,
+} from './handlers/user'
 import {
     getToken,
     login,
@@ -139,6 +143,7 @@ userHandler.get('/user/linked', withDB(firestore, getLinkedUsers));
 
 const utilsHandler = handlerWithPrefix('utils')
 utilsHandler.get('/utils/signedDonationURL', getDonationURL);
+utilsHandler.get('/utils/signedRedirectURL', withDB(firestore, getSignedRedirect));
 
 const impexHandler = adminHandlerWithPrefix('impex')
 impexHandler.post('/impex/export', withBucket(firestore, impExBucket, exportData));

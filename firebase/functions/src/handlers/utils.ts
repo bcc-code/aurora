@@ -30,3 +30,19 @@ export async function getDonationURL(req: Request, res: Response) : Promise<void
         res.json({ url: outUrl }).end();
     }
 }
+
+// TODO: This is just for purposes of integrating the app. It needs to be made functional
+export async function getSignedRedirect(
+    db: firestore.Firestore,
+    req: Request,
+    res: Response
+) : Promise<void> {
+    log.debug("getSignedRedirect - start")
+    const personId: string | null = getPersonId(req)
+    const data = req.query["data"];
+
+    res.status(200).send({url: `https://bcc.no/?personId=${personId}&data=${data}`})
+
+    log.debug("getSignedRedirect - end")
+}
+
