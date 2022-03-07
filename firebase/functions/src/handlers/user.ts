@@ -89,9 +89,13 @@ export async function getLinkedUsers(
         return
     }
 
-    let linkedUsers : Array<IUser> = await Promise.all(personData.LinkedUserIds.map(
-        async (linkedId) => ((await userModel.userRef(linkedId.toFixed()).get()).data() as IUser)
-    ))
+      const relatedUsers = await db.collection("users")
+        .where("PersonId", "in",   personData.LinkedUserIds)
+        .get();
+
+    let linkedUsers : Array<IUser> = relatedUsers.docs.map(
+        (linkedUser) => linkedUser.data() as IUser
+    )
 
     linkedUsers = linkedUsers.filter(u => getAge(u.Birthdate || "") < 18)
     log.debug("getLinkedUsers - end")
