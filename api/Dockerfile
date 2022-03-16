@@ -1,4 +1,4 @@
-FROM golang:alpine AS builder
+FROM golang:1.18.0-alpine AS builder
 RUN mkdir /work
 WORKDIR /work
 COPY . .
