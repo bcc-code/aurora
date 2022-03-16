@@ -159,7 +159,7 @@ test("Stateless checkin, event, validate Status", async t => {
       firstName: 'Alient',
       lastName: 'Alieno',
       profilePicture: null,
-      age: 61,
+      age: 62,
       linkedUsers: [],
     })
 
