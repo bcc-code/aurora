@@ -114,7 +114,12 @@ async function createSubclip(assetId, title, tsin, tsout) {
         assetId
     });
 
-    console.error(results);
+    if (results.status < 200 || results.status > 299 ) {
+        console.error(results);
+        return
+    }
+
+    console.debug(results);
 }
 
 /**

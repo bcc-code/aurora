@@ -63,23 +63,13 @@ func mustSetupTracing() *http.Client {
 }
 
 func main() {
+
 	ctx := context.Background()
 	log.ConfigureGlobalLogger(zerolog.DebugLevel)
 	log.L.Debug().Msg("Seting up tracing")
 
 	tracedHTTPClient := mustSetupTracing()
 
-	/*
-		mbClient := proto.NewMediabankBridgeClient(conn)
-		_, err = mbClient.CreateSubclip(ctx, &proto.CreateSubclipRequest{
-			In:      "91000",
-			Out:     "92001",
-			Title:   "From BCCO",
-			AssetId: "VX-396795",
-		})
-
-		log.L.Fatal().Err(err).Msgf("Done")
-	*/
 	ctx, initTrace := trace.StartSpan(ctx, "init")
 
 	log.L.Debug().Msg("Fetching ENV vars")

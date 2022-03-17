@@ -60,10 +60,19 @@ export default {
         },
         async pushToMB(){
             let event = await this.selectedEventRef.get()
-            if (!event.data().mediabankID) {
+            let eventData = event.data()
+            if (!eventData.mediabankID) {
                 // Missing mediabankID. Can't proceed
                 return
             }
+
+            console.log(this.programElement)
+            console.log(eventData.mediabankFps)
+
+            let start = (((this.programElement.start.seconds - eventData.mediabankStartTime.seconds) + ((this.programElement.start.nanoseconds - eventData.mediabankStartTime.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
+            let end = (((this.programElement.end.seconds - this.programElement.start.seconds) + ((this.programElement.end.nanoseconds - this.programElement.start.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
+
+    console.log(start, end)
 
             await api.createSubclip(event.data().mediabankID, this.programElement.text, "91000", "92001") //TODO in out times
         },
