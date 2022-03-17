@@ -110,7 +110,7 @@ async function createSubclip(assetId, title, tsin, tsout) {
     let results = await sendRequestRaw("POST", `${keys.API.BASE_PATH_V2}api/subclip`, {
         in: tsin,
         out: tsout,
-        title,
+        title: title,
         assetId
     });
 

@@ -66,13 +66,14 @@ export default {
                 return
             }
 
-            console.log(this.programElement)
-            console.log(eventData.mediabankFps)
+            let startOfDay = new Date();
+            startOfDay.setUTCHours(0,0,0,0);
+            let startODUnix = startOfDay.getTime()/1000;
 
-            let start = (((this.programElement.start.seconds - eventData.mediabankStartTime.seconds) + ((this.programElement.start.nanoseconds - eventData.mediabankStartTime.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
-            let end = (((this.programElement.end.seconds - eventData.mediabankStartTime.seconds) + ((this.programElement.end.nanoseconds - eventData.mediabankStartTime.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
+            let start = (((this.programElement.start.seconds - startODUnix) + ((this.programElement.start.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
+            let end = (((this.programElement.end.seconds - startODUnix) + ((this.programElement.end.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
 
-            await api.createSubclip(event.data().mediabankID, this.programElement.text, start, end)
+            await api.createSubclip(event.data().mediabankID, this.programElement.texts.no, start, end)
         },
     }
 }
