@@ -188,7 +188,7 @@ export class PollModule extends Module {
 
         let churchId = -1
         try {
-            churchId = userData.ChurchId as number
+            churchId = userData.ChurchId as number ?? -1
         } catch(e) {/* ignore errors */}
 
         const response = {
