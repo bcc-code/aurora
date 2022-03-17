@@ -7,6 +7,7 @@ import (
 
 	"cloud.google.com/go/firestore"
 	"github.com/ansel1/merry/v2"
+	"go.opencensus.io/trace"
 	"google.golang.org/api/iterator"
 )
 
@@ -39,6 +40,9 @@ type PollAnswerData struct {
 }
 
 func getAllResponsesForEvent(ctx context.Context, client *firestore.Client, eventID string) ([]PollResponse, error) {
+	ctx, t := trace.StartSpan(ctx, "getAllResponsesForEvent")
+	defer t.End()
+
 	if eventID == "" {
 		return nil, merry.Errorf("Empty event ID")
 	}
@@ -76,6 +80,9 @@ type AnswerMap map[string](map[string]bool)
 // GetCorrectAnswersMap returns a map of QuestionID => CorrectAnswerID for quickly validating if
 // answers and qustion ID combos are correct.
 func GetCorrectAnswersMap(ctx context.Context, client *firestore.Client, eventID string) (AnswerMap, error) {
+	ctx, t := trace.StartSpan(ctx, "GetCorrectAnswersMap")
+	defer t.End()
+
 	if eventID == "" {
 		return nil, merry.Errorf("Empty event ID")
 	}
@@ -112,6 +119,9 @@ func GetCorrectAnswersMap(ctx context.Context, client *firestore.Client, eventID
 
 // GetCorrectAnswerID for the specified question
 func GetCorrectAnswerID(ctx context.Context, client *firestore.Client, eventID, questionID string) (map[string]bool, error) {
+	ctx, t := trace.StartSpan(ctx, "GetCorrectAnswerID")
+	defer t.End()
+
 	if eventID == "" {
 		return nil, merry.Errorf("Empty event ID")
 	}
@@ -149,6 +159,9 @@ func GetCorrectAnswerID(ctx context.Context, client *firestore.Client, eventID, 
 // For example `cutoff` == 18 means that the 1st returned value is the % of correct answers
 // for users aged 18 (incl) and below and the 2nd number is for users aged 19 (incl) and above
 func GetAgePercentages(ctx context.Context, client *firestore.Client, eventID string, cutoff int) (float64, float64, error) {
+	ctx, t := trace.StartSpan(ctx, "GetAgePercentages")
+	defer t.End()
+
 	responses, err := getAllResponsesForEvent(ctx, client, eventID)
 	if err != nil {
 		return -1, -1, err
@@ -248,6 +261,9 @@ func (s chruchStats) ToMap() map[string]interface{} {
 
 // GetPollChurchPercentages calculates how many responses were correct by church
 func GetPollChurchPercentages(ctx context.Context, client *firestore.Client, eventID string) (map[int]*chruchStats, error) {
+	ctx, t := trace.StartSpan(ctx, "GetPollChurchPercentages")
+	defer t.End()
+
 	responses, err := getAllResponsesForEvent(ctx, client, eventID)
 	if err != nil {
 		return nil, err
@@ -283,7 +299,10 @@ func GetPollChurchPercentages(ctx context.Context, client *firestore.Client, eve
 }
 
 // WritePollChurchesStats into firebase
-func WritePollChurchesStats(ctx context.Context, client *firestore.Client, eventID string, topHowMany int, stats map[int]*chruchStats) error {
+func WritePollChurchesStats(ctx context.Context, client *firestore.Client, eventID string, topHowMany, minAnswers int, stats map[int]*chruchStats) error {
+	ctx, t := trace.StartSpan(ctx, "WritePollChurchesStats")
+	defer t.End()
+
 	if stats == nil {
 		return nil
 	}
@@ -303,7 +322,7 @@ func WritePollChurchesStats(ctx context.Context, client *firestore.Client, event
 	topWithMinAnswers := []*chruchStats{}
 
 	for _, s := range toSort {
-		if s.Total < 3 {
+		if s.Total < minAnswers {
 			continue
 		}
 

@@ -4,6 +4,7 @@ import (
 	"context"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 
 	mbBridge "github.com/bcc-code/mediabank-bridge/proto"
@@ -40,8 +41,16 @@ func mustSetupTracing() *http.Client {
 		panic(err)
 	}
 
+	samplingFrequencyString := os.Getenv("TRACE_SAMPLING_FREQUENCY")
+	frequency, err := strconv.ParseFloat(samplingFrequencyString, 32)
+	if err != nil {
+		log.L.Warn().Err(err).Msg("Error getting samplingFrequencyString, setting to 0.1")
+		frequency = 0.1
+	}
+
+	log.L.Debug().Msgf("Setting trace sampling probability to %.2f", frequency)
 	trace.RegisterExporter(exporter)
-	trace.ApplyConfig(trace.Config{DefaultSampler: trace.AlwaysSample()})
+	trace.ApplyConfig(trace.Config{DefaultSampler: trace.ProbabilitySampler(frequency)})
 
 	client := &http.Client{
 		Transport: &ochttp.Transport{
@@ -57,6 +66,7 @@ func main() {
 	ctx := context.Background()
 	log.ConfigureGlobalLogger(zerolog.DebugLevel)
 	log.L.Debug().Msg("Seting up tracing")
+
 	tracedHTTPClient := mustSetupTracing()
 
 	/*

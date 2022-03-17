@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.bcc.media/bcco-api/firebase"
 	"go.bcc.media/bcco-api/log"
+	"go.opencensus.io/trace"
 )
 
 type eventIDQuery struct {
@@ -15,6 +16,9 @@ type eventIDQuery struct {
 
 // UpdatePollStatsByAge regenerates stats based on the specified event
 func (s Server) UpdatePollStatsByAge(c *gin.Context) {
+	ctx, t := trace.StartSpan(c.Request.Context(), "UpdatePollStatsByAge")
+	defer t.End()
+
 	q := eventIDQuery{}
 	err := c.ShouldBindQuery(&q)
 
@@ -28,7 +32,6 @@ func (s Server) UpdatePollStatsByAge(c *gin.Context) {
 
 	cutoff := 18
 
-	ctx := c.Request.Context()
 	under, over, err := firebase.GetAgePercentages(ctx, s.fs, q.EventID, cutoff)
 
 	if err != nil {
@@ -54,6 +57,9 @@ func (s Server) UpdatePollStatsByAge(c *gin.Context) {
 
 // UpdatePollStatsByChurch regenerates stats based on the church
 func (s Server) UpdatePollStatsByChurch(c *gin.Context) {
+	ctx, t := trace.StartSpan(c.Request.Context(), "UpdatePollStatsByChurch")
+	defer t.End()
+
 	q := eventIDQuery{}
 	err := c.ShouldBindQuery(&q)
 
@@ -65,7 +71,6 @@ func (s Server) UpdatePollStatsByChurch(c *gin.Context) {
 		return
 	}
 
-	ctx := c.Request.Context()
 	stats, err := firebase.GetPollChurchPercentages(ctx, s.fs, q.EventID)
 
 	if err != nil {
@@ -78,7 +83,9 @@ func (s Server) UpdatePollStatsByChurch(c *gin.Context) {
 	}
 
 	top10 := 10
-	err = firebase.WritePollChurchesStats(ctx, s.fs, q.EventID, top10, stats)
+	minAnswers := 15
+
+	err = firebase.WritePollChurchesStats(ctx, s.fs, q.EventID, top10, minAnswers, stats)
 	if err != nil {
 		fmt.Printf("%+v", err)
 		log.L.Error().

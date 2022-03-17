@@ -3,9 +3,11 @@ package main
 import (
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/log"
+
+	"github.com/gin-gonic/gin"
+	"go.opencensus.io/trace"
 )
 
 // APIKeyMiddleware only allows access if the specified header has
@@ -21,6 +23,9 @@ func APIKeyMiddleware(allowedKeys []string, headerName string) gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
+		_, t := trace.StartSpan(c.Request.Context(), "APIKeyMiddleware")
+		defer t.End()
+
 		providedKey := c.GetHeader(headerName)
 
 		if _, ok := keyMap[providedKey]; ok {
@@ -38,6 +43,9 @@ type personIDQuery struct {
 
 // GetEnrichmentData for the provided user id
 func (s Server) GetEnrichmentData(c *gin.Context) {
+	ctx, t := trace.StartSpan(c.Request.Context(), "GetEnrichmentData")
+	defer t.End()
+
 	q := &personIDQuery{}
 	err := c.BindQuery(q)
 	if err != nil {
@@ -46,7 +54,7 @@ func (s Server) GetEnrichmentData(c *gin.Context) {
 		return
 	}
 
-	userData, err := analytics.GetAnalyticsData(c.Request.Context(), s.fs, s.analyticsClient, q.PersonID)
+	userData, err := analytics.GetAnalyticsData(ctx, s.fs, s.analyticsClient, q.PersonID)
 	if err != nil {
 		c.AbortWithStatus(http.StatusInternalServerError)
 		log.L.Debug().Err(err).Msg("Unable to get user analytics data")

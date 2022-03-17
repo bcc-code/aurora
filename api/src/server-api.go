@@ -9,6 +9,8 @@ import (
 
 	"github.com/bcc-code/mediabank-bridge/proto"
 	"github.com/gin-gonic/gin"
+	"go.opencensus.io/trace"
+
 	"go.bcc.media/bcco-api/analytics"
 	"go.bcc.media/bcco-api/log"
 )
@@ -20,6 +22,9 @@ const (
 
 // GenerateAnalyticsID for the user requesting
 func (s Server) GenerateAnalyticsID(c *gin.Context) {
+	_, t := trace.StartSpan(c.Request.Context(), "GenerateAnalyticsID")
+	defer t.End()
+
 	var personID float64
 
 	if pid, ok := c.Get("PersonID"); ok {
@@ -46,6 +51,9 @@ func (s Server) GenerateAnalyticsID(c *gin.Context) {
 // GetCollectionResults from the collection api.
 // This is just a simple proxy to do M2M authentication
 func (s Server) GetCollectionResults(c *gin.Context) {
+	_, t := trace.StartSpan(c.Request.Context(), "GetCollectionResults")
+	defer t.End()
+
 	url := fmt.Sprintf("%s/Collection/status?apiKey=%s", s.collectionBaseURL, url.QueryEscape(s.collectionAPIKey))
 
 	res, err := s.httpClient.Get(url)
@@ -74,6 +82,9 @@ func (s Server) GetCollectionResults(c *gin.Context) {
 
 // CreateSubclip in mediabanken
 func (s Server) CreateSubclip(c *gin.Context) {
+	ctx, t := trace.StartSpan(c.Request.Context(), "CreateSubclip")
+	defer t.End()
+
 	req := &proto.CreateSubclipRequest{}
 	err := c.BindJSON(req)
 	if err != nil {
@@ -82,7 +93,7 @@ func (s Server) CreateSubclip(c *gin.Context) {
 		return
 	}
 
-	res, err := s.mediaBankBridgeClient.CreateSubclip(c.Request.Context(), req)
+	res, err := s.mediaBankBridgeClient.CreateSubclip(ctx, req)
 	if err != nil {
 		log.L.Error().Err(err).Msg("CreateSubclip")
 		c.AbortWithStatus(http.StatusInternalServerError)

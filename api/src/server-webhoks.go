@@ -12,12 +12,16 @@ import (
 	"go.bcc.media/bcco-api/mediabank"
 	"go.bcc.media/bcco-api/members"
 	"go.bcc.media/bcco-api/pubsub"
+	"go.opencensus.io/trace"
 )
 
 // MembersWebhook handles the pubsub notification
 // StatusNoContent is used to ACK messages that we do not want retried even if the
 // actual staus is a permanent error
 func (s Server) MembersWebhook(c *gin.Context) {
+	ctx, t := trace.StartSpan(c.Request.Context(), "MembersWebhook")
+	defer t.End()
+
 	msg, err := pubsub.MessageFromCtx(c)
 	if err != nil {
 		data, _ := c.GetRawData()
@@ -77,7 +81,7 @@ func (s Server) MembersWebhook(c *gin.Context) {
 			seenChurches[person.Church.Org.ChurchID] = true
 			ch := firebase.Church{}
 			ch = ch.UpdateFromMembers(&person.Church.Org)
-			err = ch.Upsert(c.Request.Context(), s.fs)
+			err = ch.Upsert(ctx, s.fs)
 
 			// Good to know but we should not delay because of that. Not an integral part
 			if err != nil {
@@ -96,6 +100,9 @@ func (s Server) MembersWebhook(c *gin.Context) {
 // MediabankWebhookEventData accepts event data from mediabanken and
 // adds it to the current running event
 func (s Server) MediabankWebhookEventData(c *gin.Context) {
+	ctx, t := trace.StartSpan(c.Request.Context(), "MediabankWebhookEventData")
+	defer t.End()
+
 	data := mediabank.EventData{}
 	err := c.BindJSON(&data)
 
@@ -106,8 +113,6 @@ func (s Server) MediabankWebhookEventData(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, map[string]string{"message": "Malformed request"})
 		return
 	}
-
-	ctx := c.Request.Context()
 
 	configRaw, err := s.fs.Doc("configs/brunstadtv-app").Get(ctx)
 	if err != nil {
