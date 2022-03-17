@@ -138,7 +138,7 @@ func (s Server) MediabankWebhookEventData(c *gin.Context) {
 		return
 	}
 
-	data.StartTime, err = time.Parse("UTC 2006-02-01 15:04:05", data.StartTimeISO)
+	data.StartTime, err = time.Parse("UTC 2006-01-02 15:04:05", data.StartTimeISO)
 
 	if err != nil {
 		log.L.Info().

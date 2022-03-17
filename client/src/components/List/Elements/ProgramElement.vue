@@ -70,11 +70,9 @@ export default {
             console.log(eventData.mediabankFps)
 
             let start = (((this.programElement.start.seconds - eventData.mediabankStartTime.seconds) + ((this.programElement.start.nanoseconds - eventData.mediabankStartTime.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
-            let end = (((this.programElement.end.seconds - this.programElement.start.seconds) + ((this.programElement.end.nanoseconds - this.programElement.start.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
+            let end = (((this.programElement.end.seconds - eventData.mediabankStartTime.seconds) + ((this.programElement.end.nanoseconds - eventData.mediabankStartTime.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
 
-    console.log(start, end)
-
-            await api.createSubclip(event.data().mediabankID, this.programElement.text, "91000", "92001") //TODO in out times
+            await api.createSubclip(event.data().mediabankID, this.programElement.text, start, end)
         },
     }
 }
