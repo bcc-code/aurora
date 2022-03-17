@@ -303,7 +303,7 @@ func WritePollChurchesStats(ctx context.Context, client *firestore.Client, event
 	topWithMinAnswers := []*chruchStats{}
 
 	for _, s := range toSort {
-		if s.Total < 15 {
+		if s.Total < 3 {
 			continue
 		}
 
@@ -311,7 +311,7 @@ func WritePollChurchesStats(ctx context.Context, client *firestore.Client, event
 	}
 
 	if len(topWithMinAnswers) < topHowMany {
-		topHowMany = len(toSort)
+		topHowMany = len(topWithMinAnswers)
 	}
 
 	topX := topWithMinAnswers[0:topHowMany]
