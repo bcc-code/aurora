@@ -83,7 +83,7 @@ func (s Server) UpdatePollStatsByChurch(c *gin.Context) {
 	}
 
 	top10 := 10
-	minAnswers := 15
+	minAnswers := 3
 
 	err = firebase.WritePollChurchesStats(ctx, s.fs, q.EventID, top10, minAnswers, stats)
 	if err != nil {
