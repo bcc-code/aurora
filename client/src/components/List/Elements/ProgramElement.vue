@@ -21,6 +21,8 @@ import { ProgramElementTypeLabel } from '@/models/program.js'
 import Translations from '@/mixins/translation.js'
 import api from '@/utils/api.js'
 import * as dayjs from 'dayjs'
+import * as utc from 'dayjs/plugins/utc'
+import * as tz from 'dayjs/plugins/timezone'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
