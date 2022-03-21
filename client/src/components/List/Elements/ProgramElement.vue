@@ -20,6 +20,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { ProgramElementTypeLabel } from '@/models/program.js'
 import Translations from '@/mixins/translation.js'
 import api from '@/utils/api.js'
+import * as dayjs from 'dayjs'
 
 export default {
     props: {
@@ -66,9 +67,8 @@ export default {
                 return
             }
 
-            let startOfDay = new Date();
-            startOfDay.setUTCHours(0,0,0,0);
-            let startODUnix = startOfDay.getTime()/1000;
+            let startOfDay = dayjs(this.programElement.start.toDate()).startOf('day')
+            let startODUnix = startOfDay.unix()
 
             let start = (((this.programElement.start.seconds - startODUnix) + ((this.programElement.start.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
             let end = (((this.programElement.end.seconds - startODUnix) + ((this.programElement.end.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
