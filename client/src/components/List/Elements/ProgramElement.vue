@@ -22,6 +22,9 @@ import Translations from '@/mixins/translation.js'
 import api from '@/utils/api.js'
 import * as dayjs from 'dayjs'
 
+dayjs.extend(utc)
+dayjs.extend(timezone)
+
 export default {
     props: {
         programElement: {
@@ -67,7 +70,7 @@ export default {
                 return
             }
 
-            let startOfDay = dayjs(this.programElement.start.toDate()).startOf('day')
+            let startOfDay = dayjs(this.programElement.start.toDate()).tz("Europe/Oslo").startOf('day')
             let startODUnix = startOfDay.unix()
 
             let start = (((this.programElement.start.seconds - startODUnix) + ((this.programElement.start.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
