@@ -20,12 +20,7 @@ import { mapActions, mapGetters } from 'vuex'
 import { ProgramElementTypeLabel } from '@/models/program.js'
 import Translations from '@/mixins/translation.js'
 import api from '@/utils/api.js'
-import * as dayjs from 'dayjs'
-import * as utc from 'dayjs/plugins/utc'
-import * as tz from 'dayjs/plugins/timezone'
-
-dayjs.extend(utc)
-dayjs.extend(timezone)
+import { DateTime } from "luxon";
 
 export default {
     props: {
@@ -72,8 +67,9 @@ export default {
                 return
             }
 
-            let startOfDay = dayjs(this.programElement.start.toDate()).tz("Europe/Oslo").startOf('day')
-            let startODUnix = startOfDay.unix()
+
+            let startOfDay = DateTime.fromJSDate(this.programElement.start.toDate(), {zone:"Europe/Oslo"}).startOf("day")
+            let startODUnix = startOfDay.toUnixInteger()
 
             let start = (((this.programElement.start.seconds - startODUnix) + ((this.programElement.start.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
             let end = (((this.programElement.end.seconds - startODUnix) + ((this.programElement.end.nanoseconds) / 1000000000) ) * eventData.mediabankFps).toFixed()
