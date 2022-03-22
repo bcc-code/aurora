@@ -84,7 +84,7 @@ export async function getLinkedUsers(
 
     const userModel = new UserModel(db)
     const personData = (await userModel.userRef(personId).get()).data() as IUser
-    if (!personData.LinkedUserIds) {
+    if (!personData.LinkedUserIds || personData.LinkedUserIds.length < 1) {
         res.status(200).json({LinkedUsers: []}).end()
         return
     }
