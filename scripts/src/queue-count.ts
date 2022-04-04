@@ -1,7 +1,4 @@
 import * as firebase from 'firebase-admin'
-import * as tty from "tty"
-import * as fs from "fs"
-import {exit} from 'process';
 import * as firestore from "@google-cloud/firestore";
 
 //var serviceAccount = require("../firebase-key.json");
