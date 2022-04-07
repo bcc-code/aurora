@@ -30,10 +30,11 @@ export default {
         }
     },
     methods: {
-        ...mapActions('contributions', ['removeLiveRef']),
+        ...mapActions('contributions', ['removeLiveRef', 'updateContribsCount']),
 
         async rejectContribution(){
             await this.removeLiveRef(this.entry)
+            await this.updateContribsCount(-1) // Decrement counter
         },
     }
 }
