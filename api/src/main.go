@@ -205,6 +205,7 @@ func main() {
 		"mediabank": mediabankWebhookPassword,
 	}))
 	mediabankWebhooks.POST("event-data", server.MediabankWebhookEventData)
+	mediabankWebhooks.GET("test", server.MediabankTestHandler)
 
 	// Use if you need to debug fetching members from API
 	// webhooks.POST("singlemember", server.UpdatePersonFromMembers)

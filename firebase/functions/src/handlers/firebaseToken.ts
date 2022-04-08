@@ -44,7 +44,7 @@ export async function getToken(req: Request, res: Response) : Promise<void> {
     }
 }
 
-export function login(req: Request, res: Response, next: NextFunction) : Promise<void> {
+export function login(req: Request, res: Response, next: NextFunction) : void {
     const authOptions: AuthenticateOptions = {
         scope: 'openid email profile church country',
         // @ts-ignore this is valid according to the docs
