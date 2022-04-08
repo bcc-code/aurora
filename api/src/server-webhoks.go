@@ -171,3 +171,8 @@ func (s Server) MediabankWebhookEventData(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Updated event", "event_id": config.CurrentEventPath.ID})
 }
+
+// MediabankTestHandler is just a dummy handler for MB to be able to easily test stuff
+func (s Server) MediabankTestHandler(c *gin.Context) {
+	c.JSON(http.StatusOK, gin.H{"status": "OK"})
+}
