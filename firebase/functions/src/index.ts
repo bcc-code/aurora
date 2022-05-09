@@ -33,6 +33,7 @@ import { deleteEvent, deleteQuestion } from './handlers/delete'
 import {
     getLinkedUsers,
     getProfileImage,
+    getUserDetails,
     updateProfileImage,
 } from './handlers/user'
 import {
@@ -139,6 +140,7 @@ bukGamesHandler.post('/bukGames/entry', withDB(firestore, addEntry))
 const userHandler = handlerWithPrefix('user')
 userHandler.post('/user/profileImage', withDB(firestore, updateProfileImage));
 userHandler.get('/user/profileImage', withDB(firestore, getProfileImage));
+userHandler.get('/user/details', withDB(firestore, getProfileImage));
 userHandler.get('/user/linked', withDB(firestore, getLinkedUsers));
 
 const utilsHandler = handlerWithPrefix('utils')
