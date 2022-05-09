@@ -70,6 +70,35 @@ function getAge(dateString : string) : number{
     return age;
 }
 
+export async function getUserDetails(
+    db: firestore.Firestore,
+    req: Request,
+    res: Response
+) : Promise<void> {
+    log.debug("getUserDetails - start")
+    const personId = getPersonId(req)
+    if (!personId) {
+        res.sendStatus(404).end()
+        return
+    }
+    log.debug("getUserDetails - end")
+
+    const userModel = new UserModel(db)
+    const personData = (await userModel.userRef(personId).get()).data() as IUser
+
+    const out = {
+        churchId: personData.ChurchId,
+        churchName: personData.ChurchName,
+        firstName: personData.FirstName,
+        lastName: personData.LastName,
+        birthDate: personData.Birthdate,
+        age: getAge(personData.Birthdate||""),
+        profilePicture: personData.ProfilePicture,
+    }
+
+    res.status(200).json(out).end()
+}
+
 export async function getLinkedUsers(
     db: firestore.Firestore,
     req: Request,
