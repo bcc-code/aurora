@@ -81,7 +81,6 @@ export async function getUserDetails(
         res.sendStatus(404).end()
         return
     }
-    log.debug("getUserDetails - end")
 
     const userModel = new UserModel(db)
     const personData = (await userModel.userRef(personId).get()).data() as IUser
@@ -95,6 +94,8 @@ export async function getUserDetails(
         age: getAge(personData.Birthdate||""),
         profilePicture: personData.ProfilePicture,
     }
+
+    log.debug("getUserDetails - end")
 
     res.status(200).json(out).end()
 }
