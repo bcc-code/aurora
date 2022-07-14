@@ -44,7 +44,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('contributions', ['latestFeed']),
+        ...mapGetters('contributions', ['latestScreenFeed']),
         formattedVerse: function () {
             let verseToDisplay = this.verseToDisplay;
             let out = `${verseToDisplay.verse.book } ${verseToDisplay.verse.chapter}:${verseToDisplay.verse.verse_from}`
@@ -61,20 +61,20 @@ export default {
         }
     },
     methods: {
-        ...mapActions('contributions', ['bindFeedRef']),
+        ...mapActions('contributions', ['bindScreenFeedRef']),
         loadLastVerse() {
-            if ((!this.loaded && !this.displayPrevious) || this.latestFeed.length == 0) {
+            if ((!this.loaded && !this.displayPrevious) || this.latestScreenFeed.length == 0) {
                 this.verseToDisplay = null;
                 return
             }
 
             if (this.displayPrevious) {
-                let verses = this.latestFeed.filter((el, i) => (el.type == ContributionTypes.BIBLEVERSE))
+                let verses = this.latestScreenFeed.filter((el, i) => (el.type == ContributionTypes.BIBLEVERSE))
                 this.verseToDisplay = verses[0] || null;
                 return
             }
 
-            const lastElement = this.latestFeed[0]
+            const lastElement = this.latestScreenFeed[0]
             if (!lastElement || lastElement.type != ContributionTypes.BIBLEVERSE) {
                 this.verseToDisplay = null;
                 return
@@ -90,7 +90,7 @@ export default {
             this.loaded = true;
             this.loadLastVerse();
         },
-        latestFeed() {
+        latestScreenFeed() {
             this.loadLastVerse()
         },
         verseToDisplay() {
