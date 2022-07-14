@@ -56,7 +56,7 @@ export default {
     },
     async mounted(){
         if (this.event != null) {
-            await this.bindFeedRef(this.event.additionalFeed);
+            await this.bindScreenFeedRef(this.event.additionalFeed);
             this.loaded = true;
         }
     },
@@ -86,7 +86,7 @@ export default {
     watch: {
         async 'event.additionalFeed'(value) {
             this.loaded = false;
-            await this.bindFeedRef(value);
+            await this.bindScreenFeedRef(value);
             this.loaded = true;
             this.loadLastVerse();
         },
