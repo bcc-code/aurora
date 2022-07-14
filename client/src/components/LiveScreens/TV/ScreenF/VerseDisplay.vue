@@ -35,7 +35,7 @@ export default {
     components: {
         FeedEntry
     },
-    props: ['displayPrevious', 'displayTime'],
+    props: ['displayPrevious', 'displayTime', 'event'],
     data: function() {
         return {
             loaded: false,
@@ -43,8 +43,7 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('events', ['event']),
-        ...mapGetters('contributions', ['latestFeed']),
+        ...mapGetters('contributions', ['latestScreenFeed']),
         formattedVerse: function () {
             let verseToDisplay = this.verseToDisplay;
             let out = `${verseToDisplay.verse.book } ${verseToDisplay.verse.chapter}:${verseToDisplay.verse.verse_from}`
@@ -56,25 +55,25 @@ export default {
     },
     async mounted(){
         if (this.event != null) {
-            await this.bindFeedRef(this.event.additionalFeed);
+            await this.bindFeedRefByEvent(this.event);
             this.loaded = true;
         }
     },
     methods: {
-        ...mapActions('contributions', ['bindFeedRef']),
+        ...mapActions('contributions', ['bindFeedRefByEvent']),
         loadLastVerse() {
-            if ((!this.loaded && !this.displayPrevious) || this.latestFeed.length == 0) {
+            if ((!this.loaded && !this.displayPrevious) || this.latestScreenFeed.length == 0) {
                 this.verseToDisplay = null;
                 return
             }
 
             if (this.displayPrevious) {
-                let verses = this.latestFeed.filter((el, i) => (el.type == ContributionTypes.BIBLEVERSE))
+                let verses = this.latestScreenFeed.filter((el, i) => (el.type == ContributionTypes.BIBLEVERSE))
                 this.verseToDisplay = verses[0] || null;
                 return
             }
 
-            const lastElement = this.latestFeed[0]
+            const lastElement = this.latestScreenFeed[0]
             if (!lastElement || lastElement.type != ContributionTypes.BIBLEVERSE) {
                 this.verseToDisplay = null;
                 return
@@ -86,11 +85,11 @@ export default {
     watch: {
         async 'event.additionalFeed'(value) {
             this.loaded = false;
-            await this.bindFeedRef(value);
+            await this.bindFeedRefByEvent(this.event);
             this.loaded = true;
             this.loadLastVerse();
         },
-        latestFeed() {
+        latestScreenFeed() {
             this.loadLastVerse()
         },
         verseToDisplay() {
