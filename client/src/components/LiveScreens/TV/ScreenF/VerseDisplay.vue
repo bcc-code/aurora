@@ -35,7 +35,7 @@ export default {
     components: {
         FeedEntry
     },
-    props: ['displayPrevious', 'displayTime'],
+    props: ['displayPrevious', 'displayTime', 'event'],
     data: function() {
         return {
             loaded: false,
@@ -43,7 +43,6 @@ export default {
         }
     },
     computed: {
-        ...mapGetters('events', ['event']),
         ...mapGetters('contributions', ['latestFeed']),
         formattedVerse: function () {
             let verseToDisplay = this.verseToDisplay;
