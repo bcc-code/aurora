@@ -7,7 +7,6 @@
                 verse
     "v-if="loaded">
         <transition name="slide">
-        <div>{{ event }}</div>
             <div v-if="verseToDisplay" class="
                 bg-primary-dark
                 font-bold
@@ -56,12 +55,12 @@ export default {
     },
     async mounted(){
         if (this.event != null) {
-            await this.bindScreenFeedRef(this.event.additionalFeed);
+            await this.bindFeedRefByEvent(this.event);
             this.loaded = true;
         }
     },
     methods: {
-        ...mapActions('contributions', ['bindScreenFeedRef']),
+        ...mapActions('contributions', ['bindFeedRefByEvent']),
         loadLastVerse() {
             if ((!this.loaded && !this.displayPrevious) || this.latestScreenFeed.length == 0) {
                 this.verseToDisplay = null;
@@ -86,7 +85,7 @@ export default {
     watch: {
         async 'event.additionalFeed'(value) {
             this.loaded = false;
-            await this.bindScreenFeedRef(value);
+            await this.bindFeedRefByEvent(this.event);
             this.loaded = true;
             this.loadLastVerse();
         },
