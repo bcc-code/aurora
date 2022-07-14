@@ -7,6 +7,7 @@
                 verse
     "v-if="loaded">
         <transition name="slide">
+        <div>{{ event }}</div>
             <div v-if="verseToDisplay" class="
                 bg-primary-dark
                 font-bold
