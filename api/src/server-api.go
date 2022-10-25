@@ -95,7 +95,7 @@ func (s Server) GenerateDynamicLink(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"url": "https://brunstad.tv/?token=" + string(signed)})
+	c.JSON(http.StatusOK, gin.H{"url": "https://gameshow.buk.no/?token=" + string(signed)})
 }
 
 // GetCollectionResults from the collection api.
