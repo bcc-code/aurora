@@ -194,6 +194,7 @@ func main() {
 	apiGrp.POST("subclip", server.CreateSubclip)
 	apiGrp.GET("updatepollstatsbyage", server.UpdatePollStatsByAge)
 	apiGrp.GET("updatepollstatsbychurch", server.UpdatePollStatsByChurch)
+	apiGrp.GET("dynamiclink", server.GenerateDynamicLink)
 
 	// /analytics/ is protected by a (set) of API keys. It is meant to be used by the
 	// transformers in rudderstack
