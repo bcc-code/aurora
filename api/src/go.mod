@@ -20,10 +20,11 @@ require (
 	github.com/go-resty/resty/v2 v2.6.0
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/lestrrat-go/jwx v1.2.11
+	github.com/lestrrat-go/jwx/v2 v2.0.6 // indirect
 	github.com/rs/zerolog v1.26.0
 	github.com/rudderlabs/analytics-go v3.3.1+incompatible
 	github.com/segmentio/backo-go v0.0.0-20200129164019-23eae7c10bd3 // indirect
-	github.com/stretchr/testify v1.7.0
+	github.com/stretchr/testify v1.8.0
 	github.com/tidwall/gjson v1.9.1 // indirect
 	github.com/xtgo/uuid v0.0.0-20140804021211-a0b114877d4c // indirect
 	go.opencensus.io v0.23.0

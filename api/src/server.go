@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rsa"
 	"net/http"
 
 	"cloud.google.com/go/firestore"
@@ -29,6 +30,8 @@ type ServerConfig struct {
 	AnalitycsIDSecret string
 
 	MediaBankBridgeClient mbBridge.MediabankBridgeClient
+
+	JwtKey *rsa.PrivateKey
 }
 
 // Server holds shared resources for the webserver
@@ -46,6 +49,8 @@ type Server struct {
 	collectionAPIKey  string
 
 	mediaBankBridgeClient mbBridge.MediabankBridgeClient
+
+	jwtKey *rsa.PrivateKey
 }
 
 // NewServer with embedded shared resources
@@ -60,6 +65,7 @@ func NewServer(c ServerConfig) *Server {
 		collectionAPIKey:      c.CollectionAPIKey,
 		analyticsIDSecret:     c.AnalitycsIDSecret,
 		mediaBankBridgeClient: c.MediaBankBridgeClient,
+		jwtKey:                c.JwtKey,
 	}
 }
 

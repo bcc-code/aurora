@@ -6,9 +6,12 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	"github.com/bcc-code/mediabank-bridge/proto"
 	"github.com/gin-gonic/gin"
+	"github.com/lestrrat-go/jwx/v2/jwa"
+	"github.com/lestrrat-go/jwx/v2/jwt"
 	"go.opencensus.io/trace"
 
 	"go.bcc.media/bcco-api/analytics"
@@ -46,6 +49,53 @@ func (s Server) GenerateAnalyticsID(c *gin.Context) {
 	id := analytics.GenerateID(personID, s.analyticsIDSecret)
 
 	c.JSON(http.StatusOK, gin.H{"id": string(id)})
+}
+
+// GenerateDynamicLink for the user requesting
+func (s Server) GenerateDynamicLink(c *gin.Context) {
+	_, t := trace.StartSpan(c.Request.Context(), "GenerateDynamicLink")
+	defer t.End()
+
+	var personID float64
+
+	if pid, ok := c.Get("PersonID"); ok {
+		personID = pid.(float64)
+	} else if pidHeader := c.GetHeader(HeaderXPersonID); pidHeader != "" {
+		pidFloat, err := strconv.ParseFloat(pidHeader, 64)
+		if err != nil {
+			log.L.Debug().Str(HeaderXPersonID, pidHeader).
+				Msg("Could not parse x-person-id")
+			c.AbortWithStatus(http.StatusBadRequest)
+			return
+		}
+		personID = pidFloat
+	} else {
+		c.AbortWithStatus(http.StatusUnauthorized)
+		return
+	}
+
+	// Build a JWT!
+	tok, err := jwt.NewBuilder().
+		Claim(`person_id`, personID).
+		Issuer(`https://brunstad.tv/r/`).
+		IssuedAt(time.Now()).
+		Expiration(time.Now().Add(10 * time.Minute)).
+		Build()
+	if err != nil {
+		log.L.Error().Err(err).Msgf("failed to build token")
+		c.AbortWithStatus(500)
+		return
+	}
+
+	// Sign a JWT!
+	signed, err := jwt.Sign(tok, jwt.WithKey(jwa.RS256, s.jwtKey))
+	if err != nil {
+		log.L.Error().Err(err).Msgf("failed to sign token")
+		c.AbortWithStatus(500)
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"url": "https://brunstad.tv/?token=" + string(signed)})
 }
 
 // GetCollectionResults from the collection api.

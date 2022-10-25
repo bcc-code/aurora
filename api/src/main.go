@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"crypto/x509"
+	"encoding/pem"
 	"net/http"
 	"os"
 	"strconv"
@@ -119,6 +121,10 @@ func main() {
 		appBuild = "DeveloperLocal"
 	}
 
+	// Parsing JWT key
+	block, _ := pem.Decode([]byte(os.Getenv("JWKEY")))
+	jwtkey, _ := x509.ParsePKCS1PrivateKey(block.Bytes)
+
 	// Instantiates a client to use send messages to the Rudder API.
 	analyticsClient := analytics.MustSetupAnalytics(rudderstackURL, rudderstackKey, analyticsSecret, "", appBuild)
 
@@ -146,6 +152,7 @@ func main() {
 		AnalyticsClient:       analyticsClient,
 		AnalitycsIDSecret:     analyticsSecret,
 		MediaBankBridgeClient: mbBridgeClient,
+		JwtKey:                jwtkey,
 	})
 
 	router := gin.Default()
