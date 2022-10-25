@@ -38,10 +38,25 @@ export async function getSignedRedirect(
     res: Response
 ) : Promise<void> {
     log.debug("getSignedRedirect - start")
-    const personId: string | null = getPersonId(req)
     const data = req.query["data"];
 
-    res.status(200).json(`https://bcc.no/?personId=${personId}&data=${data}`)
+    const token = req.header("authorization")?.replace("Bearer ", "");
+
+    try {
+        const result = await gaxios.request({
+            method: 'GET',
+            timeout: 5000, // We wait at most 5 seconds
+            url: `https://api.pro.online.bcc.media/api/dynamiclink?data=${data}`, // Yes, I know. Not now!
+            headers: {
+                'Authorization': token,
+            },
+        });
+
+        res.status(200).json((result.data as Record<string, unknown>).url);
+    } catch(e) {
+        log.error(e);
+        res.status(200).json(`https://brunstad.tv`)
+    }
 
     log.debug("getSignedRedirect - end")
 }
