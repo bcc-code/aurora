@@ -47,7 +47,7 @@
     "@babel/preset-env": "^7.14.1",
     "@fortawesome/fontawesome-free": "^5.15.3",
     "@vue/cli-plugin-babel": "^3.12.1",
-    "@vue/cli-service": "^4.5.12",
+    "@vue/cli-service": "^5.0.8",
     "babel-core": "^7.0.0-bridge.0",
     "esm": "^3.2.25",
     "google-fonts-webpack-plugin": "^0.4.4",
