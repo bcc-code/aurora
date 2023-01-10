@@ -7,6 +7,6 @@
     "mocha": "^8.3.0"
   },
   "dependencies": {
-    "firebase-admin": "^9.8.0"
+    "firebase-admin": "^11.4.1"
   }
 }
