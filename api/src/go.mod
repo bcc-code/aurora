@@ -13,7 +13,6 @@ require (
 	github.com/aws/aws-sdk-go v1.40.13 // indirect
 	github.com/bcc-code/mediabank-bridge v1.1.1
 	github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869 // indirect
-	github.com/davecgh/go-spew v1.1.1
 	github.com/gin-contrib/cors v1.3.1
 	github.com/gin-contrib/logger v0.0.3
 	github.com/gin-gonic/gin v1.7.1
@@ -24,7 +23,7 @@ require (
 	github.com/rudderlabs/analytics-go v3.3.1+incompatible
 	github.com/segmentio/backo-go v0.0.0-20200129164019-23eae7c10bd3 // indirect
 	github.com/stretchr/testify v1.7.0
-	github.com/tidwall/gjson v1.9.1 // indirect
+	github.com/tidwall/gjson v1.9.3 // indirect
 	github.com/xtgo/uuid v0.0.0-20140804021211-a0b114877d4c // indirect
 	go.opencensus.io v0.23.0
 	google.golang.org/api v0.52.0
